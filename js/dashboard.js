@@ -1,18 +1,29 @@
-// dashboard.js - Core Hub Logic, Modals, Letters, and Decorative Background
 document.addEventListener('DOMContentLoaded', () => {
     
-    // 1. Navigation Tab Switching
-    const navItems = document.querySelectorAll('.nav-item');
+    // 1. Central Menu & Workspace Routing
+    const centralMenu = document.getElementById('central-menu');
+    const dashboardContainer = document.getElementById('dashboard-container');
     const sections = document.querySelectorAll('.dash-section');
+    const menuCards = document.querySelectorAll('.menu-card');
+    const backBtn = document.getElementById('back-to-menu');
 
-    navItems.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            navItems.forEach(n => n.classList.remove('active'));
+    menuCards.forEach(card => {
+        card.addEventListener('click', (e) => {
+            const targetId = card.dataset.target;
+            
+            // Hide Menu, Show Workspace
+            centralMenu.classList.remove('active');
             sections.forEach(s => s.classList.remove('active'));
             
-            e.target.classList.add('active');
-            document.getElementById(e.target.dataset.target).classList.add('active');
+            document.getElementById(targetId).classList.add('active');
+            backBtn.classList.remove('hidden');
         });
+    });
+
+    backBtn.addEventListener('click', () => {
+        sections.forEach(s => s.classList.remove('active'));
+        backBtn.classList.add('hidden');
+        centralMenu.classList.add('active');
     });
 
     // 2. Global Modal Closers
@@ -22,7 +33,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Close modal on background click
     document.querySelectorAll('.modal').forEach(modal => {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -40,18 +50,18 @@ document.addEventListener('DOMContentLoaded', () => {
         'https://images.unsplash.com/photo-1611077544760-4969246f481c?auto=format&fit=crop&w=300&q=80'
     ];
 
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 8; i++) {
         let img = document.createElement('img');
         img.src = placeholderImages[i % placeholderImages.length];
         img.className = 'floating-photo';
-        img.style.left = `${Math.random() * 80 + 10}vw`;
-        img.style.top = `${Math.random() * 80 + 10}vh`;
-        img.style.animationDuration = `${Math.random() * 10 + 15}s`;
+        img.style.left = `${Math.random() * 90}vw`;
+        img.style.top = `${Math.random() * 90}vh`;
+        img.style.animationDuration = `${Math.random() * 15 + 20}s`;
         img.style.animationDelay = `${Math.random() * 5}s`;
         decorContainer.appendChild(img);
     }
 
-    // 4. Love Letters Logic (Mapped to dashboard.html)
+    // 4. Love Letters Logic with Author Attribution
     const sendBtn = document.getElementById('send-letter-btn');
     const titleInput = document.getElementById('letter-title');
     const bodyInput = document.getElementById('letter-body');
@@ -59,13 +69,15 @@ document.addEventListener('DOMContentLoaded', () => {
     sendBtn.addEventListener('click', () => {
         const title = titleInput.value.trim();
         const body = bodyInput.value.trim();
+        const author = document.querySelector('input[name="letter-author"]:checked').value;
         
         if (title && body) {
             window.store.addLetter({ 
                 id: Date.now(), 
                 date: new Date().toISOString(), 
                 title, 
-                body 
+                body,
+                author
             });
             titleInput.value = '';
             bodyInput.value = '';
@@ -78,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const letters = window.store.state.letters;
 
         if (letters.length === 0) {
-            feed.innerHTML = '<p style="color: var(--text-muted);">The mailbox is empty. Drop the first letter...</p>';
+            feed.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">The mailbox is empty. Drop the first letter...</p>';
             return;
         }
 
@@ -86,7 +98,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('div');
             card.className = 'letter-card';
             card.innerHTML = `
-                <div class="letter-date">${new Date(letter.date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</div>
+                <div class="letter-meta">
+                    <span class="letter-date">${new Date(letter.date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
+                    <span class="letter-author-badge">By ${letter.author || 'Unknown'}</span>
+                </div>
                 <h3>${letter.title}</h3>
                 <p>${letter.body.replace(/\n/g, '<br>')}</p>
             `;
@@ -94,7 +109,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Initial render and subscribe
     renderLetters();
     window.store.subscribe(() => {
         renderLetters();

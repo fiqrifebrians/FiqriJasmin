@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="css/apologies.css">
 </head>
 <body>
-    <div id="slider-container" class="glass-panel">
+    <div id="borderless-slider">
         <div class="slide active">
             <h1>Hi Jas...</h1>
         </div>
@@ -23,13 +23,12 @@
         </div>
         <div class="slide">
             <p>I built this digital sanctuary exclusively for the two of us. A private space to hold our memories and future dreams.</p>
-            <button id="continue-btn" class="glow-btn hidden">Continue</button>
+            <button id="continue-btn" class="glow-btn huge hidden" onclick="window.location.href='dashboard.html'">Continue</button>
         </div>
         
-        <div class="controls">
+        <div class="controls" id="controls-container">
             <button id="next-btn" class="nav-arrow">&#10230;</button>
         </div>
-        <div class="progress-dots" id="dots-container"></div>
     </div>
 
     <script src="js/apologies.js"></script>

@@ -1,21 +1,19 @@
-// journey.js - Horizontal Calendar Log Logic
 document.addEventListener('DOMContentLoaded', () => {
     const container = document.getElementById('horizontal-calendar');
     
     function renderJourney() {
         container.innerHTML = '';
         
-        // Start Date: December 13, 2023
+        // Compact Strip anchored exactly to Dec 13, 2023
         const startDate = new Date('2023-12-13T00:00:00');
         const today = new Date();
         const diffTime = Math.abs(today - startDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 14; // Include 2 weeks ahead
+        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 7; // Only 1 week ahead for compactness
 
         for (let i = 0; i <= diffDays; i++) {
             let d = new Date(startDate);
             d.setDate(d.getDate() + i);
             
-            // Format YYYY-MM-DD
             const dateKey = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
             
             const node = document.createElement('div');
@@ -25,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
             node.innerHTML = `
                 <div class="month">${d.toLocaleString('default', { month: 'short' })}</div>
                 <div class="day">${d.getDate()}</div>
-                <div class="month">${d.getFullYear()}</div>
             `;
 
             if (attachments) {
@@ -42,7 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     `).join('');
                     
                     document.getElementById('journey-detail').innerHTML = `
-                        <h3 style="color: var(--neon-violet); margin-bottom: 20px; font-weight: 300; font-size: 1.5rem;">
+                        <h3 style="color: var(--neon-violet); margin-bottom: 25px; font-weight: 300; font-size: 1.5rem; letter-spacing: 1px;">
                             ${d.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
                         </h3>
                         ${html}
@@ -53,10 +50,10 @@ document.addEventListener('DOMContentLoaded', () => {
             container.appendChild(node);
         }
         
-        // Scroll to the end (today) automatically
+        // Auto-scroll to the right-most end to show the most recent dates
         setTimeout(() => {
             container.scrollLeft = container.scrollWidth;
-        }, 100);
+        }, 150);
     }
 
     renderJourney();

@@ -14,25 +14,41 @@
     <!-- Floating Decorative Background -->
     <div id="floating-decorations"></div>
 
-    <nav class="glass-nav">
-        <div class="nav-logo">Our Sanctuary</div>
-        <div class="nav-links">
-            <button class="nav-item active" data-target="journey">Journey</button>
-            <button class="nav-item" data-target="galleries">Galleries</button>
-            <button class="nav-item" data-target="wishlist">Wishlist</button>
-            <button class="nav-item" data-target="letters">Love Letters</button>
+    <!-- Centralized Menu System -->
+    <div id="central-menu" class="active">
+        <h1 class="menu-title">Our Sanctuary</h1>
+        <div class="menu-grid">
+            <button class="menu-card glass-panel" data-target="journey">
+                <h3>Journey</h3>
+                <p>Our timeline since Dec 13, 2023</p>
+            </button>
+            <button class="menu-card glass-panel" data-target="galleries">
+                <h3>Galleries</h3>
+                <p>The iOS-style photo vault</p>
+            </button>
+            <button class="menu-card glass-panel" data-target="wishlist">
+                <h3>Wishlist</h3>
+                <p>Our shared dreams & milestones</p>
+            </button>
+            <button class="menu-card glass-panel" data-target="letters">
+                <h3>Love Letters</h3>
+                <p>Digital mailbox for the heart</p>
+            </button>
         </div>
-    </nav>
+    </div>
+
+    <!-- Global Back Button -->
+    <button id="back-to-menu" class="glow-btn small hidden">&#8592; Menu</button>
 
     <main id="dashboard-container">
         <!-- JOURNEY SECTION -->
-        <section id="journey" class="dash-section active">
+        <section id="journey" class="dash-section">
             <div class="section-header">
                 <h2>Our Journey</h2>
                 <p>Since December 13, 2023</p>
             </div>
             <div class="calendar-wrapper glass-panel">
-                <div id="horizontal-calendar" class="horizontal-scroll">
+                <div id="horizontal-calendar" class="horizontal-scroll compact-strip">
                     <!-- Injected by journey.js -->
                 </div>
             </div>
@@ -65,6 +81,11 @@
                     <option value="Milestone">Milestone</option>
                     <option value="Date Night">Date Night</option>
                 </select>
+                <div class="author-selector">
+                    <label>Added by:</label>
+                    <input type="radio" name="wish-author" value="Fiqri" id="wish-fiqri" checked> <label for="wish-fiqri">Fiqri</label>
+                    <input type="radio" name="wish-author" value="Jasmin" id="wish-jasmin"> <label for="wish-jasmin">Jasmin</label>
+                </div>
                 <button id="add-wish-btn" class="glow-btn small">Add Wish</button>
             </div>
             <div id="wishlist-container" class="wish-list">
@@ -80,6 +101,11 @@
             <div class="letter-form glass-panel">
                 <input type="text" id="letter-title" placeholder="Subject...">
                 <textarea id="letter-body" rows="5" placeholder="Write something from the heart..."></textarea>
+                <div class="author-selector">
+                    <label>Written by:</label>
+                    <input type="radio" name="letter-author" value="Fiqri" id="letter-fiqri" checked> <label for="letter-fiqri">Fiqri</label>
+                    <input type="radio" name="letter-author" value="Jasmin" id="letter-jasmin"> <label for="letter-jasmin">Jasmin</label>
+                </div>
                 <button id="send-letter-btn" class="glow-btn small">Drop Letter</button>
             </div>
             <div id="letters-feed" class="letters-feed">

@@ -1,13 +1,13 @@
 .wisher-form { 
     display: flex; 
-    gap: 1rem; 
+    gap: 1.2rem; 
     margin-bottom: 2.5rem; 
     flex-wrap: wrap; 
     align-items: center;
 }
 
-.wisher-form input, .wisher-form select {
-    background: rgba(0,0,0,0.4); 
+.wisher-form input[type="text"], .wisher-form select {
+    background: rgba(0,0,0,0.3); 
     border: 1px solid var(--glass-border);
     color: var(--text-main); 
     padding: 12px 15px; 
@@ -18,7 +18,7 @@
     transition: border-color 0.3s;
 }
 
-.wisher-form input:focus, .wisher-form select:focus {
+.wisher-form input[type="text"]:focus, .wisher-form select:focus {
     border-color: var(--neon-violet);
 }
 
@@ -40,23 +40,47 @@
     border-radius: 12px; 
     border-left: 4px solid var(--neon-violet);
     transition: all 0.3s ease;
+    position: relative;
 }
 
 .wish-item:hover { background: rgba(255,255,255,0.05); }
 
-.wish-text h4 { font-size: 1.2rem; font-weight: 500; margin-bottom: 5px; }
-.wish-cat { font-size: 0.75rem; color: var(--neon-violet); margin-left: 10px; text-transform: uppercase; letter-spacing: 1px; }
-.wish-desc { font-size: 0.9rem; color: var(--text-muted); }
-
-.wish-checkbox {
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    accent-color: var(--neon-violet);
+.wish-content-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
-.wish-item.done { border-left-color: #333; opacity: 0.6; }
-.wish-item.done .wish-text h4, .wish-item.done .wish-desc { 
+.wish-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.wish-header h4 { font-size: 1.3rem; font-weight: 500; color: var(--text-main); }
+.wish-cat { font-size: 0.75rem; color: #fff; background: rgba(182, 109, 255, 0.4); padding: 3px 8px; border-radius: 12px; text-transform: uppercase; letter-spacing: 1px; }
+
+.wish-author-badge {
+    font-size: 0.75rem;
+    color: var(--neon-violet);
+    border: 1px solid var(--neon-violet);
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.wish-desc { font-size: 0.95rem; color: var(--text-muted); font-weight: 300;}
+
+.wish-checkbox {
+    width: 26px;
+    height: 26px;
+    cursor: pointer;
+    accent-color: var(--neon-violet);
+    margin-left: 15px;
+}
+
+.wish-item.done { border-left-color: #333; opacity: 0.5; }
+.wish-item.done .wish-header h4, .wish-item.done .wish-desc { 
     text-decoration: line-through; 
     color: var(--text-muted);
 }

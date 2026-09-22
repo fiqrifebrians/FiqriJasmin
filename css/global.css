@@ -1,14 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
 
 :root {
+    /* New Majority Purple Theme */
     --bg-dark: #0a0510;
-    --bg-gradient: linear-gradient(135deg, #0a0510 0%, #1a0b2e 100%);
-    --neon-violet: #9d4edd;
-    --neon-glow: 0 0 15px rgba(157, 78, 221, 0.6);
-    --glass-bg: rgba(255, 255, 255, 0.03);
-    --glass-border: rgba(255, 255, 255, 0.08);
+    --bg-gradient: linear-gradient(135deg, #46147a 0%, #200742 45%, #0a0510 100%);
+    --neon-violet: #b66dff;
+    --neon-glow: 0 0 20px rgba(182, 109, 255, 0.7);
+    --glass-bg: rgba(255, 255, 255, 0.04);
+    --glass-border: rgba(255, 255, 255, 0.1);
     --text-main: #f8f9fa;
-    --text-muted: #adb5bd;
+    --text-muted: #c2c9d6;
 }
 
 * {
@@ -23,6 +24,7 @@ body {
     color: var(--text-main);
     min-height: 100vh;
     overflow-x: hidden;
+    background-attachment: fixed;
 }
 
 /* Glassmorphism Utilities */
@@ -50,9 +52,9 @@ body {
     border-radius: 8px;
     font-size: 1rem;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.4s ease;
     text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 2px;
     font-weight: 500;
 }
 
@@ -99,15 +101,16 @@ body {
     max-width: 90%; 
     max-height: 75vh; 
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
     object-fit: contain;
 }
 
 .text-modal { 
-    background: var(--bg-dark); 
-    padding: 2.5rem; 
-    min-width: 320px; 
+    background: var(--bg-gradient); 
+    padding: 3rem; 
+    min-width: 350px; 
     text-align: center; 
+    border: 1px solid var(--glass-border);
 }
 
 #modal-caption {
