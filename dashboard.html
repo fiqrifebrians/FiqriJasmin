@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Our Sanctuary</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-body">
+    <nav class="glass-nav">
+        <div class="nav-logo">Our Space</div>
+        <div class="nav-links">
+            <button class="nav-item active" data-target="journey">Journey</button>
+            <button class="nav-item" data-target="galleries">Galleries</button>
+            <button class="nav-item" data-target="wishlist">Wishlist</button>
+            <button class="nav-item" data-target="letters">Love Letters</button>
+        </div>
+    </nav>
+
+    <main id="dashboard-container">
+        <!-- JOURNEY SECTION -->
+        <section id="journey" class="dash-section active">
+            <div class="section-header">
+                <h2>Our Journey</h2>
+                <p>Since December 13, 2023</p>
+            </div>
+            <div class="calendar-wrapper glass-panel">
+                <div id="horizontal-calendar" class="horizontal-scroll">
+                    <!-- Dates injected via app.js -->
+                </div>
+            </div>
+        </section>
+
+        <!-- GALLERIES SECTION -->
+        <section id="galleries" class="dash-section">
+            <div class="section-header">
+                <h2>Photo Vault</h2>
+                <div class="upload-wrapper">
+                    <label for="photo-upload" class="glow-btn small">Upload Memory</label>
+                    <input type="file" id="photo-upload" accept="image/*" hidden>
+                </div>
+            </div>
+            <div id="gallery-grid" class="ios-grid">
+                <!-- Photos injected via app.js -->
+            </div>
+        </section>
+
+        <!-- WISHLIST SECTION -->
+        <section id="wishlist" class="dash-section">
+            <div class="section-header">
+                <h2>Our Dreams</h2>
+            </div>
+            <div class="wisher-form glass-panel">
+                <input type="text" id="wish-title" placeholder="What's our next dream?">
+                <input type="text" id="wish-desc" placeholder="A short description...">
+                <select id="wish-category">
+                    <option value="Travel">Travel</option>
+                    <option value="Milestone">Milestone</option>
+                    <option value="Date">Date Night</option>
+                </select>
+                <button id="add-wish-btn" class="glow-btn small">Add</button>
+            </div>
+            <div id="wishlist-container" class="wish-list">
+                <!-- Wishes injected via app.js -->
+            </div>
+        </section>
+
+        <!-- LOVE LETTERS SECTION -->
+        <section id="letters" class="dash-section">
+            <div class="section-header">
+                <h2>Digital Mailbox</h2>
+            </div>
+            <div class="letter-form glass-panel">
+                <input type="text" id="letter-title" placeholder="Subject...">
+                <textarea id="letter-body" rows="5" placeholder="Write something from the heart..."></textarea>
+                <button id="send-letter-btn" class="glow-btn small">Drop Letter</button>
+            </div>
+            <div id="letters-feed" class="letters-feed">
+                <!-- Letters injected via app.js -->
+            </div>
+        </section>
+    </main>
+
+    <!-- GLOBAL MODALS -->
+    <div id="image-modal" class="modal glass-overlay">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modal-img">
+        <div id="modal-caption"></div>
+    </div>
+
+    <div id="journey-modal" class="modal glass-overlay">
+        <span class="close-modal">&times;</span>
+        <div class="modal-content text-modal glass-panel" id="journey-detail"></div>
+    </div>
+
+    <script src="store.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
