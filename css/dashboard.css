@@ -1,0 +1,150 @@
+/* Decorative Floating Photos Background */
+#floating-decorations {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.floating-photo {
+    position: absolute;
+    width: 120px;
+    height: 150px;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 8px;
+    opacity: 0.15;
+    animation: floatAnim 20s infinite linear alternate;
+    object-fit: cover;
+    filter: grayscale(50%) blur(1px);
+}
+
+@keyframes floatAnim {
+    0% { transform: translateY(0) rotate(0deg); }
+    100% { transform: translateY(-30px) rotate(15deg); }
+}
+
+/* Navigation */
+.glass-nav {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    padding: 1.2rem 5%; 
+    background: rgba(10, 5, 16, 0.7);
+    backdrop-filter: blur(15px); 
+    border-bottom: 1px solid var(--glass-border);
+    position: sticky; 
+    top: 0; 
+    z-index: 100;
+}
+
+.nav-logo { 
+    font-weight: 600; 
+    color: var(--neon-violet); 
+    letter-spacing: 2px; 
+    text-transform: uppercase;
+}
+
+.nav-links { display: flex; gap: 1.5rem; }
+
+.nav-item {
+    background: none; border: none; 
+    color: var(--text-muted);
+    font-size: 0.95rem; 
+    cursor: pointer; 
+    transition: all 0.3s ease;
+    padding-bottom: 5px;
+    border-bottom: 2px solid transparent;
+}
+
+.nav-item:hover, .nav-item.active { 
+    color: var(--neon-violet); 
+    border-bottom: 2px solid var(--neon-violet);
+}
+
+/* Sections */
+#dashboard-container { 
+    padding: 3rem 5%; 
+    max-width: 1200px; 
+    margin: auto; 
+}
+
+.dash-section { 
+    display: none; 
+    animation: fadeIn 0.5s ease; 
+}
+
+.dash-section.active { display: block; }
+
+.section-header { 
+    margin-bottom: 2.5rem; 
+    border-bottom: 1px solid var(--glass-border); 
+    padding-bottom: 1rem; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+}
+
+.section-header h2 { 
+    font-weight: 300; 
+    font-size: 2rem;
+    color: var(--text-main); 
+}
+
+.section-header p {
+    color: var(--neon-violet);
+    font-size: 0.9rem;
+    margin-top: 5px;
+}
+
+/* Love Letters specific styles included in dashboard */
+.letter-form { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 1.2rem; 
+    margin-bottom: 3rem; 
+}
+
+.letter-form input, .letter-form textarea {
+    background: rgba(0,0,0,0.3); 
+    border: 1px solid var(--glass-border);
+    color: var(--text-main); 
+    padding: 15px; 
+    border-radius: 8px; 
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.3s;
+}
+
+.letter-form input:focus, .letter-form textarea:focus {
+    border-color: var(--neon-violet);
+}
+
+.letters-feed { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.letter-card { 
+    padding: 2rem; 
+    background: var(--glass-bg); 
+    border: 1px solid var(--glass-border);
+    border-radius: 12px; 
+    border-left: 4px solid var(--neon-violet);
+}
+
+.letter-date { 
+    font-size: 0.85rem; 
+    color: var(--neon-violet); 
+    margin-bottom: 0.8rem; 
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.letter-card h3 { font-weight: 500; font-size: 1.3rem; margin-bottom: 10px; }
+.letter-card p { color: var(--text-muted); line-height: 1.7; }
+
+@media (max-width: 768px) {
+    .nav-links { gap: 0.8rem; }
+    .nav-item { font-size: 0.8rem; }
+    .section-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+}

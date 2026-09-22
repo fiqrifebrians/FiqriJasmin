@@ -1,4 +1,4 @@
-// store.js - Simulates Real-Time Database via LocalStorage Event Broadcasting
+// store.js - Centralized LocalStorage State mimicking a real-time database
 class AppStore {
     constructor() {
         this.state = {
@@ -9,7 +9,7 @@ class AppStore {
         };
         this.listeners = [];
         
-        // Cross-tab real-time sync simulation
+        // Listen for changes from other tabs to simulate real-time sync
         window.addEventListener('storage', (e) => {
             if (this.state.hasOwnProperty(e.key)) {
                 this.state[e.key] = JSON.parse(e.newValue);
@@ -32,11 +32,12 @@ class AppStore {
         this.notify();
     }
 
-    // Actions
+    // --- Actions ---
+    
     addPhoto(photoData) {
         const photos = [photoData, ...this.state.photos];
         this.save('photos', photos);
-        this.linkToJourney(photoData.date, { type: 'Photo Uploaded', data: photoData.location });
+        this.linkToJourney(photoData.date, { type: 'Memory Added', data: photoData.location });
     }
 
     togglePhotoVisibility(id, isHidden) {
@@ -57,16 +58,21 @@ class AppStore {
     addLetter(letter) {
         const letters = [letter, ...this.state.letters];
         this.save('letters', letters);
-        this.linkToJourney(letter.date, { type: 'Love Letter', data: letter.title });
+        this.linkToJourney(letter.date, { type: 'Love Letter Received', data: letter.title });
     }
 
     linkToJourney(dateString, attachment) {
-        const dateKey = new Date(dateString).toISOString().split('T')[0];
+        const dateObj = new Date(dateString);
+        // Format YYYY-MM-DD local time
+        const dateKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
+        
         const journey = { ...this.state.journey };
         if (!journey[dateKey]) journey[dateKey] = [];
+        
         journey[dateKey].push(attachment);
         this.save('journey', journey);
     }
 }
 
+// Initialize global store
 window.store = new AppStore();

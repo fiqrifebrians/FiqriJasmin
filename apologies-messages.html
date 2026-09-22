@@ -2,18 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>For Jas</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/apologies.css">
 </head>
-<body class="slider-body">
+<body>
     <div id="slider-container" class="glass-panel">
         <div class="slide active">
             <h1>Hi Jas...</h1>
         </div>
         <div class="slide">
-            <p>I want you to know that I still love you deeply. I am sincerely sorry for all of my past actions, and I miss us.</p>
+            <p>I want you to know that I love you deeply. I am sincerely sorry for all of my past actions, and I miss us.</p>
         </div>
         <div class="slide">
             <p>I am fully committed to fixing everything and rebuilding what we lost, together.</p>
@@ -23,16 +23,15 @@
         </div>
         <div class="slide">
             <p>I built this digital sanctuary exclusively for the two of us. A private space to hold our memories and future dreams.</p>
-            <button id="continue-btn" class="glow-btn hidden" onclick="window.location.href='dashboard.html'">Continue</button>
+            <button id="continue-btn" class="glow-btn hidden">Continue</button>
         </div>
         
         <div class="controls">
             <button id="next-btn" class="nav-arrow">&#10230;</button>
         </div>
-        <div class="progress-dots"></div>
+        <div class="progress-dots" id="dots-container"></div>
     </div>
 
-    <script src="store.js"></script>
-    <script src="app.js"></script>
+    <script src="js/apologies.js"></script>
 </body>
 </html>

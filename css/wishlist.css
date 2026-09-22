@@ -1,0 +1,62 @@
+.wisher-form { 
+    display: flex; 
+    gap: 1rem; 
+    margin-bottom: 2.5rem; 
+    flex-wrap: wrap; 
+    align-items: center;
+}
+
+.wisher-form input, .wisher-form select {
+    background: rgba(0,0,0,0.4); 
+    border: 1px solid var(--glass-border);
+    color: var(--text-main); 
+    padding: 12px 15px; 
+    border-radius: 8px; 
+    flex: 1; 
+    min-width: 200px;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.wisher-form input:focus, .wisher-form select:focus {
+    border-color: var(--neon-violet);
+}
+
+.wisher-form select { cursor: pointer; }
+
+.wish-list { 
+    display: flex; 
+    flex-direction: column; 
+    gap: 1.2rem; 
+}
+
+.wish-item {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center;
+    padding: 1.5rem; 
+    background: var(--glass-bg); 
+    border: 1px solid var(--glass-border);
+    border-radius: 12px; 
+    border-left: 4px solid var(--neon-violet);
+    transition: all 0.3s ease;
+}
+
+.wish-item:hover { background: rgba(255,255,255,0.05); }
+
+.wish-text h4 { font-size: 1.2rem; font-weight: 500; margin-bottom: 5px; }
+.wish-cat { font-size: 0.75rem; color: var(--neon-violet); margin-left: 10px; text-transform: uppercase; letter-spacing: 1px; }
+.wish-desc { font-size: 0.9rem; color: var(--text-muted); }
+
+.wish-checkbox {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    accent-color: var(--neon-violet);
+}
+
+.wish-item.done { border-left-color: #333; opacity: 0.6; }
+.wish-item.done .wish-text h4, .wish-item.done .wish-desc { 
+    text-decoration: line-through; 
+    color: var(--text-muted);
+}

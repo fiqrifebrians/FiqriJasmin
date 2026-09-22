@@ -1,0 +1,62 @@
+.horizontal-scroll {
+    display: flex; 
+    gap: 2.5rem; 
+    overflow-x: auto; 
+    padding: 2rem 1rem;
+    scrollbar-width: thin; 
+    scrollbar-color: var(--neon-violet) transparent;
+}
+
+.horizontal-scroll::-webkit-scrollbar { height: 6px; }
+.horizontal-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 10px; }
+.horizontal-scroll::-webkit-scrollbar-thumb { background: var(--neon-violet); border-radius: 10px; }
+
+.date-node {
+    min-width: 90px; 
+    text-align: center; 
+    cursor: pointer; 
+    opacity: 0.5; 
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+}
+
+.date-node:hover { 
+    opacity: 1; 
+    transform: translateY(-8px) scale(1.1); 
+}
+
+.date-node.has-data { opacity: 0.9; }
+.date-node.has-data:hover { opacity: 1; }
+
+.date-node .month { 
+    font-size: 0.85rem; 
+    text-transform: uppercase; 
+    color: var(--text-muted); 
+    letter-spacing: 1px;
+}
+
+.date-node .day { 
+    font-size: 2.2rem; 
+    font-weight: 300; 
+    color: var(--text-main);
+    margin: 5px 0;
+}
+
+.indicator-dot {
+    width: 8px; height: 8px; 
+    background: var(--neon-violet);
+    border-radius: 50%; 
+    margin: 12px auto 0; 
+    box-shadow: var(--neon-glow);
+}
+
+.journey-entry {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--glass-border);
+    text-align: left;
+}
+
+.journey-entry:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.journey-entry .type { color: var(--neon-violet); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+.journey-entry .content { color: var(--text-main); font-size: 1rem; }
