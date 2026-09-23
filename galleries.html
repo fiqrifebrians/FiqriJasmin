@@ -13,9 +13,10 @@
     <a href="index.html" class="glow-btn small" style="position:fixed; top:20px; left:20px; text-decoration:none; display:flex; align-items:center; gap:5px; z-index:100;"><i data-feather="arrow-left"></i> Menu</a>
     
     <div class="page-container">
-        <div class="section-header" style="display:flex; justify-content:space-between; align-items:center;">
+        <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <h2>Galleries</h2>
-            <div class="upload-wrapper">
+            <div class="upload-wrapper" style="display:flex; gap:10px; flex-wrap:wrap;">
+                <button id="toggle-map-btn" class="glow-btn small" style="display:flex; align-items:center; gap:5px;"><i data-feather="map"></i> Toggle Map</button>
                 <label for="photo-upload" class="glow-btn small solid" style="cursor:pointer;">Upload Photos</label>
                 <input type="file" id="photo-upload" accept="image/*" multiple hidden>
             </div>
@@ -23,13 +24,15 @@
         
         <div id="upload-loading" class="hidden" style="color:var(--primary-purple); margin-bottom:1rem; font-size:0.9rem; text-align:center;">Extracting EXIF data & uploading...</div>
         
-        <div id="map-container" class="glass-panel" style="height: 300px; padding:0; margin-bottom: 2rem; overflow:hidden;">
+        <!-- Peta Minimalis (Hidden by default or shown, toggleable) -->
+        <div id="map-container" class="glass-panel" style="height: 300px; padding:0; margin-bottom: 2rem; overflow:hidden; transition: all 0.3s ease;">
             <div id="map" style="width: 100%; height: 100%;"></div>
         </div>
 
         <div id="gallery-grid" class="ios-grid"></div>
     </div>
 
+    <!-- Modal Gambar Zoom -->
     <div id="image-modal" class="modal glass-overlay">
         <span class="close-modal">&times;</span>
         <img class="modal-content" id="modal-img" alt="Zoomed memory">

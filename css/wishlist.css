@@ -6,16 +6,27 @@
 .wisher-form input[type="text"]:focus, .wisher-form select:focus { border-color: var(--primary-purple); }
 .author-selector { display: flex; align-items: center; gap: 1rem; color: var(--text-main); font-size: 0.9rem; background: var(--bg-panel); padding: 10px 15px; border-radius: 8px; border: 1px solid var(--glass-border); }
 .author-selector input[type="radio"] { accent-color: var(--primary-purple); cursor: pointer; }
+
+/* FIX FLEX LAYOUT */
 .wish-list { display: flex; flex-direction: column; gap: 1rem; }
-.wish-item { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; background: var(--bg-panel); border: 1px solid var(--glass-border); border-radius: 12px; border-left: 4px solid var(--primary-purple); transition: all 0.3s ease; }
-.wish-content-wrap { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-.wish-header { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.wish-header h4 { font-size: 1.25rem; font-weight: 500; color: var(--text-main); }
+.wish-item { 
+    display: flex; flex-direction: column; gap: 15px; padding: 1.5rem; 
+    background: var(--bg-panel); border: 1px solid var(--glass-border); 
+    border-radius: 12px; border-left: 4px solid var(--primary-purple); 
+    transition: all 0.3s ease; 
+}
+.wish-header-wrap { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; flex-wrap: wrap; }
+.wish-info { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.wish-title-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.wish-title-row h4 { font-size: 1.25rem; font-weight: 500; color: var(--text-main); }
 .wish-cat { font-size: 0.75rem; color: #fff; background: rgba(168, 85, 247, 0.3); padding: 3px 8px; border-radius: 12px; text-transform: uppercase; }
 .wish-author-badge { font-size: 0.75rem; color: var(--primary-purple); border: 1px solid var(--primary-purple); padding: 2px 8px; border-radius: 12px; }
 .wish-desc { font-size: 0.95rem; color: var(--text-muted); font-weight: 300;}
-.wish-tools { display: flex; align-items: center; gap: 10px; margin-left: 15px;}
+
+/* BUTTONS DI BAWAH KANAN */
+.wish-tools { display: flex; align-items: center; gap: 8px; align-self: flex-end; }
 .wish-checkbox { width: 24px; height: 24px; cursor: pointer; accent-color: var(--primary-purple); margin-left: 10px;}
+
 .wish-item.done { border-left-color: #333; opacity: 0.6; }
-.wish-item.done .wish-header h4, .wish-item.done .wish-desc { text-decoration: line-through; color: var(--text-muted); }
+.wish-item.done .wish-title-row h4, .wish-item.done .wish-desc { text-decoration: line-through; color: var(--text-muted); }
 .edit-input { width: 100%; background: var(--bg-solid); border: 1px solid var(--glass-border); color: var(--text-main); padding: 12px; border-radius: 8px; margin-bottom: 10px; outline: none; font-size: 1rem; }

@@ -68,14 +68,16 @@ document.addEventListener('DOMContentLoaded', () => {
             const item = document.createElement('div');
             item.className = `wish-item ${wish.done ? 'done' : ''}`;
             item.innerHTML = `
-                <div class="wish-content-wrap">
-                    <div class="wish-header">
-                        <h4>${wish.title}</h4>
-                        <span class="wish-cat">${wish.cat}</span>
-                        <span class="wish-author-badge">By ${wish.author || 'Unknown'}</span>
+                <div class="wish-header-wrap">
+                    <div class="wish-info">
+                        <div class="wish-title-row">
+                            <h4>${wish.title}</h4>
+                            <span class="wish-cat">${wish.cat}</span>
+                            <span class="wish-author-badge">By ${wish.author || 'Unknown'}</span>
+                        </div>
+                        ${wish.desc ? `<p class="wish-desc">${wish.desc}</p>` : ''}
+                        ${wish.done && wish.completedAt ? `<p style="font-size:0.8rem; color:var(--primary-purple); margin-top:5px;">Achieved on: ${new Date(wish.completedAt).toLocaleDateString('en-US')}</p>` : ''}
                     </div>
-                    ${wish.desc ? `<p class="wish-desc">${wish.desc}</p>` : ''}
-                    ${wish.done && wish.completedAt ? `<p style="font-size:0.8rem; color:var(--primary-purple); margin-top:5px;">Achieved on: ${new Date(wish.completedAt).toLocaleDateString()}</p>` : ''}
                 </div>
                 <div class="wish-tools">
                     <button class="action-btn edit-btn"><i data-feather="edit-2"></i></button>

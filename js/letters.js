@@ -43,12 +43,14 @@ document.addEventListener('DOMContentLoaded', () => {
             card.className = 'letter-card';
             card.innerHTML = `
                 <div class="letter-meta">
-                    <span class="letter-date">${new Date(letter.date).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' })}</span>
+                    <span class="letter-date">${new Date(letter.date).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })}</span>
                     <span class="letter-author-badge">By ${letter.author || 'Unknown'}</span>
                 </div>
-                <h3>${letter.title}</h3>
-                <p>${letter.body.replace(/\n/g, '<br>')}</p>
-                <div style="position:absolute; top:20px; right:20px; display:flex; gap:5px;">
+                <div class="letter-content">
+                    <h3>${letter.title}</h3>
+                    <p>${letter.body}</p>
+                </div>
+                <div class="letter-actions">
                     <button class="action-btn edit-btn"><i data-feather="edit-2"></i></button>
                     <button class="action-btn delete-btn"><i data-feather="trash-2"></i></button>
                 </div>

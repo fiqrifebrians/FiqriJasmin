@@ -5,12 +5,26 @@ document.addEventListener('DOMContentLoaded', () => {
     const modalImg = document.getElementById('modal-img');
     const modalCaption = document.getElementById('modal-caption');
     const loadingText = document.getElementById('upload-loading');
+    const mapContainer = document.getElementById('map-container');
+    const toggleMapBtn = document.getElementById('toggle-map-btn');
 
+    // Menggunakan CartoDB Positron (Sangat minimalis & ringan)
     let map = L.map('map').setView([-2.5489, 118.0149], 4);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap' }).addTo(map);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { 
+        attribution: '&copy; OpenStreetMap',
+        subdomains: 'abcd',
+        maxZoom: 20
+    }).addTo(map);
     let markers = [];
 
-    // Convert EXIF coordinates to decimal
+    // Opsi Toggle Map
+    toggleMapBtn.addEventListener('click', () => {
+        mapContainer.classList.toggle('hidden');
+        if(!mapContainer.classList.contains('hidden')) {
+            setTimeout(() => { map.invalidateSize(); }, 300);
+        }
+    });
+
     function getDecimalGPS(data, ref) {
         if (!data) return null;
         let decimal = data[0].valueOf() + data[1].valueOf()/60 + data[2].valueOf()/3600;
@@ -75,7 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let mapBounds = [];
         photos.forEach(photo => {
-            // Add pin to map if coordinates exist
             if (photo.lat && photo.lon) {
                 let marker = L.marker([photo.lat, photo.lon]).addTo(map).bindPopup(`<b>${photo.location}</b>`);
                 markers.push(marker);
@@ -83,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             const item = document.createElement('div');
             item.className = `grid-item`;
-            const dateStr = new Date(photo.date).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+            const dateStr = new Date(photo.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
             item.innerHTML = `
                 <img src="${photo.src}" alt="Memory">
                 <div class="meta-tag">${photo.location}</div>
@@ -100,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             grid.appendChild(item);
         });
-        // Zoom map so all pins are visible
+        
         if (mapBounds.length > 0) map.fitBounds(mapBounds);
         if(typeof feather !== 'undefined') feather.replace();
     }

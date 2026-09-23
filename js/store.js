@@ -1,5 +1,4 @@
-// Replace config with your actual Firebase API key
-// MAKE SURE databaseURL IS INCLUDED HERE!
+// Ensure databaseURL is included
 const firebaseConfig = {
   apiKey: "AIzaSyCtaAAhSd605dOM_2gX14WyIz2xC0lo1TQ",
   authDomain: "fiqrijasmin.firebaseapp.com",
@@ -34,7 +33,6 @@ class AppStore {
             this.notify();
         }, (error) => {
             console.error("Firebase Read Error: ", error);
-            alert("Database Connection Failed. Check databaseURL in store.js or Firebase Rules.");
         });
     }
 
@@ -52,7 +50,9 @@ class AppStore {
         const dateObj = new Date(dateString);
         const dateKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
         if (!this.state.journey[dateKey]) this.state.journey[dateKey] = [];
-        this.state.journey[dateKey] = this.state.journey[dateKey].filter(item => item.id !== attachment.id); // Prevent duplicate ID
+        
+        // Prevent ID duplicates
+        this.state.journey[dateKey] = this.state.journey[dateKey].filter(item => String(item.id) !== String(attachment.id));
         this.state.journey[dateKey].push(attachment);
     }
     
@@ -61,7 +61,8 @@ class AppStore {
         const dateObj = new Date(dateString);
         const dateKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
         if (this.state.journey[dateKey]) {
-            this.state.journey[dateKey] = this.state.journey[dateKey].filter(item => item.id !== id);
+            // Force strict string conversion to prevent deletion failures
+            this.state.journey[dateKey] = this.state.journey[dateKey].filter(item => String(item.id) !== String(id));
             if (this.state.journey[dateKey].length === 0) delete this.state.journey[dateKey];
         }
     }
@@ -71,7 +72,7 @@ class AppStore {
         const dateObj = new Date(dateString);
         const dateKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
         if (this.state.journey[dateKey]) {
-            let entry = this.state.journey[dateKey].find(e => e.id === id);
+            let entry = this.state.journey[dateKey].find(e => String(e.id) === String(id));
             if (entry) entry.data = newData;
         }
     }
@@ -83,14 +84,14 @@ class AppStore {
         this.saveToCloud();
     }
     deletePhoto(id) {
-        const p = this.state.photos.find(x => x.id === id);
-        if(p) { this.removeFromJourney(p.date, id); this.state.photos = this.state.photos.filter(x => x.id !== id); this.saveToCloud(); }
+        const p = this.state.photos.find(x => String(x.id) === String(id));
+        if(p) { this.removeFromJourney(p.date, id); this.state.photos = this.state.photos.filter(x => String(x.id) !== String(id)); this.saveToCloud(); }
     }
 
     // -- WISHES --
     addWish(wish) { this.state.wishes.unshift(wish); this.saveToCloud(); }
     toggleWish(id, completionDateStr = null) {
-        const w = this.state.wishes.find(x => x.id === id);
+        const w = this.state.wishes.find(x => String(x.id) === String(id));
         if(!w) return;
         if (!w.done && completionDateStr) {
             w.done = true; w.completedAt = completionDateStr;
@@ -102,13 +103,13 @@ class AppStore {
         this.saveToCloud();
     }
     updateWish(id, data) {
-        const w = this.state.wishes.find(x => x.id === id);
+        const w = this.state.wishes.find(x => String(x.id) === String(id));
         if(w) { w.title = data.title; w.desc = data.desc; if (w.done && w.completedAt) this.updateJourney(w.completedAt, id, data.title); this.saveToCloud(); }
     }
     deleteWish(id) {
-        const w = this.state.wishes.find(x => x.id === id);
+        const w = this.state.wishes.find(x => String(x.id) === String(id));
         if(w && w.done && w.completedAt) this.removeFromJourney(w.completedAt, id);
-        this.state.wishes = this.state.wishes.filter(x => x.id !== id); 
+        this.state.wishes = this.state.wishes.filter(x => String(x.id) !== String(id)); 
         this.saveToCloud(); 
     }
 
@@ -119,12 +120,12 @@ class AppStore {
         this.saveToCloud();
     }
     updateLetter(id, data) {
-        const l = this.state.letters.find(x => x.id === id);
+        const l = this.state.letters.find(x => String(x.id) === String(id));
         if(l) { l.title = data.title; l.body = data.body; this.updateJourney(l.date, id, data.title); this.saveToCloud(); }
     }
     deleteLetter(id) {
-        const l = this.state.letters.find(x => x.id === id);
-        if(l) { this.removeFromJourney(l.date, id); this.state.letters = this.state.letters.filter(x => x.id !== id); this.saveToCloud(); }
+        const l = this.state.letters.find(x => String(x.id) === String(id));
+        if(l) { this.removeFromJourney(l.date, id); this.state.letters = this.state.letters.filter(x => String(x.id) !== String(id)); this.saveToCloud(); }
     }
 }
 window.store = new AppStore();
