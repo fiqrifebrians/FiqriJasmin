@@ -5,37 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fiqri ♥︎ Jasmin</title>
     <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/apologies.css">
+    <style>
+        #central-menu { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100dvh; width: 100vw; background: var(--bg-solid); }
+        .menu-title { font-size: 3.5rem; font-weight: 400; color: var(--text-main); margin-bottom: 3rem; letter-spacing: 2px; }
+        .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; max-width: 700px; width: 90%; }
+        .menu-card { text-align: center; cursor: pointer; transition: all 0.3s ease; border: 1px solid var(--glass-border); padding: 2.5rem 1rem; text-decoration: none; display: block; border-radius: 12px; background: var(--bg-panel);}
+        .menu-card:hover { transform: translateY(-5px); border-color: var(--primary-purple); background: #110818; }
+        .menu-card h3 { font-size: 1.6rem; font-weight: 400; color: var(--text-main); }
+        @media (max-width: 768px) { .menu-grid { grid-template-columns: 1fr; } .menu-title { font-size: 2.5rem; } }
+    </style>
 </head>
 <body>
-    <div id="borderless-slider">
-        <div class="slide active">
-            <h1 style="font-weight: 400;">Fiqri <span style="color: var(--primary-purple);">♥︎</span> Jasmin</h1>
-        </div>
-        <div class="slide">
-            <p>I want you to know that I love you deeply. I am sincerely sorry for all of my past actions, and I miss us.</p>
-        </div>
-        <div class="slide">
-            <p>I am fully committed to fixing everything and rebuilding what we lost, together.</p>
-        </div>
-        <div class="slide">
-            <p>I know healing takes time, but please accept this web app as a testament to my absolute seriousness about our relationship.</p>
-        </div>
-        <div class="slide">
-            <p>I built this digital sanctuary exclusively for the two of us. A private space to hold our memories and future dreams.</p>
-            <button id="continue-btn" class="glow-btn huge hidden" onclick="window.location.href='dashboard.html'">Continue to Our Space</button>
-        </div>
-        
-        <div class="controls" id="controls-container">
-            <button id="next-btn" class="nav-arrow" style="font-family: sans-serif;">&#10230;</button>
+    <div id="central-menu">
+        <h1 class="menu-title">Fiqri <span style="color:var(--primary-purple);">♥︎</span> Jasmin</h1>
+        <div class="menu-grid">
+            <a href="journey.html" class="menu-card"><h3>Journey Calendar</h3></a>
+            <a href="galleries.html" class="menu-card"><h3>Galleries & Map</h3></a>
+            <a href="wishlist.html" class="menu-card"><h3>Our Wishlist</h3></a>
+            <a href="letters.html" class="menu-card"><h3>Love Letters</h3></a>
         </div>
     </div>
-
-    <!-- Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-    
-    <script src="js/store.js"></script>
-    <script src="js/apologies.js"></script>
 </body>
 </html>

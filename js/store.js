@@ -1,4 +1,5 @@
-// Ganti config dengan API key asli Firebase Anda
+// Replace config with your actual Firebase API key
+// MAKE SURE databaseURL IS INCLUDED HERE!
 const firebaseConfig = {
   apiKey: "AIzaSyCtaAAhSd605dOM_2gX14WyIz2xC0lo1TQ",
   authDomain: "fiqrijasmin.firebaseapp.com",
@@ -17,6 +18,7 @@ class AppStore {
     constructor() {
         this.state = { photos: [], wishes: [], letters: [], journey: {} };
         this.listeners = [];
+        this.isLoaded = false;
         
         db.ref('sanctuary_data').on('value', (snapshot) => {
             const cloudData = snapshot.val();
@@ -27,12 +29,20 @@ class AppStore {
                     letters: cloudData.letters || [],
                     journey: cloudData.journey || {}
                 };
-                this.notify();
             }
+            this.isLoaded = true;
+            this.notify();
+        }, (error) => {
+            console.error("Firebase Read Error: ", error);
+            alert("Database Connection Failed. Check databaseURL in store.js or Firebase Rules.");
         });
     }
 
-    subscribe(listener) { this.listeners.push(listener); }
+    subscribe(listener) { 
+        this.listeners.push(listener); 
+        if (this.isLoaded) listener(this.state);
+    }
+    
     notify() { this.listeners.forEach(listener => listener(this.state)); }
     saveToCloud() { db.ref('sanctuary_data').set(this.state); }
 
@@ -42,9 +52,7 @@ class AppStore {
         const dateObj = new Date(dateString);
         const dateKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
         if (!this.state.journey[dateKey]) this.state.journey[dateKey] = [];
-        
-        // Hapus duplikat ID jika ada (mencegah double entry)
-        this.state.journey[dateKey] = this.state.journey[dateKey].filter(item => item.id !== attachment.id);
+        this.state.journey[dateKey] = this.state.journey[dateKey].filter(item => item.id !== attachment.id); // Prevent duplicate ID
         this.state.journey[dateKey].push(attachment);
     }
     
@@ -57,7 +65,7 @@ class AppStore {
             if (this.state.journey[dateKey].length === 0) delete this.state.journey[dateKey];
         }
     }
-    
+
     updateJourney(dateString, id, newData) {
         if(!dateString) return;
         const dateObj = new Date(dateString);
@@ -71,12 +79,8 @@ class AppStore {
     // -- PHOTOS --
     addPhoto(photoData) {
         this.state.photos.unshift(photoData);
-        this.linkToJourney(photoData.date, { id: photoData.id, type: 'Memory Added', data: photoData.location });
+        this.linkToJourney(photoData.date, { id: photoData.id, type: 'Memory', data: photoData.location });
         this.saveToCloud();
-    }
-    updatePhoto(id, newLoc) {
-        const p = this.state.photos.find(x => x.id === id);
-        if(p) { p.location = newLoc; this.updateJourney(p.date, id, newLoc); this.saveToCloud(); }
     }
     deletePhoto(id) {
         const p = this.state.photos.find(x => x.id === id);
@@ -85,33 +89,21 @@ class AppStore {
 
     // -- WISHES --
     addWish(wish) { this.state.wishes.unshift(wish); this.saveToCloud(); }
-    
-    // Toggle wish logic baru mencakup tanggal tercapai
     toggleWish(id, completionDateStr = null) {
         const w = this.state.wishes.find(x => x.id === id);
         if(!w) return;
-
         if (!w.done && completionDateStr) {
-            // Mencapai wishlist
-            w.done = true;
-            w.completedAt = completionDateStr;
-            this.linkToJourney(completionDateStr, { id: w.id, type: 'Wish Achieved', data: w.title });
+            w.done = true; w.completedAt = completionDateStr;
+            this.linkToJourney(completionDateStr, { id: w.id, type: 'Dream Achieved', data: w.title });
         } else if (w.done) {
-            // Membatalkan capaian wishlist
             if (w.completedAt) this.removeFromJourney(w.completedAt, w.id);
-            w.done = false;
-            w.completedAt = null;
+            w.done = false; w.completedAt = null;
         }
         this.saveToCloud();
     }
-    
     updateWish(id, data) {
         const w = this.state.wishes.find(x => x.id === id);
-        if(w) { 
-            w.title = data.title; w.desc = data.desc; 
-            if (w.done && w.completedAt) this.updateJourney(w.completedAt, id, data.title);
-            this.saveToCloud(); 
-        }
+        if(w) { w.title = data.title; w.desc = data.desc; if (w.done && w.completedAt) this.updateJourney(w.completedAt, id, data.title); this.saveToCloud(); }
     }
     deleteWish(id) {
         const w = this.state.wishes.find(x => x.id === id);
@@ -135,5 +127,4 @@ class AppStore {
         if(l) { this.removeFromJourney(l.date, id); this.state.letters = this.state.letters.filter(x => x.id !== id); this.saveToCloud(); }
     }
 }
-
 window.store = new AppStore();

@@ -1,69 +1,10 @@
-/* Tampilan Vertical Minimalist Timeline Baru (Mencegah scroll ke samping) */
-.timeline-container {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-    padding-left: 20px;
-    border-left: 2px solid var(--glass-border);
-    margin-top: 1rem;
-    margin-bottom: 3rem;
-}
-
-.timeline-node {
-    position: relative;
-    animation: fadeIn 0.4s ease;
-}
-
-.timeline-dot {
-    position: absolute;
-    left: -27px; /* Adjust with border thickness */
-    top: 5px;
-    width: 12px;
-    height: 12px;
-    background: var(--neon-violet);
-    border-radius: 50%;
-    box-shadow: 0 0 10px rgba(162, 85, 255, 0.6);
-}
-
-.timeline-date {
-    font-weight: 500;
-    color: var(--neon-violet);
-    margin-bottom: 12px;
-    font-size: 0.95rem;
-    letter-spacing: 1px;
-}
-
-.timeline-content {
-    background: var(--bg-panel);
-    border: 1px solid var(--glass-border);
-    padding: 1.2rem;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.journey-entry {
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.journey-entry:last-child {
-    padding-bottom: 0;
-    border-bottom: none;
-    margin-bottom: 0;
-}
-
-.journey-type { 
-    font-size: 0.8rem; 
-    color: var(--text-muted); 
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.journey-data { 
-    font-size: 1.05rem; 
-    color: var(--text-main); 
-    margin-top: 5px; 
-    font-weight: 300;
-}
+.page-container { padding: 5rem 5% 2rem; max-width: 900px; margin: auto; height: 100dvh; overflow-y: auto;}
+.section-header { margin-bottom: 2rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem; }
+.section-header h2 { font-weight: 400; font-size: 2.2rem; }
+.calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+.calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: 500; color: var(--text-muted); margin-bottom: 10px; font-size: 0.9rem;}
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.cal-day { background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 6px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: all 0.3s; }
+.cal-day.empty { background: transparent; border-color: transparent; }
+.cal-day.has-event { background: rgba(168, 85, 247, 0.15); border-color: var(--primary-purple); color: #fff; cursor: pointer; font-weight: 600; box-shadow: inset 0 0 10px rgba(168,85,247,0.3);}
+.cal-day.has-event:hover { transform: scale(1.1); background: var(--primary-purple); }

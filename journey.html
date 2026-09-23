@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Journey - Fiqri ♥︎ Jasmin</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/journey.css">
+    <script src="https://unpkg.com/feather-icons"></script>
+</head>
+<body>
+    <a href="index.html" class="glow-btn small" style="position:fixed; top:20px; left:20px; text-decoration:none; display:flex; align-items:center; gap:5px; z-index: 100;"><i data-feather="arrow-left"></i> Menu</a>
+    
+    <div class="page-container">
+        <div class="section-header"><h2>Journey</h2></div>
+        
+        <div class="calendar-container glass-panel">
+            <div class="calendar-header">
+                <button id="prev-month" class="action-btn"><i data-feather="chevron-left"></i></button>
+                <h3 id="month-year-display"></h3>
+                <button id="next-month" class="action-btn"><i data-feather="chevron-right"></i></button>
+            </div>
+            <div class="calendar-days">
+                <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div>
+            </div>
+            <div id="calendar-grid" class="calendar-grid"></div>
+        </div>
+    </div>
+
+    <!-- Modal Activity -->
+    <div id="activity-modal" class="modal glass-overlay">
+        <span class="close-modal">&times;</span>
+        <div class="modal-content text-modal">
+            <h3 id="activity-date" style="color:var(--primary-purple); margin-bottom:1rem; font-weight:400;"></h3>
+            <div id="activity-list" style="text-align:left; color:var(--text-main);"></div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="js/store.js"></script>
+    <script src="js/journey.js"></script>
+    <script>feather.replace();</script>
+</body>
+</html>

@@ -1,137 +1,39 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap');
 
 :root {
-    /* Tema Ungu Primary & Hitam Secondary */
     --bg-solid: #050505; 
     --bg-panel: #0a0a0c;
-    --primary-purple: #a855f7; /* Ungu Elegan */
+    --primary-purple: #a855f7; 
     --primary-purple-hover: #9333ea;
     --glass-border: #1f1f22;
     --text-main: #fcfcfc;
     --text-muted: #8b8d98;
 }
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Outfit', sans-serif; /* Font Minimalis Baru */
-}
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
+body { background-color: var(--bg-solid); color: var(--text-main); height: 100dvh; overflow: hidden; }
 
-body {
-    background-color: var(--bg-solid);
-    color: var(--text-main);
-    height: 100dvh; 
-    overflow: hidden; 
-}
+.glass-panel { background: var(--bg-panel); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem; }
+.glass-overlay { background-color: rgba(5, 5, 5, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
 
-.glass-panel {
-    background: var(--bg-panel);
-    border: 1px solid var(--glass-border);
-    border-radius: 12px;
-    padding: 1.5rem;
-}
+.glow-btn { background: transparent; color: var(--primary-purple); border: 1px solid var(--primary-purple); padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; letter-spacing: 1px; font-weight: 500; }
+.glow-btn.small { padding: 8px 16px; font-size: 0.85rem; }
+.glow-btn:hover { background: var(--primary-purple); color: #fff; box-shadow: 0 0 15px rgba(168, 85, 247, 0.4); }
+.glow-btn.solid { background: var(--primary-purple); color: #fff; }
+.glow-btn.solid:hover { background: var(--primary-purple-hover); }
 
-.glass-overlay {
-    background-color: rgba(5, 5, 5, 0.95);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
-
-/* Buttons */
-.glow-btn {
-    background: transparent;
-    color: var(--primary-purple);
-    border: 1px solid var(--primary-purple);
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    letter-spacing: 1px;
-    font-weight: 500;
-}
-
-.glow-btn.small { 
-    padding: 8px 16px; 
-    font-size: 0.85rem; 
-}
-
-.glow-btn:hover {
-    background: var(--primary-purple);
-    color: #fff;
-    box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
-}
-
-.glow-btn.solid {
-    background: var(--primary-purple);
-    color: #fff;
-}
-.glow-btn.solid:hover {
-    background: var(--primary-purple-hover);
-}
-
-/* Elegant Action Buttons (Feather Icons) */
-.action-btn {
-    background: transparent;
-    border: none;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: color 0.3s, transform 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid transparent;
-}
-
-.action-btn:hover {
-    color: var(--primary-purple);
-    border-color: var(--primary-purple);
-    background: rgba(168, 85, 247, 0.1);
-    transform: translateY(-2px);
-}
-
-.action-btn svg {
-    width: 16px;
-    height: 16px;
-}
+.action-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; transition: color 0.3s, transform 0.2s; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; background: rgba(255,255,255,0.03); border: 1px solid transparent; }
+.action-btn:hover { color: var(--primary-purple); border-color: var(--primary-purple); background: rgba(168, 85, 247, 0.1); transform: translateY(-2px); }
+.action-btn svg { width: 16px; height: 16px; }
 
 .hidden { display: none !important; }
 
-/* Modals */
-.modal {
-    display: none; 
-    position: fixed; 
-    z-index: 1000; 
-    left: 0; top: 0;
-    width: 100%; height: 100%; 
-    justify-content: center; 
-    align-items: center; 
-    flex-direction: column;
-}
+.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; justify-content: center; align-items: center; flex-direction: column; }
 .modal.active { display: flex; animation: fadeIn 0.3s ease; }
-.close-modal { 
-    position: absolute; 
-    top: 25px; right: 30px; 
-    color: var(--text-muted); 
-    font-size: 35px; 
-    font-weight: 300; 
-    cursor: pointer; 
-    transition: color 0.3s;
-}
+.close-modal { position: absolute; top: 25px; right: 30px; color: var(--text-muted); font-size: 35px; font-weight: 300; cursor: pointer; transition: color 0.3s; }
 .close-modal:hover { color: var(--primary-purple); }
-.modal-content { 
-    max-width: 90%; max-height: 80vh; border-radius: 12px; object-fit: contain;
-}
-.text-modal { 
-    background: var(--bg-panel); padding: 2.5rem; 
-    width: 90%; max-width: 450px; text-align: center; 
-    border: 1px solid var(--glass-border);
-}
+.modal-content { max-width: 90%; max-height: 80vh; border-radius: 12px; object-fit: contain; }
+.text-modal { background: var(--bg-panel); padding: 2.5rem; width: 90%; max-width: 450px; text-align: center; border: 1px solid var(--glass-border); }
 #modal-caption { margin-top: 15px; color: var(--text-muted); font-size: 0.9rem; text-align: center; }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

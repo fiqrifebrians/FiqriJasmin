@@ -1,46 +1,59 @@
-// Membangun Timeline Vertikal Murni dari data yang ada
 document.addEventListener('DOMContentLoaded', () => {
-    const container = document.getElementById('journey-timeline');
+    const grid = document.getElementById('calendar-grid');
+    const monthYear = document.getElementById('month-year-display');
+    const prevBtn = document.getElementById('prev-month');
+    const nextBtn = document.getElementById('next-month');
+    const modal = document.getElementById('activity-modal');
+    const activityDate = document.getElementById('activity-date');
+    const activityList = document.getElementById('activity-list');
     
-    function renderJourney() {
-        container.innerHTML = '';
-        const journeyData = window.store.state.journey || {};
-        
-        // Hanya ambil tanggal yang ada datanya, lalu urutkan dari terbaru ke terlama
-        const dates = Object.keys(journeyData).sort((a, b) => new Date(b) - new Date(a));
+    let currentDate = new Date();
 
-        if (dates.length === 0) {
-            container.innerHTML = '<p style="color:var(--text-muted); padding-left:10px;">The journey is just beginning...</p>';
-            return;
+    function renderCalendar() {
+        grid.innerHTML = '';
+        const year = currentDate.getFullYear();
+        const month = currentDate.getMonth();
+        monthYear.textContent = currentDate.toLocaleString('default', { month: 'long', year: 'numeric' });
+        
+        const firstDay = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
+        const journeyData = window.store.state.journey || {};
+
+        // Generate empty slots
+        for (let i = 0; i < firstDay; i++) {
+            let emptyDiv = document.createElement('div');
+            emptyDiv.className = 'cal-day empty';
+            grid.appendChild(emptyDiv);
         }
 
-        dates.forEach(dateKey => {
-            const entries = journeyData[dateKey];
-            if (!entries || entries.length === 0) return;
-
-            const d = new Date(dateKey);
-            const dateStr = d.toLocaleDateString([], { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' });
-
-            const node = document.createElement('div');
-            node.className = 'timeline-node';
+        // Generate active day slots
+        for (let i = 1; i <= daysInMonth; i++) {
+            let dayDiv = document.createElement('div');
+            dayDiv.className = 'cal-day';
+            dayDiv.textContent = i;
             
-            const entriesHtml = entries.map(a => `
-                <div class="journey-entry">
-                    <div class="journey-type">${a.type}</div>
-                    <div class="journey-data">${a.data}</div>
-                </div>
-            `).join('');
-
-            node.innerHTML = `
-                <div class="timeline-dot"></div>
-                <div class="timeline-date">${dateStr}</div>
-                <div class="timeline-content">${entriesHtml}</div>
-            `;
+            // Format YYYY-MM-DD
+            let dateKey = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
             
-            container.appendChild(node);
-        });
+            if (journeyData[dateKey] && journeyData[dateKey].length > 0) {
+                dayDiv.classList.add('has-event');
+                dayDiv.addEventListener('click', () => {
+                    activityDate.textContent = new Date(dateKey).toLocaleDateString([], {weekday: 'long', day:'numeric', month:'long', year:'numeric'});
+                    activityList.innerHTML = journeyData[dateKey].map(e => `
+                        <div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid var(--glass-border);">
+                            <span style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">${e.type}</span><br>
+                            <span style="font-size:1.1rem;">${e.data}</span>
+                        </div>
+                    `).join('');
+                    modal.classList.add('active');
+                });
+            }
+            grid.appendChild(dayDiv);
+        }
     }
 
-    renderJourney();
-    window.store.subscribe(renderJourney);
+    prevBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
+    nextBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
+    document.querySelector('.close-modal').addEventListener('click', () => modal.classList.remove('active'));
+    window.store.subscribe(renderCalendar);
 });

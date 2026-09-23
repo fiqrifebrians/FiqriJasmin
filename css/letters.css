@@ -1,0 +1,16 @@
+.page-container { padding: 5rem 5% 2rem; max-width: 1000px; margin: auto; height: 100dvh; overflow-y: auto;}
+.section-header { margin-bottom: 1.5rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem; }
+.section-header h2 { font-weight: 400; font-size: 2.2rem; }
+.letter-form { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem; }
+.letter-form input[type="text"], .letter-form textarea { background: var(--bg-solid); border: 1px solid var(--glass-border); color: var(--text-main); padding: 15px; border-radius: 8px; font-size: 1rem; outline: none; }
+.letter-form input[type="text"]:focus, .letter-form textarea:focus { border-color: var(--primary-purple); }
+.author-selector { display: flex; align-items: center; gap: 1rem; color: var(--text-main); font-size: 0.9rem; background: var(--bg-panel); padding: 10px 15px; border-radius: 8px; border: 1px solid var(--glass-border); }
+.author-selector input[type="radio"] { accent-color: var(--primary-purple); cursor: pointer; }
+.letters-feed { display: flex; flex-direction: column; gap: 1.5rem; }
+.letter-card { padding: 2rem; background: var(--bg-panel); border: 1px solid var(--glass-border); border-radius: 12px; border-left: 4px solid var(--primary-purple); position: relative; }
+.letter-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; }
+.letter-date { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
+.letter-author-badge { font-size: 0.8rem; background: rgba(168, 85, 247, 0.1); color: var(--primary-purple); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--primary-purple); }
+.letter-card h3 { font-weight: 500; font-size: 1.4rem; margin-bottom: 10px; color: var(--text-main); padding-right: 80px; }
+.letter-card p { color: var(--text-main); line-height: 1.7; font-weight: 300; }
+.edit-input { width: 100%; background: var(--bg-solid); border: 1px solid var(--glass-border); color: var(--text-main); padding: 12px; border-radius: 8px; margin-bottom: 10px; outline: none; font-size: 1rem; }
