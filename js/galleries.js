@@ -8,23 +8,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const mapContainer = document.getElementById('map-container');
     const toggleMapBtn = document.getElementById('toggle-map-btn');
 
-    // Menggunakan CartoDB Positron (Sangat minimalis & ringan)
+    // Restored to standard OpenStreetMap to avoid extra API requirements
     let map = L.map('map').setView([-2.5489, 118.0149], 4);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', { 
-        attribution: '&copy; OpenStreetMap',
-        subdomains: 'abcd',
-        maxZoom: 20
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { 
+        attribution: '&copy; OpenStreetMap'
     }).addTo(map);
     let markers = [];
 
-    // Opsi Toggle Map
+    // Toggle Map Function
     toggleMapBtn.addEventListener('click', () => {
         mapContainer.classList.toggle('hidden');
         if(!mapContainer.classList.contains('hidden')) {
-            setTimeout(() => { map.invalidateSize(); }, 300);
+            setTimeout(() => { map.invalidateSize(); }, 300); // Fix rendering issue
         }
     });
 
+    // Convert EXIF coordinates to decimal format
     function getDecimalGPS(data, ref) {
         if (!data) return null;
         let decimal = data[0].valueOf() + data[1].valueOf()/60 + data[2].valueOf()/3600;
@@ -68,7 +67,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
             let reader = new FileReader();
             reader.onload = (event) => {
-                window.store.addPhoto({ id: Date.now() + i, src: event.target.result, date: photoDate, location: locationName, lat: lat, lon: lon, hidden: false });
+                window.store.addPhoto({ 
+                    id: Date.now() + i, 
+                    src: event.target.result, 
+                    date: photoDate, 
+                    location: locationName, 
+                    lat: lat, 
+                    lon: lon, 
+                    hidden: false 
+                });
             };
             reader.readAsDataURL(file);
         }
