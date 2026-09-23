@@ -1,12 +1,13 @@
 // Ganti nilai-nilai ini dengan kunci asli dari Firebase Console Anda
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCtaAAhSd605dOM_2gX14WyIz2xC0lo1TQ",
+  authDomain: "fiqrijasmin.firebaseapp.com",
+  databaseURL: "https://fiqrijasmin-default-rtdb.firebaseio.com",
+  projectId: "fiqrijasmin",
+  storageBucket: "fiqrijasmin.firebasestorage.app",
+  messagingSenderId: "596021282856",
+  appId: "1:596021282856:web:2b1a38cb7dadc32d074d1d",
+  measurementId: "G-D5181Q5JFM"
 };
 
 // Mencegah duplikasi inisialisasi Firebase
