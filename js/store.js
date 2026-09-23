@@ -1,13 +1,12 @@
-// Ganti config dengan API key asli Anda
+// Ganti config dengan API key asli Firebase Anda
 const firebaseConfig = {
-  apiKey: "AIzaSyCtaAAhSd605dOM_2gX14WyIz2xC0lo1TQ",
-  authDomain: "fiqrijasmin.firebaseapp.com",
-  databaseURL: "https://fiqrijasmin-default-rtdb.firebaseio.com",
-  projectId: "fiqrijasmin",
-  storageBucket: "fiqrijasmin.firebasestorage.app",
-  messagingSenderId: "596021282856",
-  appId: "1:596021282856:web:2b1a38cb7dadc32d074d1d",
-  measurementId: "G-D5181Q5JFM"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
 };
 
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
@@ -38,9 +37,13 @@ class AppStore {
 
     // -- JOURNEY HUB --
     linkToJourney(dateString, attachment) {
+        if (!dateString) return;
         const dateObj = new Date(dateString);
         const dateKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
         if (!this.state.journey[dateKey]) this.state.journey[dateKey] = [];
+        
+        // Hapus duplikat ID jika ada (mencegah double entry)
+        this.state.journey[dateKey] = this.state.journey[dateKey].filter(item => item.id !== attachment.id);
         this.state.journey[dateKey].push(attachment);
     }
     
@@ -55,6 +58,7 @@ class AppStore {
     }
     
     updateJourney(dateString, id, newData) {
+        if(!dateString) return;
         const dateObj = new Date(dateString);
         const dateKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
         if (this.state.journey[dateKey]) {
@@ -80,12 +84,40 @@ class AppStore {
 
     // -- WISHES --
     addWish(wish) { this.state.wishes.unshift(wish); this.saveToCloud(); }
-    toggleWish(id) { this.state.wishes = this.state.wishes.map(w => w.id === id ? { ...w, done: !w.done } : w); this.saveToCloud(); }
+    
+    // Toggle wish logic baru mencakup tanggal tercapai
+    toggleWish(id, completionDateStr = null) {
+        const w = this.state.wishes.find(x => x.id === id);
+        if(!w) return;
+
+        if (!w.done && completionDateStr) {
+            // Mencapai wishlist
+            w.done = true;
+            w.completedAt = completionDateStr;
+            this.linkToJourney(completionDateStr, { id: w.id, type: 'Wish Achieved', data: w.title });
+        } else if (w.done) {
+            // Membatalkan capaian wishlist
+            if (w.completedAt) this.removeFromJourney(w.completedAt, w.id);
+            w.done = false;
+            w.completedAt = null;
+        }
+        this.saveToCloud();
+    }
+    
     updateWish(id, data) {
         const w = this.state.wishes.find(x => x.id === id);
-        if(w) { w.title = data.title; w.desc = data.desc; this.saveToCloud(); }
+        if(w) { 
+            w.title = data.title; w.desc = data.desc; 
+            if (w.done && w.completedAt) this.updateJourney(w.completedAt, id, data.title);
+            this.saveToCloud(); 
+        }
     }
-    deleteWish(id) { this.state.wishes = this.state.wishes.filter(x => x.id !== id); this.saveToCloud(); }
+    deleteWish(id) {
+        const w = this.state.wishes.find(x => x.id === id);
+        if(w && w.done && w.completedAt) this.removeFromJourney(w.completedAt, id);
+        this.state.wishes = this.state.wishes.filter(x => x.id !== id); 
+        this.saveToCloud(); 
+    }
 
     // -- LETTERS --
     addLetter(letter) {

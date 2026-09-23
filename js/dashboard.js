@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuCards = document.querySelectorAll('.menu-card');
     const backBtn = document.getElementById('back-to-menu');
 
-    // Routing Layout
     menuCards.forEach(card => {
         card.addEventListener('click', (e) => {
             const targetId = card.dataset.target;
@@ -21,7 +20,6 @@ document.addEventListener('DOMContentLoaded', () => {
         centralMenu.classList.add('active');
     });
 
-    // Closers Modal
     document.querySelectorAll('.close-modal, .close-modal-btn').forEach(btn => {
         btn.addEventListener('click', function() {
             this.closest('.modal').classList.remove('active');
@@ -65,24 +63,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const author = document.querySelector('input[name="letter-author"]:checked').value;
         
         if (title && body) {
-            window.store.addLetter({ 
-                id: Date.now(), 
-                date: new Date().toISOString(), 
-                title, 
-                body,
-                author
-            });
-            titleInput.value = '';
-            bodyInput.value = '';
+            window.store.addLetter({ id: Date.now(), date: new Date().toISOString(), title, body, author });
+            titleInput.value = ''; bodyInput.value = '';
         }
     });
 
     function renderLetters() {
         const feed = document.getElementById('letters-feed');
         feed.innerHTML = '';
-        const letters = window.store.state.letters;
+        const letters = window.store.state.letters || [];
 
-        if (!letters || letters.length === 0) {
+        if (letters.length === 0) {
             feed.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">The mailbox is empty.</p>';
             return;
         }
@@ -97,28 +88,26 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <h3>${letter.title}</h3>
                 <p>${letter.body.replace(/\n/g, '<br>')}</p>
-                <div style="position:absolute; top:25px; right:20px; display:flex; gap:8px;">
-                    <button class="action-btn edit-btn">✏️</button>
-                    <button class="action-btn delete-btn">🗑️</button>
+                <div style="position:absolute; top:20px; right:20px; display:flex; gap:5px;">
+                    <button class="action-btn edit-btn"><i data-feather="edit-2"></i></button>
+                    <button class="action-btn delete-btn"><i data-feather="trash-2"></i></button>
                 </div>
             `;
             
             card.querySelector('.edit-btn').addEventListener('click', () => {
                 window.openEditModal("Edit Letter", letter.title, letter.body, (newTitle, newBody) => {
-                    if (newTitle.trim() && newBody.trim()) {
-                        window.store.updateLetter(letter.id, { title: newTitle.trim(), body: newBody.trim() });
-                    }
+                    if (newTitle.trim() && newBody.trim()) window.store.updateLetter(letter.id, { title: newTitle.trim(), body: newBody.trim() });
                 });
             });
 
             card.querySelector('.delete-btn').addEventListener('click', () => {
-                if (confirm("Delete this letter permanently?")) {
-                    window.store.deleteLetter(letter.id);
-                }
+                if (confirm("Delete this letter permanently?")) window.store.deleteLetter(letter.id);
             });
 
             feed.appendChild(card);
         });
+
+        if(typeof feather !== 'undefined') feather.replace();
     }
 
     renderLetters();

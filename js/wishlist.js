@@ -4,6 +4,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const descInput = document.getElementById('wish-desc');
     const catInput = document.getElementById('wish-category');
     const container = document.getElementById('wishlist-container');
+    
+    // Modal Date Elements
+    const dateModal = document.getElementById('wish-date-modal');
+    const dateInput = document.getElementById('wish-date-input');
+    const todayBtn = document.getElementById('wish-today-btn');
+    const saveDateBtn = document.getElementById('wish-save-date-btn');
+    
+    let activeWishId = null;
 
     addBtn.addEventListener('click', () => {
         const title = titleInput.value.trim();
@@ -12,8 +20,27 @@ document.addEventListener('DOMContentLoaded', () => {
         const author = document.querySelector('input[name="wish-author"]:checked').value;
 
         if (title) {
-            window.store.addWish({ id: Date.now(), title, desc, cat, author, done: false });
+            window.store.addWish({ id: Date.now(), title, desc, cat, author, done: false, completedAt: null });
             titleInput.value = ''; descInput.value = '';
+        }
+    });
+
+    // Logika Modal Tanggal
+    todayBtn.addEventListener('click', () => {
+        if(activeWishId) {
+            window.store.toggleWish(activeWishId, new Date().toISOString());
+            dateModal.classList.remove('active');
+            activeWishId = null;
+        }
+    });
+
+    saveDateBtn.addEventListener('click', () => {
+        if(activeWishId && dateInput.value) {
+            window.store.toggleWish(activeWishId, new Date(dateInput.value).toISOString());
+            dateModal.classList.remove('active');
+            activeWishId = null;
+        } else {
+            alert("Pilih tanggal terlebih dahulu.");
         }
     });
 
@@ -38,15 +65,28 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="wish-author-badge">By ${wish.author || 'Unknown'}</span>
                     </div>
                     ${wish.desc ? `<p class="wish-desc">${wish.desc}</p>` : ''}
+                    ${wish.done && wish.completedAt ? `<p style="font-size:0.8rem; color:var(--primary-purple); margin-top:5px;">Terwujud pada: ${new Date(wish.completedAt).toLocaleDateString()}</p>` : ''}
                 </div>
                 <div class="wish-tools">
-                    <button class="action-btn edit-btn">✏️</button>
-                    <button class="action-btn delete-btn">🗑️</button>
+                    <button class="action-btn edit-btn"><i data-feather="edit-2"></i></button>
+                    <button class="action-btn delete-btn"><i data-feather="trash-2"></i></button>
                     <input type="checkbox" class="wish-checkbox" ${wish.done ? 'checked' : ''}>
                 </div>
             `;
             
-            item.querySelector('.wish-checkbox').addEventListener('change', () => window.store.toggleWish(wish.id));
+            item.querySelector('.wish-checkbox').addEventListener('change', (e) => {
+                const isChecked = e.target.checked;
+                if (isChecked) {
+                    // Prevent checking visually immediately until date is selected
+                    e.target.checked = false; 
+                    activeWishId = wish.id;
+                    dateInput.value = new Date().toISOString().split('T')[0]; // Default to today
+                    dateModal.classList.add('active');
+                } else {
+                    // Batalkan capaian
+                    window.store.toggleWish(wish.id);
+                }
+            });
             
             item.querySelector('.edit-btn').addEventListener('click', () => {
                 window.openEditModal("Edit Wish", wish.title, wish.desc || "", (newTitle, newDesc) => {
@@ -60,6 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             container.appendChild(item);
         });
+
+        if(typeof feather !== 'undefined') feather.replace();
     }
 
     renderWishlist();

@@ -1,30 +1,30 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap');
 
 :root {
-    /* Tema Solid Ungu-Hitam Minimalis (Tanpa Gradient) */
-    --bg-solid: #0d0614; 
-    --bg-panel: #160a22;
-    --neon-violet: #a255ff;
-    --glass-border: #2e1d3d;
-    --text-main: #f8f9fa;
-    --text-muted: #a3a8b5;
+    /* Tema Ungu Primary & Hitam Secondary */
+    --bg-solid: #050505; 
+    --bg-panel: #0a0a0c;
+    --primary-purple: #a855f7; /* Ungu Elegan */
+    --primary-purple-hover: #9333ea;
+    --glass-border: #1f1f22;
+    --text-main: #fcfcfc;
+    --text-muted: #8b8d98;
 }
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', sans-serif; /* Font Minimalis Baru */
 }
 
 body {
     background-color: var(--bg-solid);
     color: var(--text-main);
-    height: 100dvh; /* Tampilan Fixed */
-    overflow: hidden; /* Mengunci scroll liar di layar luar */
+    height: 100dvh; 
+    overflow: hidden; 
 }
 
-/* Panel Solid Minimalis */
 .glass-panel {
     background: var(--bg-panel);
     border: 1px solid var(--glass-border);
@@ -33,7 +33,7 @@ body {
 }
 
 .glass-overlay {
-    background-color: rgba(13, 6, 20, 0.9);
+    background-color: rgba(5, 5, 5, 0.95);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
 }
@@ -41,15 +41,14 @@ body {
 /* Buttons */
 .glow-btn {
     background: transparent;
-    color: var(--neon-violet);
-    border: 1px solid var(--neon-violet);
+    color: var(--primary-purple);
+    border: 1px solid var(--primary-purple);
     padding: 12px 24px;
     border-radius: 8px;
     font-size: 1rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1.5px;
+    letter-spacing: 1px;
     font-weight: 500;
 }
 
@@ -59,37 +58,51 @@ body {
 }
 
 .glow-btn:hover {
-    background: var(--neon-violet);
+    background: var(--primary-purple);
     color: #fff;
-    box-shadow: 0 0 15px rgba(162, 85, 255, 0.4);
+    box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
 }
 
-/* Action Buttons (Edit & Delete) */
+.glow-btn.solid {
+    background: var(--primary-purple);
+    color: #fff;
+}
+.glow-btn.solid:hover {
+    background: var(--primary-purple-hover);
+}
+
+/* Elegant Action Buttons (Feather Icons) */
 .action-btn {
     background: transparent;
     border: none;
     color: var(--text-muted);
     cursor: pointer;
-    font-size: 1.1rem;
     transition: color 0.3s, transform 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
-    border-radius: 5px;
-    background: rgba(0,0,0,0.3);
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid transparent;
 }
 
 .action-btn:hover {
-    color: var(--text-main);
-    background: var(--neon-violet);
-    transform: scale(1.1);
+    color: var(--primary-purple);
+    border-color: var(--primary-purple);
+    background: rgba(168, 85, 247, 0.1);
+    transform: translateY(-2px);
+}
+
+.action-btn svg {
+    width: 16px;
+    height: 16px;
 }
 
 .hidden { display: none !important; }
 
-/* Global Modals */
+/* Modals */
 .modal {
     display: none; 
     position: fixed; 
@@ -100,46 +113,25 @@ body {
     align-items: center; 
     flex-direction: column;
 }
-
 .modal.active { display: flex; animation: fadeIn 0.3s ease; }
-
 .close-modal { 
     position: absolute; 
     top: 25px; right: 30px; 
-    color: var(--text-main); 
-    font-size: 40px; 
+    color: var(--text-muted); 
+    font-size: 35px; 
     font-weight: 300; 
     cursor: pointer; 
     transition: color 0.3s;
 }
-
-.close-modal:hover { color: var(--neon-violet); }
-
+.close-modal:hover { color: var(--primary-purple); }
 .modal-content { 
-    max-width: 90%; 
-    max-height: 80vh; 
-    border-radius: 12px;
-    object-fit: contain;
+    max-width: 90%; max-height: 80vh; border-radius: 12px; object-fit: contain;
 }
-
 .text-modal { 
-    background: var(--bg-solid); 
-    padding: 2.5rem; 
-    min-width: 320px; 
-    width: 90%;
-    max-width: 500px;
-    text-align: center; 
+    background: var(--bg-panel); padding: 2.5rem; 
+    width: 90%; max-width: 450px; text-align: center; 
     border: 1px solid var(--glass-border);
 }
+#modal-caption { margin-top: 15px; color: var(--text-muted); font-size: 0.9rem; text-align: center; }
 
-#modal-caption {
-    margin-top: 15px;
-    color: var(--text-muted);
-    font-size: 0.9rem;
-    text-align: center;
-}
-
-@keyframes fadeIn { 
-    from { opacity: 0; } 
-    to { opacity: 1; } 
-}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
