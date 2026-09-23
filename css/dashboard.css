@@ -1,122 +1,86 @@
-/* Decorative Floating Photos Background */
-#floating-decorations {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100vw; height: 100vh;
-    pointer-events: none;
-    z-index: -1;
-    overflow: hidden;
-}
-
-.floating-photo {
-    position: absolute;
-    width: 120px;
-    height: 150px;
-    background: var(--glass-bg);
-    border: 1px solid var(--glass-border);
-    border-radius: 8px;
-    opacity: 0.1;
-    animation: floatAnim 25s infinite linear alternate;
-    object-fit: cover;
-    filter: grayscale(30%) blur(2px);
-}
-
-@keyframes floatAnim {
-    0% { transform: translateY(0) rotate(0deg); }
-    100% { transform: translateY(-40px) rotate(20deg); }
-}
-
-/* Centralized Menu System */
+/* Centralized Menu System - Fixed Scroll Internal */
 #central-menu {
     display: none;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    height: 100vh;
+    height: 100dvh;
     width: 100vw;
     position: fixed;
     top: 0;
     left: 0;
     z-index: 50;
+    overflow-y: auto;
+    background: var(--bg-solid);
 }
 
 #central-menu.active {
     display: flex;
-    animation: fadeIn 0.8s ease;
+    animation: fadeIn 0.5s ease;
 }
 
 .menu-title {
     font-size: 3rem;
     font-weight: 300;
     color: var(--text-main);
-    margin-bottom: 4rem;
+    margin-bottom: 3rem;
     letter-spacing: 2px;
-    text-shadow: var(--neon-glow);
 }
 
 .menu-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 2rem;
-    max-width: 800px;
+    gap: 1.5rem;
+    max-width: 700px;
     width: 90%;
 }
 
 .menu-card {
     text-align: center;
     cursor: pointer;
-    transition: all 0.4s ease;
+    transition: all 0.3s ease;
     border: 1px solid var(--glass-border);
-    background: rgba(255, 255, 255, 0.02);
+    padding: 2.5rem 1rem;
 }
 
 .menu-card:hover {
-    transform: translateY(-10px);
+    transform: translateY(-5px);
     border-color: var(--neon-violet);
-    box-shadow: var(--neon-glow);
-    background: rgba(182, 109, 255, 0.05);
+    background: #1a0c27;
 }
 
 .menu-card h3 {
-    font-size: 1.8rem;
+    font-size: 1.6rem;
     font-weight: 400;
     color: var(--neon-violet);
-    margin-bottom: 0.5rem;
-}
-
-.menu-card p {
-    font-size: 0.9rem;
-    color: var(--text-muted);
 }
 
 /* Global Back Button */
 #back-to-menu {
     position: fixed;
-    top: 2rem;
-    left: 2rem;
+    top: 1.5rem;
+    left: 1.5rem;
     z-index: 100;
-    background: rgba(10, 5, 16, 0.6);
-    backdrop-filter: blur(10px);
+    background: var(--bg-solid);
 }
 
-/* Sections Workspace */
+/* Sections Workspace - Area Internal Scroll */
 #dashboard-container { 
-    padding: 6rem 5% 3rem; 
-    max-width: 1200px; 
+    height: 100dvh;
+    overflow-y: auto; /* Internal scroll lock */
+    padding: 6rem 5% 4rem; 
+    max-width: 1000px; 
     margin: auto; 
 }
 
-.dash-section { 
-    display: none; 
-}
-
+.dash-section { display: none; }
 .dash-section.active { 
     display: block; 
-    animation: fadeIn 0.6s ease;
+    animation: fadeIn 0.4s ease;
 }
 
 .section-header { 
-    margin-bottom: 2.5rem; 
+    margin-bottom: 2rem; 
     border-bottom: 1px solid var(--glass-border); 
     padding-bottom: 1rem; 
     display: flex; 
@@ -126,97 +90,64 @@
 
 .section-header h2 { 
     font-weight: 300; 
-    font-size: 2.5rem;
+    font-size: 2.2rem;
     color: var(--text-main); 
 }
 
-.section-header p {
-    color: var(--neon-violet);
-    font-size: 1rem;
-    margin-top: 5px;
-}
-
-/* Author Selector Global Component */
+/* Author Selector */
 .author-selector {
     display: flex;
     align-items: center;
     gap: 1rem;
     color: var(--text-main);
     font-size: 0.9rem;
-    background: rgba(0,0,0,0.3);
+    background: rgba(0,0,0,0.5);
     padding: 10px 15px;
     border-radius: 8px;
     border: 1px solid var(--glass-border);
 }
 
-.author-selector input[type="radio"] {
-    accent-color: var(--neon-violet);
-    transform: scale(1.2);
-    cursor: pointer;
-}
-
+.author-selector input[type="radio"] { accent-color: var(--neon-violet); cursor: pointer; }
 .author-selector label { cursor: pointer; }
+
+/* Edit Inputs (Global) */
+.edit-input {
+    width: 100%;
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--glass-border);
+    color: var(--text-main);
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    outline: none;
+    font-size: 1rem;
+}
+.edit-input:focus { border-color: var(--neon-violet); }
 
 /* Love Letters Styles */
 .letter-form { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 1.2rem; 
-    margin-bottom: 3rem; 
+    display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2.5rem; 
 }
-
 .letter-form input[type="text"], .letter-form textarea {
-    background: rgba(0,0,0,0.3); 
-    border: 1px solid var(--glass-border);
-    color: var(--text-main); 
-    padding: 15px; 
-    border-radius: 8px; 
-    font-size: 1rem;
-    outline: none;
-    transition: border 0.3s;
+    background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border);
+    color: var(--text-main); padding: 15px; border-radius: 8px; font-size: 1rem; outline: none;
 }
-
-.letter-form input[type="text"]:focus, .letter-form textarea:focus {
-    border-color: var(--neon-violet);
-}
-
+.letter-form input[type="text"]:focus, .letter-form textarea:focus { border-color: var(--neon-violet); }
 .letters-feed { display: flex; flex-direction: column; gap: 1.5rem; }
 
 .letter-card { 
-    padding: 2rem; 
-    background: var(--glass-bg); 
-    border: 1px solid var(--glass-border);
-    border-radius: 12px; 
-    border-left: 4px solid var(--neon-violet);
-    position: relative;
+    padding: 2rem; background: var(--bg-panel); border: 1px solid var(--glass-border);
+    border-radius: 12px; border-left: 4px solid var(--neon-violet); position: relative;
 }
 
 .letter-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
+    display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;
 }
 
-.letter-date { 
-    font-size: 0.85rem; 
-    color: var(--text-muted); 
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.letter-author-badge {
-    font-size: 0.8rem;
-    background: rgba(182, 109, 255, 0.2);
-    color: var(--neon-violet);
-    padding: 4px 10px;
-    border-radius: 20px;
-    border: 1px solid var(--neon-violet);
-    font-weight: 500;
-}
-
-.letter-card h3 { font-weight: 500; font-size: 1.5rem; margin-bottom: 15px; color: var(--text-main); }
-.letter-card p { color: var(--text-main); line-height: 1.8; font-weight: 300; }
+.letter-date { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; }
+.letter-author-badge { font-size: 0.8rem; background: rgba(162, 85, 255, 0.15); color: var(--neon-violet); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--neon-violet); }
+.letter-card h3 { font-weight: 500; font-size: 1.4rem; margin-bottom: 10px; color: var(--text-main); padding-right: 80px; }
+.letter-card p { color: var(--text-main); line-height: 1.7; font-weight: 300; }
 
 @media (max-width: 768px) {
     .menu-grid { grid-template-columns: 1fr; }

@@ -12,25 +12,17 @@ document.addEventListener('DOMContentLoaded', () => {
         const author = document.querySelector('input[name="wish-author"]:checked').value;
 
         if (title) {
-            window.store.addWish({ 
-                id: Date.now(), 
-                title, 
-                desc, 
-                cat, 
-                author,
-                done: false 
-            });
-            titleInput.value = '';
-            descInput.value = '';
+            window.store.addWish({ id: Date.now(), title, desc, cat, author, done: false });
+            titleInput.value = ''; descInput.value = '';
         }
     });
 
     function renderWishlist() {
         container.innerHTML = '';
-        const wishes = window.store.state.wishes;
+        const wishes = window.store.state.wishes || [];
 
         if (wishes.length === 0) {
-            container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">No dreams added yet. What do you want to achieve together?</p>';
+            container.innerHTML = '<p style="color: var(--text-muted); text-align: center; padding: 2rem;">No dreams added yet.</p>';
             return;
         }
 
@@ -47,12 +39,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     ${wish.desc ? `<p class="wish-desc">${wish.desc}</p>` : ''}
                 </div>
-                <input type="checkbox" class="wish-checkbox" ${wish.done ? 'checked' : ''} title="Mark as completed">
+                <div class="wish-tools">
+                    <button class="action-btn edit-btn">✏️</button>
+                    <button class="action-btn delete-btn">🗑️</button>
+                    <input type="checkbox" class="wish-checkbox" ${wish.done ? 'checked' : ''}>
+                </div>
             `;
             
-            const checkbox = item.querySelector('.wish-checkbox');
-            checkbox.addEventListener('change', () => {
-                window.store.toggleWish(wish.id);
+            item.querySelector('.wish-checkbox').addEventListener('change', () => window.store.toggleWish(wish.id));
+            
+            item.querySelector('.edit-btn').addEventListener('click', () => {
+                window.openEditModal("Edit Wish", wish.title, wish.desc || "", (newTitle, newDesc) => {
+                    if(newTitle.trim()) window.store.updateWish(wish.id, { title: newTitle.trim(), desc: newDesc.trim() });
+                });
+            });
+
+            item.querySelector('.delete-btn').addEventListener('click', () => {
+                if(confirm("Delete this dream?")) window.store.deleteWish(wish.id);
             });
 
             container.appendChild(item);
@@ -60,7 +63,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     renderWishlist();
-    window.store.subscribe(() => {
-        renderWishlist();
-    });
+    window.store.subscribe(renderWishlist);
 });

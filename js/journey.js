@@ -1,63 +1,46 @@
+// Membangun Timeline Vertikal Murni dari data yang ada
 document.addEventListener('DOMContentLoaded', () => {
-    const container = document.getElementById('horizontal-calendar');
+    const container = document.getElementById('journey-timeline');
     
     function renderJourney() {
         container.innerHTML = '';
+        const journeyData = window.store.state.journey || {};
         
-        // Compact Strip anchored exactly to Dec 13, 2023
-        const startDate = new Date('2023-12-13T00:00:00');
-        const today = new Date();
-        const diffTime = Math.abs(today - startDate);
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 7; // Only 1 week ahead for compactness
+        // Hanya ambil tanggal yang ada datanya, lalu urutkan dari terbaru ke terlama
+        const dates = Object.keys(journeyData).sort((a, b) => new Date(b) - new Date(a));
 
-        for (let i = 0; i <= diffDays; i++) {
-            let d = new Date(startDate);
-            d.setDate(d.getDate() + i);
-            
-            const dateKey = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-            
-            const node = document.createElement('div');
-            const attachments = window.store.state.journey[dateKey];
-            
-            node.className = `date-node ${attachments ? 'has-data' : ''}`;
-            node.innerHTML = `
-                <div class="month">${d.toLocaleString('default', { month: 'short' })}</div>
-                <div class="day">${d.getDate()}</div>
-            `;
-
-            if (attachments) {
-                const dot = document.createElement('div');
-                dot.className = 'indicator-dot';
-                node.appendChild(dot);
-                
-                node.addEventListener('click', () => {
-                    const html = attachments.map(a => `
-                        <div class="journey-entry">
-                            <div class="type">${a.type}</div>
-                            <div class="content">${a.data}</div>
-                        </div>
-                    `).join('');
-                    
-                    document.getElementById('journey-detail').innerHTML = `
-                        <h3 style="color: var(--neon-violet); margin-bottom: 25px; font-weight: 300; font-size: 1.5rem; letter-spacing: 1px;">
-                            ${d.toLocaleDateString([], { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-                        </h3>
-                        ${html}
-                    `;
-                    document.getElementById('journey-modal').classList.add('active');
-                });
-            }
-            container.appendChild(node);
+        if (dates.length === 0) {
+            container.innerHTML = '<p style="color:var(--text-muted); padding-left:10px;">The journey is just beginning...</p>';
+            return;
         }
-        
-        // Auto-scroll to the right-most end to show the most recent dates
-        setTimeout(() => {
-            container.scrollLeft = container.scrollWidth;
-        }, 150);
+
+        dates.forEach(dateKey => {
+            const entries = journeyData[dateKey];
+            if (!entries || entries.length === 0) return;
+
+            const d = new Date(dateKey);
+            const dateStr = d.toLocaleDateString([], { weekday: 'short', year: 'numeric', month: 'long', day: 'numeric' });
+
+            const node = document.createElement('div');
+            node.className = 'timeline-node';
+            
+            const entriesHtml = entries.map(a => `
+                <div class="journey-entry">
+                    <div class="journey-type">${a.type}</div>
+                    <div class="journey-data">${a.data}</div>
+                </div>
+            `).join('');
+
+            node.innerHTML = `
+                <div class="timeline-dot"></div>
+                <div class="timeline-date">${dateStr}</div>
+                <div class="timeline-content">${entriesHtml}</div>
+            `;
+            
+            container.appendChild(node);
+        });
     }
 
     renderJourney();
-    window.store.subscribe(() => {
-        renderJourney();
-    });
+    window.store.subscribe(renderJourney);
 });
