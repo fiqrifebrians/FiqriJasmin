@@ -11,10 +11,8 @@
     <link rel="stylesheet" href="css/wishlist.css">
 </head>
 <body>
-    <!-- Floating Decorative Background -->
     <div id="floating-decorations"></div>
 
-    <!-- Centralized Menu System -->
     <div id="central-menu" class="active">
         <h1 class="menu-title">Our Sanctuary</h1>
         <div class="menu-grid">
@@ -37,11 +35,9 @@
         </div>
     </div>
 
-    <!-- Global Back Button -->
     <button id="back-to-menu" class="glow-btn small hidden">&#8592; Menu</button>
 
     <main id="dashboard-container">
-        <!-- JOURNEY SECTION -->
         <section id="journey" class="dash-section">
             <div class="section-header">
                 <h2>Our Journey</h2>
@@ -49,12 +45,10 @@
             </div>
             <div class="calendar-wrapper glass-panel">
                 <div id="horizontal-calendar" class="horizontal-scroll compact-strip">
-                    <!-- Injected by journey.js -->
                 </div>
             </div>
         </section>
 
-        <!-- GALLERIES SECTION -->
         <section id="galleries" class="dash-section">
             <div class="section-header">
                 <h2>Photo Vault</h2>
@@ -64,11 +58,9 @@
                 </div>
             </div>
             <div id="gallery-grid" class="ios-grid">
-                <!-- Injected by galleries.js -->
             </div>
         </section>
 
-        <!-- WISHLIST SECTION -->
         <section id="wishlist" class="dash-section">
             <div class="section-header">
                 <h2>Our Dreams & Milestones</h2>
@@ -89,11 +81,9 @@
                 <button id="add-wish-btn" class="glow-btn small">Add Wish</button>
             </div>
             <div id="wishlist-container" class="wish-list">
-                <!-- Injected by wishlist.js -->
             </div>
         </section>
 
-        <!-- LOVE LETTERS SECTION -->
         <section id="letters" class="dash-section">
             <div class="section-header">
                 <h2>Digital Mailbox</h2>
@@ -109,12 +99,10 @@
                 <button id="send-letter-btn" class="glow-btn small">Drop Letter</button>
             </div>
             <div id="letters-feed" class="letters-feed">
-                <!-- Injected by dashboard.js -->
             </div>
         </section>
     </main>
 
-    <!-- GLOBAL MODALS -->
     <div id="image-modal" class="modal glass-overlay">
         <span class="close-modal">&times;</span>
         <img class="modal-content" id="modal-img" alt="Zoomed memory">
@@ -126,7 +114,11 @@
         <div class="modal-content text-modal glass-panel" id="journey-detail"></div>
     </div>
 
-    <!-- Scripts must load in this exact order -->
+    <!-- 1. Pemuatan Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
+    <!-- 2. Pemuatan Script Aplikasi secara berurutan -->
     <script src="js/store.js"></script>
     <script src="js/dashboard.js"></script>
     <script src="js/journey.js"></script>

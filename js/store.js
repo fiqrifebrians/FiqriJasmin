@@ -1,18 +1,41 @@
-// store.js - Centralized LocalStorage State mimicking a real-time database
+// Ganti nilai-nilai ini dengan kunci asli dari Firebase Console Anda
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+// Mencegah duplikasi inisialisasi Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+
+const db = firebase.database();
+
 class AppStore {
     constructor() {
         this.state = {
-            photos: JSON.parse(localStorage.getItem('photos')) || [],
-            wishes: JSON.parse(localStorage.getItem('wishes')) || [],
-            letters: JSON.parse(localStorage.getItem('letters')) || [],
-            journey: JSON.parse(localStorage.getItem('journey')) || {}
+            photos: [],
+            wishes: [],
+            letters: [],
+            journey: {}
         };
         this.listeners = [];
         
-        // Listen for changes from other tabs to simulate real-time sync
-        window.addEventListener('storage', (e) => {
-            if (this.state.hasOwnProperty(e.key)) {
-                this.state[e.key] = JSON.parse(e.newValue);
+        // Listener Real-Time dari Cloud Database
+        db.ref('sanctuary_data').on('value', (snapshot) => {
+            const cloudData = snapshot.val();
+            if (cloudData) {
+                this.state = {
+                    photos: cloudData.photos || [],
+                    wishes: cloudData.wishes || [],
+                    letters: cloudData.letters || [],
+                    journey: cloudData.journey || {}
+                };
                 this.notify();
             }
         });
@@ -26,76 +49,52 @@ class AppStore {
         this.listeners.forEach(listener => listener(this.state));
     }
 
-    save(key, data) {
-        this.state[key] = data;
-        localStorage.setItem(key, JSON.stringify(data));
-        this.notify();
+    // Fungsi untuk mendorong pembaruan data ke server Firebase
+    saveToCloud() {
+        db.ref('sanctuary_data').set(this.state);
     }
 
     // --- Actions ---
     
     addPhoto(photoData) {
-        const photos = [photoData, ...this.state.photos];
-        this.save('photos', photos);
+        this.state.photos.unshift(photoData);
         this.linkToJourney(photoData.date, { type: 'Memory Added', data: photoData.location });
+        this.saveToCloud();
     }
 
     togglePhotoVisibility(id, isHidden) {
-        const photos = this.state.photos.map(p => p.id === id ? { ...p, hidden: isHidden } : p);
-        this.save('photos', photos);
+        this.state.photos = this.state.photos.map(p => p.id === id ? { ...p, hidden: isHidden } : p);
+        this.saveToCloud();
     }
 
     addWish(wish) {
-        const wishes = [wish, ...this.state.wishes];
-        this.save('wishes', wishes);
+        this.state.wishes.unshift(wish);
+        this.saveToCloud();
     }
 
     toggleWish(id) {
-        const wishes = this.state.wishes.map(w => w.id === id ? { ...w, done: !w.done } : w);
-        this.save('wishes', wishes);
+        this.state.wishes = this.state.wishes.map(w => w.id === id ? { ...w, done: !w.done } : w);
+        this.saveToCloud();
     }
 
     addLetter(letter) {
-        const letters = [letter, ...this.state.letters];
-        this.save('letters', letters);
+        this.state.letters.unshift(letter);
         this.linkToJourney(letter.date, { type: 'Love Letter Received', data: letter.title });
+        this.saveToCloud();
     }
 
     linkToJourney(dateString, attachment) {
         const dateObj = new Date(dateString);
-        // Format YYYY-MM-DD local time
         const dateKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
         
-        const journey = { ...this.state.journey };
-        if (!journey[dateKey]) journey[dateKey] = [];
+        if (!this.state.journey[dateKey]) {
+            this.state.journey[dateKey] = [];
+        }
         
-        journey[dateKey].push(attachment);
-        this.save('journey', journey);
+        this.state.journey[dateKey].push(attachment);
+        this.saveToCloud(); 
     }
 }
 
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyCtaAAhSd605dOM_2gX14WyIz2xC0lo1TQ",
-  authDomain: "fiqrijasmin.firebaseapp.com",
-  databaseURL: "https://fiqrijasmin-default-rtdb.firebaseio.com",
-  projectId: "fiqrijasmin",
-  storageBucket: "fiqrijasmin.firebasestorage.app",
-  messagingSenderId: "596021282856",
-  appId: "1:596021282856:web:2b1a38cb7dadc32d074d1d",
-  measurementId: "G-D5181Q5JFM"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-
-// Initialize global store
+// Inisialisasi store global
 window.store = new AppStore();
