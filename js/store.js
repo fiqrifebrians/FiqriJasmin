@@ -74,5 +74,28 @@ class AppStore {
     }
 }
 
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCtaAAhSd605dOM_2gX14WyIz2xC0lo1TQ",
+  authDomain: "fiqrijasmin.firebaseapp.com",
+  databaseURL: "https://fiqrijasmin-default-rtdb.firebaseio.com",
+  projectId: "fiqrijasmin",
+  storageBucket: "fiqrijasmin.firebasestorage.app",
+  messagingSenderId: "596021282856",
+  appId: "1:596021282856:web:2b1a38cb7dadc32d074d1d",
+  measurementId: "G-D5181Q5JFM"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+
 // Initialize global store
 window.store = new AppStore();
