@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('calendar-grid');
-    const monthYear = document.getElementById('month-year-display');
+    const monthYearPicker = document.getElementById('month-year-picker');
     const prevBtn = document.getElementById('prev-month');
     const nextBtn = document.getElementById('next-month');
     const modal = document.getElementById('activity-modal');
@@ -13,7 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
         grid.innerHTML = '';
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
-        monthYear.textContent = currentDate.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+        
+        // Update input picker value (Format: YYYY-MM)
+        monthYearPicker.value = `${year}-${String(month + 1).padStart(2, '0')}`;
         
         const firstDay = new Date(year, month, 1).getDay();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -69,8 +71,19 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Navigasi Bulan/Tahun via panah
     prevBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
     nextBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
+    
+    // Lompat tanggal langsung dari Picker (Dropdown)
+    monthYearPicker.addEventListener('change', (e) => {
+        if(e.target.value) {
+            const [y, m] = e.target.value.split('-');
+            currentDate.setFullYear(parseInt(y), parseInt(m) - 1, 1);
+            renderCalendar();
+        }
+    });
+
     document.querySelector('.close-modal').addEventListener('click', () => modal.classList.remove('active'));
     window.store.subscribe(renderCalendar);
 });
