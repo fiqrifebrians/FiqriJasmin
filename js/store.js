@@ -44,7 +44,6 @@ class AppStore {
     notify() { this.listeners.forEach(listener => listener(this.state)); }
     saveToCloud() { db.ref('sanctuary_data').set(this.state); }
 
-    // --- STANDARDISASI FORMAT TANGGAL UNTUK MENCEGAH BUG ZONA WAKTU ---
     _getDateKey(dateString) {
         if (!dateString) return null;
         const d = new Date(dateString);
@@ -52,13 +51,10 @@ class AppStore {
         return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
     }
 
-    // --- LOGIKA SINKRONISASI JOURNEY ---
     linkToJourney(dateString, attachment) {
         const dateKey = this._getDateKey(dateString);
         if (!dateKey) return;
         if (!this.state.journey[dateKey]) this.state.journey[dateKey] = [];
-        
-        // Hapus entri lama jika ID sama, lalu masukkan yang baru
         this.state.journey[dateKey] = this.state.journey[dateKey].filter(item => String(item.id) !== String(attachment.id));
         this.state.journey[dateKey].push(attachment);
     }
@@ -66,27 +62,21 @@ class AppStore {
     removeFromJourney(dateString, id) {
         const dateKey = this._getDateKey(dateString);
         if (!dateKey) return;
-        
         if (this.state.journey[dateKey]) {
             this.state.journey[dateKey] = this.state.journey[dateKey].filter(item => String(item.id) !== String(id));
-            // Jika sudah tidak ada aktivitas di hari tersebut, hapus kunci tanggalnya
-            if (this.state.journey[dateKey].length === 0) {
-                delete this.state.journey[dateKey];
-            }
+            if (this.state.journey[dateKey].length === 0) delete this.state.journey[dateKey];
         }
     }
 
     updateJourney(dateString, id, newData) {
         const dateKey = this._getDateKey(dateString);
         if (!dateKey) return;
-        
         if (this.state.journey[dateKey]) {
             let entry = this.state.journey[dateKey].find(e => String(e.id) === String(id));
             if (entry) entry.data = newData;
         }
     }
 
-    // --- ACTIONS ---
     addPhoto(photoData) {
         this.state.photos.unshift(photoData);
         this.linkToJourney(photoData.date, { id: photoData.id, type: 'Memory', data: photoData.location });
@@ -94,11 +84,7 @@ class AppStore {
     }
     deletePhoto(id) {
         const p = this.state.photos.find(x => String(x.id) === String(id));
-        if(p) { 
-            this.removeFromJourney(p.date, id); 
-            this.state.photos = this.state.photos.filter(x => String(x.id) !== String(id)); 
-            this.saveToCloud(); 
-        }
+        if(p) { this.removeFromJourney(p.date, id); this.state.photos = this.state.photos.filter(x => String(x.id) !== String(id)); this.saveToCloud(); }
     }
 
     addWish(wish) { this.state.wishes.unshift(wish); this.saveToCloud(); }
@@ -116,11 +102,7 @@ class AppStore {
     }
     updateWish(id, data) {
         const w = this.state.wishes.find(x => String(x.id) === String(id));
-        if(w) { 
-            w.title = data.title; w.desc = data.desc; 
-            if (w.done && w.completedAt) this.updateJourney(w.completedAt, id, data.title); 
-            this.saveToCloud(); 
-        }
+        if(w) { w.title = data.title; w.desc = data.desc; if (w.done && w.completedAt) this.updateJourney(w.completedAt, id, data.title); this.saveToCloud(); }
     }
     deleteWish(id) {
         const w = this.state.wishes.find(x => String(x.id) === String(id));
@@ -136,19 +118,29 @@ class AppStore {
     }
     updateLetter(id, data) {
         const l = this.state.letters.find(x => String(x.id) === String(id));
-        if(l) { 
-            l.title = data.title; l.body = data.body; 
-            this.updateJourney(l.date, id, data.title); 
-            this.saveToCloud(); 
-        }
+        if(l) { l.title = data.title; l.body = data.body; this.updateJourney(l.date, id, data.title); this.saveToCloud(); }
     }
     deleteLetter(id) {
         const l = this.state.letters.find(x => String(x.id) === String(id));
-        if(l) { 
-            this.removeFromJourney(l.date, id); 
-            this.state.letters = this.state.letters.filter(x => String(x.id) !== String(id)); 
-            this.saveToCloud(); 
-        }
+        if(l) { this.removeFromJourney(l.date, id); this.state.letters = this.state.letters.filter(x => String(x.id) !== String(id)); this.saveToCloud(); }
     }
 }
 window.store = new AppStore();
+
+// Interceptor Transisi Halaman
+document.addEventListener('DOMContentLoaded', () => {
+    const links = document.querySelectorAll('a[href]');
+    links.forEach(link => {
+        link.addEventListener('click', (e) => {
+            const target = link.getAttribute('href');
+            // Hanya aktifkan animasi keluar pada tautan internal aplikasi
+            if (target && !target.startsWith('http') && !target.startsWith('#')) {
+                e.preventDefault();
+                document.body.classList.add('page-exit');
+                setTimeout(() => {
+                    window.location.href = target;
+                }, 300); // Sesuaikan dengan durasi di CSS (0.3s)
+            }
+        });
+    });
+});
