@@ -76,7 +76,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch(e) { return "Unknown Location"; }
     }
 
-    // HTML5 Image Compression to bypass Firebase Realtime DB limits
+    // HTML5 Image Compression
     function compressImage(file, maxWidth, quality) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -111,14 +111,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (files.length === 0) return;
         loadingText.classList.remove('hidden');
 
-        // Process sequentially to prevent Firebase connection drop
         for (let i = 0; i < files.length; i++) {
             let file = files[i];
             let photoDate = new Date(file.lastModified).toISOString(); 
             let locationName = "Unknown Location";
             let lat = null, lon = null;
 
-            // 1. Extract EXIF data from original file BEFORE compression
             await new Promise((resolve) => {
                 EXIF.getData(file, async function() {
                     let exifDate = EXIF.getTag(this, "DateTimeOriginal");
@@ -134,10 +132,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            // 2. Compress the image drastically to prevent exceeding DB payload sizes
             const compressedBase64 = await compressImage(file, 1200, 0.7);
 
-            // 3. Save to Firebase
             window.store.addPhoto({ 
                 id: Date.now() + i, 
                 src: compressedBase64, 
@@ -148,7 +144,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 hidden: isHiddenView 
             });
 
-            // Brief pause to ensure Realtime DB writes completely
             await new Promise(res => setTimeout(res, 500));
         }
         
@@ -162,7 +157,10 @@ document.addEventListener('DOMContentLoaded', () => {
         markers = [];
         
         const allPhotos = window.store.state.photos || [];
-        const displayPhotos = allPhotos.filter(p => !!p.hidden === isHiddenView);
+        let displayPhotos = allPhotos.filter(p => !!p.hidden === isHiddenView);
+        
+        // PENGURUTAN BERDASARKAN TANGGAL FOTO (Paling Baru ke Paling Lama)
+        displayPhotos.sort((a, b) => new Date(b.date) - new Date(a.date));
         
         if (displayPhotos.length === 0) {
             grid.innerHTML = `<p style="color: var(--text-muted); padding: 1rem;">No ${isHiddenView ? 'hidden ' : ''}memories uploaded yet.</p>`;
@@ -184,8 +182,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const hideIcon = isHiddenView ? "eye" : "eye-off";
             const hideTitle = isHiddenView ? "Unhide Photo" : "Hide Photo";
 
+            // MENAMBAHKAN TANGGAL (photo-date-badge) KE DALAM TAMPILAN FOTO
             item.innerHTML = `
                 <div class="photo-wrapper">
+                    <div class="photo-date-badge">${dateStr}</div>
                     <img src="${photo.src}" alt="Memory">
                 </div>
                 <div class="photo-info-bar">

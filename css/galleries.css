@@ -18,12 +18,11 @@
     margin-bottom: 1.5rem; 
     border-bottom: 1px solid var(--glass-border); 
     padding-bottom: 1rem; 
-    flex-shrink: 0; /* Prevents header from shrinking */
+    flex-shrink: 0; 
 }
 
 .section-header h2 { font-weight: 400; font-size: 2.2rem; }
 
-/* MAP CONTAINER RESPONSIVE SIZING WITH FLEX-SHRINK FIX */
 #map-container {
     height: 400px; 
     padding: 0;
@@ -31,7 +30,7 @@
     overflow: hidden;
     transition: height 0.4s ease, margin-bottom 0.4s ease, opacity 0.3s ease;
     opacity: 1;
-    flex-shrink: 0; /* THE FIX: Locks map height to prevent shrinking on mobile */
+    flex-shrink: 0; 
     width: 100%;
 }
 
@@ -70,6 +69,24 @@
     position: relative;
     overflow: hidden;
     cursor: pointer;
+}
+
+/* TAMPILAN TANGGAL DI ATAS FOTO */
+.photo-date-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 5;
+    letter-spacing: 0.5px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .photo-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s ease; }
@@ -118,4 +135,10 @@
         gap: 12px; 
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     } 
+    .photo-date-badge {
+        font-size: 0.7rem;
+        padding: 3px 6px;
+        top: 8px;
+        left: 8px;
+    }
 }
