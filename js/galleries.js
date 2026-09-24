@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isHiddenView) {
             // Exit hidden view without password
             isHiddenView = false;
-            pageTitle.innerText = "Galleries & Map";
+            pageTitle.innerText = "Gallery";
             toggleHiddenBtn.innerHTML = '<i data-feather="eye-off"></i>';
             feather.replace();
             renderGalleries();
@@ -45,7 +45,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (passwordInput.value === VAULT_PASSWORD) {
             passwordModal.classList.remove('active');
             isHiddenView = true;
-            pageTitle.innerText = "Hidden Vault & Map";
+            pageTitle.innerText = "Hidden";
             toggleHiddenBtn.innerHTML = '<i data-feather="eye"></i>';
             feather.replace();
             renderGalleries();
