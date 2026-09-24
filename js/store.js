@@ -11,22 +11,57 @@
         twilight: ['assets/twilight-1.png', 'assets/twilight-2.png', 'assets/twilight-3.png', 'assets/twilight-4.png']
     };
 
+    const themeIcons = {
+        cony: 'assets/cony-icon.png',
+        brown: 'assets/brown-icon.png',
+        twilight: 'assets/twilight-icon.png'
+    };
+
+    // Fungsi untuk memperbarui Favicon Tab Browser
+    function updateFavicon(theme) {
+        let link = document.querySelector("link[rel~='icon']");
+        if (!link) {
+            link = document.createElement('link');
+            link.rel = 'icon';
+            document.head.appendChild(link);
+        }
+        link.href = themeIcons[theme];
+    }
+
+    // Fungsi untuk mengacak urutan elemen di dalam array
+    function shuffleArray(array) {
+        const arr = [...array];
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+
     function renderDecorations() {
         // Hapus dekorasi lama jika mengganti tema
         document.querySelectorAll('.theme-decor').forEach(el => el.remove());
         const currentTheme = localStorage.getItem('app-theme') || 'twilight';
-        const images = themeImages[currentTheme];
+        let images = themeImages[currentTheme];
+        
+        // Memilih acak hanya 4 gambar jika jumlahnya lebih dari 4 (seperti Cony & Brown)
+        if (images.length > 4) {
+            images = shuffleArray(images).slice(0, 4);
+        }
+        
+        // Perbarui Ikon Tab
+        updateFavicon(currentTheme);
         
         images.forEach((src, idx) => {
             let img = document.createElement('img');
             img.src = src;
             img.className = 'theme-decor';
             
-            // Distribusikan posisi agar tidak menumpuk dan di pinggiran layar (tidak memblokir tombol tengah)
-            if(idx % 4 === 0) { img.style.top = '10%'; img.style.left = '5%'; }
-            else if(idx % 4 === 1) { img.style.top = '15%'; img.style.right = '5%'; }
-            else if(idx % 4 === 2) { img.style.bottom = '10%'; img.style.left = '10%'; }
-            else { img.style.bottom = '15%'; img.style.right = '10%'; }
+            // Distribusikan posisi ke 4 sudut agar seimbang
+            if(idx === 0) { img.style.top = '10%'; img.style.left = '5%'; }
+            else if(idx === 1) { img.style.top = '15%'; img.style.right = '5%'; }
+            else if(idx === 2) { img.style.bottom = '10%'; img.style.left = '10%'; }
+            else if(idx === 3) { img.style.bottom = '15%'; img.style.right = '10%'; }
             
             // Randomize sedikit jarak ekstra dan animasi delay
             img.style.marginTop = (Math.random() * 40) + 'px';

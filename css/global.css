@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap');
 
-/* --- TEMA TWILIGHT SPARKLE (DEFAULT) --- */
+/* --- TWILIGHT SPARKLE THEME (DEFAULT) --- */
 :root {
     --bg-solid: #673888; 
     --bg-panel: rgba(199, 157, 215, 0.15); 
@@ -13,20 +13,20 @@
     --text-muted: #e0e0e0;
 }
 
-/* --- TEMA CONY --- */
+/* --- CONY THEME --- */
 body.theme-cony {
     --bg-solid: #f0f0fc;
-    --bg-panel: #ffffff; /* Panel solid putih agar rapi di bg terang */
+    --bg-panel: #ffffff;
     --bg-panel-hover: #f9f9ff;
     --theme-accent: #f57fce;
     --theme-accent-hover: #e06bb9;
     --theme-accent-trans: rgba(245, 127, 206, 0.15);
     --glass-border: #b4a7d6; 
-    --text-main: #333333; /* Teks diubah gelap agar terbaca */
+    --text-main: #333333; 
     --text-muted: #666666;
 }
 
-/* --- TEMA BROWN --- */
+/* --- BROWN THEME --- */
 body.theme-brown {
     --bg-solid: #462300;
     --bg-panel: rgba(124, 78, 30, 0.35);
@@ -71,18 +71,18 @@ body.page-exit {
 ::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--theme-accent); }
 
-/* Komponen Panel */
+/* Panels */
 .glass-panel { background: var(--bg-panel); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem; transform: translateZ(0); transition: background 0.3s ease, border-color 0.3s ease; }
 .glass-overlay { background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transform: translateZ(0); }
 body.theme-cony .glass-overlay { background-color: rgba(240, 240, 252, 0.9); }
 
-/* Dekorasi Tema Animasi Mengambang */
+/* Tema Dekorasi (Ditaruh Paling Belakang) */
 .theme-decor {
     position: fixed;
     width: 130px;
     opacity: 0.6;
-    z-index: 1;
-    pointer-events: none;
+    z-index: -1; /* <--- Paling belakang */
+    pointer-events: none; /* Tidak bisa diklik */
     animation: floatDecor 12s infinite alternate ease-in-out;
 }
 @keyframes floatDecor {
@@ -91,7 +91,7 @@ body.theme-cony .glass-overlay { background-color: rgba(240, 240, 252, 0.9); }
 }
 @media (max-width: 768px) { .theme-decor { width: 90px; opacity: 0.4; } }
 
-/* Tombol */
+/* Buttons */
 .glow-btn { background: transparent; color: var(--theme-accent); border: 1px solid var(--theme-accent); padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; letter-spacing: 1px; font-weight: 500; }
 .glow-btn.small { padding: 8px 16px; font-size: 0.85rem; }
 .glow-btn:hover { background: var(--theme-accent); color: #fff; box-shadow: 0 0 15px var(--theme-accent-trans); }
@@ -113,7 +113,7 @@ body.theme-cony .glass-overlay { background-color: rgba(240, 240, 252, 0.9); }
 .text-modal { background: var(--bg-panel); padding: 2.5rem 2rem; width: 90%; max-width: 450px; text-align: center; border: 1px solid var(--glass-border); max-height: 85vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 #modal-caption { margin-top: 15px; color: var(--text-muted); font-size: 0.9rem; text-align: center; }
 
-/* Perbaikan Kontras untuk Tema Cony (Terang) */
+/* Kontras untuk Tema Terang (Cony) */
 body.theme-cony .edit-input, body.theme-cony input[type="text"], body.theme-cony textarea, body.theme-cony select { background: #fff; color: #333; border-color: var(--glass-border); }
 body.theme-cony .author-selector { background: #fff; color: #333; }
 body.theme-cony .photo-info-bar { background: #fff; color: #333; border-top: 1px solid var(--glass-border); }

@@ -52,7 +52,7 @@
         <!-- Slide 9 (Pesan ke-10) -->
         <div class="slide">
             <p>This is a website I created for the two of us, as a gesture of effort to apologize.</p>
-            <button class="glow-btn solid huge hidden" id="continue-btn" onclick="window.location.href='index.html'">Continue to Our Space</button>
+            <button class="glow-btn solid huge hidden" id="continue-btn">Conti Our Space</button>
         </div>
         
         <!-- Controls -->
@@ -84,6 +84,10 @@
             
             continueBtn.addEventListener('click', (e) => {
                 e.preventDefault();
+                
+                // Menetapkan tema default "twilight" sebelum berpindah ke index.html
+                localStorage.setItem('app-theme', 'twilight');
+                
                 document.body.classList.add('page-exit');
                 setTimeout(() => { window.location.href = 'index.html'; }, 750);
             });
