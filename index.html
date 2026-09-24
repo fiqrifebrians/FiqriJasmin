@@ -6,7 +6,8 @@
     <title>Fiqri ♥︎ Jasmin</title>
     <link rel="stylesheet" href="css/global.css">
     <style>
-        #central-menu { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100dvh; width: 100vw; background: var(--bg-solid); transition: background 0.5s ease; }
+        /* Mengubah background menjadi transparent agar tidak menutupi gambar floating di body */
+        #central-menu { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100dvh; width: 100vw; background: transparent; transition: background 0.5s ease; }
         .menu-title { font-size: 3.5rem; font-weight: 400; color: var(--text-main); margin-bottom: 3rem; letter-spacing: 2px; }
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; max-width: 700px; width: 90%; z-index: 10; }
         .menu-card { text-align: center; cursor: pointer; transition: all 0.3s ease; border: 1px solid var(--glass-border); padding: 2.5rem 1rem; text-decoration: none; display: block; border-radius: 12px; background: var(--bg-panel); backdrop-filter: blur(5px);}
@@ -40,7 +41,6 @@
         </div>
     </div>
     
-    <!-- Pustaka Database Tetap Dimuat Agar store.js Berjalan Sempurna -->
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="js/store.js"></script>
@@ -51,7 +51,7 @@
             links.forEach(link => {
                 link.addEventListener('click', (e) => {
                     const target = link.getAttribute('href');
-                    if (target) {
+                    if (target && !target.startsWith('http') && !target.startsWith('#')) {
                         e.preventDefault();
                         document.body.classList.add('page-exit');
                         setTimeout(() => { window.location.href = target; }, 750); 
