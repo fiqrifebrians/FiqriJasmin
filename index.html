@@ -10,14 +10,14 @@
         .menu-title { font-size: 3.5rem; font-weight: 400; color: var(--text-main); margin-bottom: 3rem; letter-spacing: 2px; }
         .menu-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; max-width: 700px; width: 90%; }
         .menu-card { text-align: center; cursor: pointer; transition: all 0.3s ease; border: 1px solid var(--glass-border); padding: 2.5rem 1rem; text-decoration: none; display: block; border-radius: 12px; background: var(--bg-panel);}
-        .menu-card:hover { transform: translateY(-5px); border-color: var(--primary-purple); background: #110818; }
+        .menu-card:hover { transform: translateY(-5px); border-color: var(--theme-accent); background: var(--bg-panel-hover); }
         .menu-card h3 { font-size: 1.6rem; font-weight: 400; color: var(--text-main); }
         @media (max-width: 768px) { .menu-grid { grid-template-columns: 1fr; } .menu-title { font-size: 2.5rem; } }
     </style>
 </head>
 <body>
     <div id="central-menu">
-        <h1 class="menu-title">Fiqri <span style="color:var(--primary-purple);">♥︎</span> Jasmin</h1>
+        <h1 class="menu-title">Fiqri <span style="color:var(--theme-accent);">♥︎</span> Jasmin</h1>
         <div class="menu-grid">
             <a href="journey.html" class="menu-card"><h3>Journey</h3></a>
             <a href="galleries.html" class="menu-card"><h3>Gallery</h3></a>
@@ -25,5 +25,21 @@
             <a href="letters.html" class="menu-card"><h3>Love Letters</h3></a>
         </div>
     </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const links = document.querySelectorAll('a[href]');
+            links.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const target = link.getAttribute('href');
+                    if (target && !target.startsWith('http') && !target.startsWith('#')) {
+                        e.preventDefault();
+                        document.body.classList.add('page-exit');
+                        setTimeout(() => { window.location.href = target; }, 750); 
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

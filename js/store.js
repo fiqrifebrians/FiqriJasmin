@@ -127,19 +127,18 @@ class AppStore {
 }
 window.store = new AppStore();
 
-// Interceptor Transisi Halaman
+// Interceptor Transisi Halaman (Disesuaikan dengan animasi Leave 0.8s)
 document.addEventListener('DOMContentLoaded', () => {
     const links = document.querySelectorAll('a[href]');
     links.forEach(link => {
         link.addEventListener('click', (e) => {
             const target = link.getAttribute('href');
-            // Hanya aktifkan animasi keluar pada tautan internal aplikasi
             if (target && !target.startsWith('http') && !target.startsWith('#')) {
                 e.preventDefault();
                 document.body.classList.add('page-exit');
                 setTimeout(() => {
                     window.location.href = target;
-                }, 300); // Sesuaikan dengan durasi di CSS (0.3s)
+                }, 750); 
             }
         });
     });

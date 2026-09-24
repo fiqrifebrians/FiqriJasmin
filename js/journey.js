@@ -37,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 dayDiv.addEventListener('click', () => {
                     activityDate.textContent = new Date(dateKey).toLocaleDateString('en-US', {weekday: 'long', day:'numeric', month:'long', year:'numeric'});
                     
-                    // Render List Dinamis ke Dalam Modal Scrollable
                     activityList.innerHTML = journeyData[dateKey].map(e => {
                         let fullContent = '';
                         
@@ -56,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         return `
                             <div class="journey-log-item">
-                                <span style="font-size:0.75rem; color:var(--primary-purple); text-transform:uppercase; letter-spacing:1px; border: 1px solid var(--primary-purple); padding:3px 10px; border-radius:12px;">${e.type}</span>
+                                <span style="font-size:0.75rem; color:var(--theme-accent); text-transform:uppercase; letter-spacing:1px; border: 1px solid var(--theme-accent); padding:3px 10px; border-radius:12px; background: var(--theme-accent-trans);">${e.type}</span>
                                 ${fullContent || `<p style="margin-top:12px; font-size:1rem; color:var(--text-main);">${e.data}</p>`}
                             </div>
                         `;

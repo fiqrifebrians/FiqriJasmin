@@ -1,32 +1,15 @@
-/* Layout Full Width untuk mendorong scrollbar ke tepi layar */
-.page-container { 
-    width: 100vw; 
-    height: 100dvh; 
-    overflow-y: auto; 
-    overflow-x: hidden; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    padding: 5rem 5% 2rem; 
-}
-
-/* Mengunci lebar konten ke tengah */
-.page-container > * { 
-    width: 100%; 
-    max-width: 900px; 
-}
-
+.page-container { width: 100vw; height: 100dvh; overflow-y: auto; overflow-x: hidden; display: flex; flex-direction: column; align-items: center; padding: 5rem 5% 2rem; }
+.page-container > * { width: 100%; max-width: 900px; }
 .section-header { margin-bottom: 2rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem; }
 .section-header h2 { font-weight: 400; font-size: 2.2rem; }
-
 .calendar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
 .calendar-days { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-weight: 500; color: var(--text-muted); margin-bottom: 10px; font-size: 0.9rem;}
 .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
 
 .cal-day { background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); border-radius: 6px; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; transition: all 0.3s; }
 .cal-day.empty { background: transparent; border-color: transparent; }
-.cal-day.has-event { background: rgba(168, 85, 247, 0.15); border-color: var(--primary-purple); color: #fff; cursor: pointer; font-weight: 600; box-shadow: inset 0 0 10px rgba(168,85,247,0.3);}
-.cal-day.has-event:hover { transform: scale(1.1); background: var(--primary-purple); }
+.cal-day.has-event { background: var(--theme-accent-trans); border-color: var(--theme-accent); color: #fff; cursor: pointer; font-weight: 600; box-shadow: inset 0 0 10px rgba(239, 79, 145, 0.2);}
+.cal-day.has-event:hover { transform: scale(1.1); background: var(--theme-accent); }
 
 #activity-list { display: flex; flex-direction: column; gap: 15px; margin-top: 20px; }
 .journey-log-item { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--glass-border); border-radius: 12px; padding: 18px; text-align: left; }

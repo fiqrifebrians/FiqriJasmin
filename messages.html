@@ -70,24 +70,22 @@
             const controlsContainer = document.getElementById('controls-container');
 
             nextBtn.addEventListener('click', () => {
-                // Fade out current slide
                 slides[currentSlide].style.opacity = '0';
-                
                 setTimeout(() => {
                     slides[currentSlide].classList.remove('active');
                     currentSlide++;
-                    
-                    // Check if it's the last slide
                     if (currentSlide >= slides.length - 1) {
                         controlsContainer.classList.add('hidden');
                         continueBtn.classList.remove('hidden');
                     }
-                    
-                    // Show next slide
-                    if (currentSlide < slides.length) {
-                        slides[currentSlide].classList.add('active');
-                    }
-                }, 1000); // 1 second fade transition
+                    if (currentSlide < slides.length) slides[currentSlide].classList.add('active');
+                }, 1000);
+            });
+            
+            continueBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                document.body.classList.add('page-exit');
+                setTimeout(() => { window.location.href = 'index.html'; }, 750);
             });
         });
     </script>

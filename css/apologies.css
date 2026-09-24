@@ -2,11 +2,11 @@ body { display: flex; align-items: center; justify-content: center; background: 
 #borderless-slider { width: 100vw; height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; position: relative; padding: 0 10%; }
 .slide { display: none; opacity: 0; transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -45%); width: 80%; max-width: 1000px; }
 .slide.active { display: block; opacity: 1; transform: translate(-50%, -50%); animation: textFadeIn 1.5s forwards; }
-.slide h1 { font-weight: 300; font-size: 5rem; color: var(--text-main); text-shadow: 0 0 20px rgba(168, 85, 247, 0.5); letter-spacing: -1px; }
+.slide h1 { font-weight: 300; font-size: 5rem; color: var(--text-main); text-shadow: 0 0 20px rgba(239, 79, 145, 0.5); letter-spacing: -1px; }
 .slide p { font-weight: 300; font-size: 2.5rem; line-height: 1.6; color: var(--text-main); }
 .controls { position: absolute; bottom: 10vh; left: 50%; transform: translateX(-50%); z-index: 10; }
 .nav-arrow { background: none; border: none; color: var(--text-muted); font-size: 4rem; cursor: pointer; transition: all 0.4s ease; font-weight: 100; }
-.nav-arrow:hover { transform: translateX(15px); color: var(--primary-purple); }
+.nav-arrow:hover { transform: translateX(15px); color: var(--theme-accent); }
 .glow-btn.huge { padding: 1.5rem 3rem; font-size: 1.5rem; margin-top: 3rem; border-width: 2px; }
 @keyframes textFadeIn { from { opacity: 0; filter: blur(10px); } to { opacity: 1; filter: blur(0); } }
 @media (max-width: 768px) { .slide h1 { font-size: 3.5rem; } .slide p { font-size: 1.8rem; } }

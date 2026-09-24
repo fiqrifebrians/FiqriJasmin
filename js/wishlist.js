@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Date Modal Logic
     todayBtn.addEventListener('click', () => {
         if(activeWishId) {
             window.store.toggleWish(activeWishId, new Date().toISOString());
@@ -76,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span class="wish-author-badge">By ${wish.author || 'Unknown'}</span>
                         </div>
                         ${wish.desc ? `<p class="wish-desc">${wish.desc}</p>` : ''}
-                        ${wish.done && wish.completedAt ? `<p style="font-size:0.8rem; color:var(--primary-purple); margin-top:5px;">Achieved on: ${new Date(wish.completedAt).toLocaleDateString('en-US')}</p>` : ''}
+                        ${wish.done && wish.completedAt ? `<p style="font-size:0.8rem; color:var(--theme-accent); margin-top:5px;">Achieved on: ${new Date(wish.completedAt).toLocaleDateString('en-US')}</p>` : ''}
                     </div>
                 </div>
                 <div class="wish-tools">
@@ -91,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     activeWishId = wish.id;
                     dateInput.value = new Date().toISOString().split('T')[0];
                     dateModal.classList.add('active');
-                } else window.store.toggleWish(wish.id); // Cancel achievement
+                } else window.store.toggleWish(wish.id); 
             });
             item.querySelector('.edit-btn').addEventListener('click', () => {
                 window.openEditModal("Edit Wish", wish.title, wish.desc || "", (newTitle, newDesc) => {
