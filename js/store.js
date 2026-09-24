@@ -44,40 +44,49 @@ class AppStore {
     notify() { this.listeners.forEach(listener => listener(this.state)); }
     saveToCloud() { db.ref('sanctuary_data').set(this.state); }
 
-    // -- JOURNEY HUB --
+    // --- STANDARDISASI FORMAT TANGGAL UNTUK MENCEGAH BUG ZONA WAKTU ---
+    _getDateKey(dateString) {
+        if (!dateString) return null;
+        const d = new Date(dateString);
+        if (isNaN(d.getTime())) return null;
+        return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    }
+
+    // --- LOGIKA SINKRONISASI JOURNEY ---
     linkToJourney(dateString, attachment) {
-        if (!dateString) return;
-        const dateObj = new Date(dateString);
-        const dateKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
+        const dateKey = this._getDateKey(dateString);
+        if (!dateKey) return;
         if (!this.state.journey[dateKey]) this.state.journey[dateKey] = [];
         
-        // Prevent ID duplicates
+        // Hapus entri lama jika ID sama, lalu masukkan yang baru
         this.state.journey[dateKey] = this.state.journey[dateKey].filter(item => String(item.id) !== String(attachment.id));
         this.state.journey[dateKey].push(attachment);
     }
     
     removeFromJourney(dateString, id) {
-        if(!dateString) return;
-        const dateObj = new Date(dateString);
-        const dateKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
+        const dateKey = this._getDateKey(dateString);
+        if (!dateKey) return;
+        
         if (this.state.journey[dateKey]) {
-            // Force strict string conversion to prevent deletion failures
             this.state.journey[dateKey] = this.state.journey[dateKey].filter(item => String(item.id) !== String(id));
-            if (this.state.journey[dateKey].length === 0) delete this.state.journey[dateKey];
+            // Jika sudah tidak ada aktivitas di hari tersebut, hapus kunci tanggalnya
+            if (this.state.journey[dateKey].length === 0) {
+                delete this.state.journey[dateKey];
+            }
         }
     }
 
     updateJourney(dateString, id, newData) {
-        if(!dateString) return;
-        const dateObj = new Date(dateString);
-        const dateKey = `${dateObj.getFullYear()}-${String(dateObj.getMonth()+1).padStart(2,'0')}-${String(dateObj.getDate()).padStart(2,'0')}`;
+        const dateKey = this._getDateKey(dateString);
+        if (!dateKey) return;
+        
         if (this.state.journey[dateKey]) {
             let entry = this.state.journey[dateKey].find(e => String(e.id) === String(id));
             if (entry) entry.data = newData;
         }
     }
 
-    // -- PHOTOS --
+    // --- ACTIONS ---
     addPhoto(photoData) {
         this.state.photos.unshift(photoData);
         this.linkToJourney(photoData.date, { id: photoData.id, type: 'Memory', data: photoData.location });
@@ -85,10 +94,13 @@ class AppStore {
     }
     deletePhoto(id) {
         const p = this.state.photos.find(x => String(x.id) === String(id));
-        if(p) { this.removeFromJourney(p.date, id); this.state.photos = this.state.photos.filter(x => String(x.id) !== String(id)); this.saveToCloud(); }
+        if(p) { 
+            this.removeFromJourney(p.date, id); 
+            this.state.photos = this.state.photos.filter(x => String(x.id) !== String(id)); 
+            this.saveToCloud(); 
+        }
     }
 
-    // -- WISHES --
     addWish(wish) { this.state.wishes.unshift(wish); this.saveToCloud(); }
     toggleWish(id, completionDateStr = null) {
         const w = this.state.wishes.find(x => String(x.id) === String(id));
@@ -104,7 +116,11 @@ class AppStore {
     }
     updateWish(id, data) {
         const w = this.state.wishes.find(x => String(x.id) === String(id));
-        if(w) { w.title = data.title; w.desc = data.desc; if (w.done && w.completedAt) this.updateJourney(w.completedAt, id, data.title); this.saveToCloud(); }
+        if(w) { 
+            w.title = data.title; w.desc = data.desc; 
+            if (w.done && w.completedAt) this.updateJourney(w.completedAt, id, data.title); 
+            this.saveToCloud(); 
+        }
     }
     deleteWish(id) {
         const w = this.state.wishes.find(x => String(x.id) === String(id));
@@ -113,7 +129,6 @@ class AppStore {
         this.saveToCloud(); 
     }
 
-    // -- LETTERS --
     addLetter(letter) {
         this.state.letters.unshift(letter);
         this.linkToJourney(letter.date, { id: letter.id, type: 'Love Letter', data: letter.title });
@@ -121,11 +136,19 @@ class AppStore {
     }
     updateLetter(id, data) {
         const l = this.state.letters.find(x => String(x.id) === String(id));
-        if(l) { l.title = data.title; l.body = data.body; this.updateJourney(l.date, id, data.title); this.saveToCloud(); }
+        if(l) { 
+            l.title = data.title; l.body = data.body; 
+            this.updateJourney(l.date, id, data.title); 
+            this.saveToCloud(); 
+        }
     }
     deleteLetter(id) {
         const l = this.state.letters.find(x => String(x.id) === String(id));
-        if(l) { this.removeFromJourney(l.date, id); this.state.letters = this.state.letters.filter(x => String(x.id) !== String(id)); this.saveToCloud(); }
+        if(l) { 
+            this.removeFromJourney(l.date, id); 
+            this.state.letters = this.state.letters.filter(x => String(x.id) !== String(id)); 
+            this.saveToCloud(); 
+        }
     }
 }
 window.store = new AppStore();
