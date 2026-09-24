@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const mapContainer = document.getElementById('map-container');
     const toggleMapBtn = document.getElementById('toggle-map-btn');
     
-    // Hidden Gallery Elements
     const toggleHiddenBtn = document.getElementById('toggle-hidden-btn');
     const passwordModal = document.getElementById('password-modal');
     const passwordInput = document.getElementById('vault-password');
@@ -25,17 +24,15 @@ document.addEventListener('DOMContentLoaded', () => {
     }).addTo(map);
     let markers = [];
 
-    // Hidden View Toggle Logic
+    // Hidden View Toggle Logic (Teks diubah menjadi Gallery / Hidden)
     toggleHiddenBtn.addEventListener('click', () => {
         if (isHiddenView) {
-            // Exit hidden view without password
             isHiddenView = false;
             pageTitle.innerText = "Gallery";
             toggleHiddenBtn.innerHTML = '<i data-feather="eye-off"></i>';
             feather.replace();
             renderGalleries();
         } else {
-            // Enter hidden view (require password)
             passwordInput.value = '';
             passwordModal.classList.add('active');
         }
@@ -58,7 +55,6 @@ document.addEventListener('DOMContentLoaded', () => {
         passwordModal.classList.remove('active');
     });
 
-    // Map Toggle Logic
     toggleMapBtn.addEventListener('click', () => {
         mapContainer.classList.toggle('hidden');
         if(!mapContainer.classList.contains('hidden')) {
@@ -116,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     location: locationName, 
                     lat: lat, 
                     lon: lon, 
-                    hidden: isHiddenView // Assign true if currently in hidden gallery
+                    hidden: isHiddenView 
                 });
             };
             reader.readAsDataURL(file);
@@ -131,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
         markers = [];
         
         const allPhotos = window.store.state.photos || [];
-        // Filter photos based on current view mode
         const displayPhotos = allPhotos.filter(p => !!p.hidden === isHiddenView);
         
         if (displayPhotos.length === 0) {
@@ -146,36 +141,53 @@ document.addEventListener('DOMContentLoaded', () => {
                 markers.push(marker);
                 mapBounds.push([photo.lat, photo.lon]);
             }
+            
             const item = document.createElement('div');
-            item.className = `grid-item`;
+            // Menambahkan class vault-hidden jika di mode hidden agar gambar menjadi blur
+            item.className = `grid-item ${isHiddenView ? 'vault-hidden' : ''}`;
             const dateStr = new Date(photo.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
             
             const hideIcon = isHiddenView ? "eye" : "eye-off";
             const hideTitle = isHiddenView ? "Unhide Photo" : "Hide Photo";
 
+            // Struktur HTML Baru (Tombol di luar gambar / Bottom Bar)
             item.innerHTML = `
-                <img src="${photo.src}" alt="Memory">
-                <div class="meta-tag">${photo.location}</div>
-                <div class="photo-actions">
-                    <button class="action-btn toggle-visibility-btn" title="${hideTitle}"><i data-feather="${hideIcon}"></i></button>
-                    <button class="action-btn delete-btn" title="Delete Photo"><i data-feather="trash-2"></i></button>
+                <div class="photo-wrapper">
+                    <img src="${photo.src}" alt="Memory">
+                </div>
+                <div class="photo-info-bar">
+                    <div class="photo-location" title="${photo.location}">
+                        <i data-feather="map-pin"></i> ${photo.location}
+                    </div>
+                    <div class="photo-actions-bottom">
+                        <button class="action-btn toggle-visibility-btn" title="${hideTitle}"><i data-feather="${hideIcon}"></i></button>
+                        <button class="action-btn delete-btn" title="Delete Photo"><i data-feather="trash-2"></i></button>
+                    </div>
                 </div>
             `;
             
-            // Hide/Unhide Logic
+            // Logika Pesan Konfirmasi Bahasa Inggris saat di Hide / Unhide
             item.querySelector('.toggle-visibility-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
-                window.store.togglePhotoVisibility(photo.id, !isHiddenView);
+                const confirmMsg = isHiddenView 
+                    ? "Are you sure you want to unhide this photo?" 
+                    : "Are you sure you want to hide this photo in the vault?";
+                
+                if (confirm(confirmMsg)) {
+                    window.store.togglePhotoVisibility(photo.id, !isHiddenView);
+                }
             });
 
-            // Delete Logic
+            // Logika Delete
             item.querySelector('.delete-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
-                if(confirm("Delete this photo permanently?")) window.store.deletePhoto(photo.id);
+                if(confirm("Are you sure you want to permanently delete this photo?")) {
+                    window.store.deletePhoto(photo.id);
+                }
             });
 
-            // Zoom Image Logic
-            item.addEventListener('click', () => {
+            // Logika Zoom hanya berjalan jika area gambar (photo-wrapper) di klik
+            item.querySelector('.photo-wrapper').addEventListener('click', () => {
                 modalImg.src = photo.src;
                 modalCaption.innerHTML = `<strong>${dateStr}</strong><br>Location: ${photo.location}`;
                 modal.classList.add('active');
