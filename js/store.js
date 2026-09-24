@@ -77,16 +77,39 @@ class AppStore {
         }
     }
 
+    // --- PHOTOS ---
     addPhoto(photoData) {
         this.state.photos.unshift(photoData);
-        this.linkToJourney(photoData.date, { id: photoData.id, type: 'Memory', data: photoData.location });
+        // Only show in journey if not hidden
+        if (!photoData.hidden) {
+            this.linkToJourney(photoData.date, { id: photoData.id, type: 'Memory', data: photoData.location });
+        }
         this.saveToCloud();
     }
+
     deletePhoto(id) {
         const p = this.state.photos.find(x => String(x.id) === String(id));
-        if(p) { this.removeFromJourney(p.date, id); this.state.photos = this.state.photos.filter(x => String(x.id) !== String(id)); this.saveToCloud(); }
+        if(p) { 
+            this.removeFromJourney(p.date, id); 
+            this.state.photos = this.state.photos.filter(x => String(x.id) !== String(id)); 
+            this.saveToCloud(); 
+        }
     }
 
+    togglePhotoVisibility(id, isHidden) {
+        const p = this.state.photos.find(x => String(x.id) === String(id));
+        if(p) { 
+            p.hidden = isHidden;
+            if (isHidden) {
+                this.removeFromJourney(p.date, id); // Remove from journey if hidden
+            } else {
+                this.linkToJourney(p.date, { id: p.id, type: 'Memory', data: p.location }); // Add back if unhidden
+            }
+            this.saveToCloud(); 
+        }
+    }
+
+    // --- WISHES ---
     addWish(wish) { this.state.wishes.unshift(wish); this.saveToCloud(); }
     toggleWish(id, completionDateStr = null) {
         const w = this.state.wishes.find(x => String(x.id) === String(id));
@@ -111,6 +134,7 @@ class AppStore {
         this.saveToCloud(); 
     }
 
+    // --- LETTERS ---
     addLetter(letter) {
         this.state.letters.unshift(letter);
         this.linkToJourney(letter.date, { id: letter.id, type: 'Love Letter', data: letter.title });
@@ -127,7 +151,7 @@ class AppStore {
 }
 window.store = new AppStore();
 
-// Interceptor Transisi Halaman (Disesuaikan dengan animasi Leave 0.8s)
+// Page Transition Interceptor
 document.addEventListener('DOMContentLoaded', () => {
     const links = document.querySelectorAll('a[href]');
     links.forEach(link => {
