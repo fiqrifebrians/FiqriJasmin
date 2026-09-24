@@ -9,23 +9,53 @@
 </head>
 <body>
     <div id="borderless-slider">
+        <!-- Slide 1 -->
         <div class="slide active">
-            <h1 style="font-weight: 400;">Hi Jas</h1>
+            <h1 style="font-weight: 400;">Hi Jas...</h1>
         </div>
+        
+        <!-- Slide 2 -->
         <div class="slide">
-            <p>I want you to know that I love you deeply. I am sincerely sorry for all of my past actions, and I miss us.</p>
+            <p>I actually really dislike calling you that... I miss calling you by my sweet pet names for you.</p>
         </div>
+        
+        <!-- Slide 3 -->
         <div class="slide">
-            <p>I am fully committed to fixing everything and rebuilding what we lost, together.</p>
+            <p>I am still so deeply in love with you, and I truly regret everything that I have done.</p>
         </div>
+        
+        <!-- Slide 4 -->
         <div class="slide">
-            <p>I know healing takes time, but please accept this web app as a testament to my absolute seriousness about our relationship.</p>
+            <p>I know it won't be easy for you to accept me back, and I understand that healing will take a very long time.</p>
         </div>
+        
+        <!-- Slide 5 -->
         <div class="slide">
-            <p>I built this digital sanctuary exclusively for the two of us. A private space to hold our memories and future dreams.</p>
+            <p>You were absolutely right. To earn your trust back, mere words and regrets are not enough. It requires real action.</p>
+        </div>
+        
+        <!-- Slide 6 -->
+        <div class="slide">
+            <p>I will prove everything through my actions, and this is one of them. I built this private web app just to apologize and show you how much you mean to me.</p>
+        </div>
+        
+        <!-- Slide 7 (Pesan ke-8) -->
+        <div class="slide">
+            <p>This is just the first of many things I will do moving forward to prove how infinitely I love you.</p>
+        </div>
+        
+        <!-- Slide 8 (Pesan ke-9) -->
+        <div class="slide">
+            <p>You deserve a man who loves you purely, fiercely, and unconditionally—and I promise to be that man for you.</p>
+        </div>
+        
+        <!-- Slide 9 (Pesan ke-10) -->
+        <div class="slide">
+            <p>This is the ultimate testament of my love for you.</p>
             <button class="glow-btn solid huge hidden" id="continue-btn" onclick="window.location.href='index.html'">Enter Our Space</button>
         </div>
         
+        <!-- Controls -->
         <div class="controls" id="controls-container">
             <button id="next-btn" class="nav-arrow" style="font-family: sans-serif;">&#10230;</button>
         </div>
@@ -40,16 +70,24 @@
             const controlsContainer = document.getElementById('controls-container');
 
             nextBtn.addEventListener('click', () => {
+                // Fade out current slide
                 slides[currentSlide].style.opacity = '0';
+                
                 setTimeout(() => {
                     slides[currentSlide].classList.remove('active');
                     currentSlide++;
+                    
+                    // Check if it's the last slide
                     if (currentSlide >= slides.length - 1) {
                         controlsContainer.classList.add('hidden');
                         continueBtn.classList.remove('hidden');
                     }
-                    if (currentSlide < slides.length) slides[currentSlide].classList.add('active');
-                }, 1000);
+                    
+                    // Show next slide
+                    if (currentSlide < slides.length) {
+                        slides[currentSlide].classList.add('active');
+                    }
+                }, 1000); // 1 second fade transition
             });
         });
     </script>
