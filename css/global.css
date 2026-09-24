@@ -1,28 +1,53 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap');
 
+/* --- TEMA TWILIGHT SPARKLE (DEFAULT) --- */
 :root {
-    /* Tema Warna Baru */
-    --bg-solid: #363b74; 
-    --bg-panel: rgba(103, 56, 136, 0.65); 
-    --bg-panel-hover: rgba(103, 56, 136, 0.85); 
+    --bg-solid: #673888; 
+    --bg-panel: rgba(199, 157, 215, 0.15); 
+    --bg-panel-hover: rgba(199, 157, 215, 0.3); 
     --theme-accent: #ef4f91; 
     --theme-accent-hover: #d63d7d;
     --theme-accent-trans: rgba(239, 79, 145, 0.15);
-    
     --glass-border: rgba(255, 255, 255, 0.15);
     --text-main: #fcfcfc;
-    --text-muted: #c4c7e6;
+    --text-muted: #e0e0e0;
+}
+
+/* --- TEMA CONY --- */
+body.theme-cony {
+    --bg-solid: #f0f0fc;
+    --bg-panel: #ffffff; /* Panel solid putih agar rapi di bg terang */
+    --bg-panel-hover: #f9f9ff;
+    --theme-accent: #f57fce;
+    --theme-accent-hover: #e06bb9;
+    --theme-accent-trans: rgba(245, 127, 206, 0.15);
+    --glass-border: #b4a7d6; 
+    --text-main: #333333; /* Teks diubah gelap agar terbaca */
+    --text-muted: #666666;
+}
+
+/* --- TEMA BROWN --- */
+body.theme-brown {
+    --bg-solid: #462300;
+    --bg-panel: rgba(124, 78, 30, 0.35);
+    --bg-panel-hover: rgba(124, 78, 30, 0.55);
+    --theme-accent: #7c4e1e;
+    --theme-accent-hover: #9c6326;
+    --theme-accent-trans: rgba(124, 78, 30, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.15);
+    --text-main: #fcfcfc;
+    --text-muted: #cccccc;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Outfit', sans-serif; }
 
-/* Transisi Sinematik Minimalis Saat Load Halaman (Durasi 1 Detik) */
 body { 
     background-color: var(--bg-solid); 
     color: var(--text-main); 
     height: 100dvh; 
     overflow: hidden; 
     opacity: 0;
+    transition: background-color 0.5s ease;
     animation: cinematicEnter 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
@@ -42,28 +67,44 @@ body.page-exit {
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--bg-solid); }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 10px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--theme-accent); }
 
-/* Komponen Panel & Overlay */
-.glass-panel { background: var(--bg-panel); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem; transform: translateZ(0); }
-.glass-overlay { background-color: rgba(54, 59, 116, 0.95); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transform: translateZ(0); }
+/* Komponen Panel */
+.glass-panel { background: var(--bg-panel); border: 1px solid var(--glass-border); border-radius: 12px; padding: 1.5rem; transform: translateZ(0); transition: background 0.3s ease, border-color 0.3s ease; }
+.glass-overlay { background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transform: translateZ(0); }
+body.theme-cony .glass-overlay { background-color: rgba(240, 240, 252, 0.9); }
+
+/* Dekorasi Tema Animasi Mengambang */
+.theme-decor {
+    position: fixed;
+    width: 130px;
+    opacity: 0.6;
+    z-index: 1;
+    pointer-events: none;
+    animation: floatDecor 12s infinite alternate ease-in-out;
+}
+@keyframes floatDecor {
+    from { transform: translateY(0) rotate(0deg); }
+    to { transform: translateY(-25px) rotate(8deg); }
+}
+@media (max-width: 768px) { .theme-decor { width: 90px; opacity: 0.4; } }
 
 /* Tombol */
 .glow-btn { background: transparent; color: var(--theme-accent); border: 1px solid var(--theme-accent); padding: 12px 24px; border-radius: 8px; font-size: 1rem; cursor: pointer; transition: all 0.3s ease; letter-spacing: 1px; font-weight: 500; }
 .glow-btn.small { padding: 8px 16px; font-size: 0.85rem; }
-.glow-btn:hover { background: var(--theme-accent); color: #fff; box-shadow: 0 0 15px rgba(239, 79, 145, 0.5); }
+.glow-btn:hover { background: var(--theme-accent); color: #fff; box-shadow: 0 0 15px var(--theme-accent-trans); }
 .glow-btn.solid { background: var(--theme-accent); color: #fff; }
 .glow-btn.solid:hover { background: var(--theme-accent-hover); }
 
-.action-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; transition: color 0.3s, transform 0.2s; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; background: rgba(255,255,255,0.05); border: 1px solid transparent; }
+.action-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; transition: color 0.3s, transform 0.2s; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; background: rgba(128,128,128,0.1); border: 1px solid transparent; }
 .action-btn:hover { color: var(--theme-accent); border-color: var(--theme-accent); background: var(--theme-accent-trans); transform: translateY(-2px); }
 .action-btn svg { width: 16px; height: 16px; }
 
 .hidden { display: none !important; }
 
-/* Modal Khusus */
+/* Modals */
 .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; justify-content: center; align-items: center; flex-direction: column; }
 .modal.active { display: flex; animation: fadeIn 0.3s ease; }
 .close-modal { position: absolute; top: 20px; right: 25px; color: var(--text-muted); font-size: 35px; font-weight: 300; cursor: pointer; transition: color 0.3s; z-index: 1001; }
@@ -71,5 +112,12 @@ body.page-exit {
 .modal-content { max-width: 90%; max-height: 80vh; border-radius: 12px; object-fit: contain; }
 .text-modal { background: var(--bg-panel); padding: 2.5rem 2rem; width: 90%; max-width: 450px; text-align: center; border: 1px solid var(--glass-border); max-height: 85vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 #modal-caption { margin-top: 15px; color: var(--text-muted); font-size: 0.9rem; text-align: center; }
+
+/* Perbaikan Kontras untuk Tema Cony (Terang) */
+body.theme-cony .edit-input, body.theme-cony input[type="text"], body.theme-cony textarea, body.theme-cony select { background: #fff; color: #333; border-color: var(--glass-border); }
+body.theme-cony .author-selector { background: #fff; color: #333; }
+body.theme-cony .photo-info-bar { background: #fff; color: #333; border-top: 1px solid var(--glass-border); }
+body.theme-cony .photo-location { color: #555; }
+body.theme-cony .cal-day { background: #fff; color: #333; border-color: var(--glass-border); }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
