@@ -24,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }).addTo(map);
     let markers = [];
 
-    // Hidden View Toggle Logic (Teks diubah menjadi Gallery / Hidden)
     toggleHiddenBtn.addEventListener('click', () => {
         if (isHiddenView) {
             isHiddenView = false;
@@ -77,17 +76,49 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch(e) { return "Unknown Location"; }
     }
 
+    // HTML5 Image Compression to bypass Firebase Realtime DB limits
+    function compressImage(file, maxWidth, quality) {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > maxWidth) {
+                        height = Math.round((height * maxWidth) / width);
+                        width = maxWidth;
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+
+                    const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                    resolve(dataUrl);
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
     uploadInput.addEventListener('change', async (e) => {
         const files = e.target.files;
         if (files.length === 0) return;
         loadingText.classList.remove('hidden');
 
+        // Process sequentially to prevent Firebase connection drop
         for (let i = 0; i < files.length; i++) {
             let file = files[i];
             let photoDate = new Date(file.lastModified).toISOString(); 
             let locationName = "Unknown Location";
             let lat = null, lon = null;
 
+            // 1. Extract EXIF data from original file BEFORE compression
             await new Promise((resolve) => {
                 EXIF.getData(file, async function() {
                     let exifDate = EXIF.getTag(this, "DateTimeOriginal");
@@ -103,20 +134,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
-            let reader = new FileReader();
-            reader.onload = (event) => {
-                window.store.addPhoto({ 
-                    id: Date.now() + i, 
-                    src: event.target.result, 
-                    date: photoDate, 
-                    location: locationName, 
-                    lat: lat, 
-                    lon: lon, 
-                    hidden: isHiddenView 
-                });
-            };
-            reader.readAsDataURL(file);
+            // 2. Compress the image drastically to prevent exceeding DB payload sizes
+            const compressedBase64 = await compressImage(file, 1200, 0.7);
+
+            // 3. Save to Firebase
+            window.store.addPhoto({ 
+                id: Date.now() + i, 
+                src: compressedBase64, 
+                date: photoDate, 
+                location: locationName, 
+                lat: lat, 
+                lon: lon, 
+                hidden: isHiddenView 
+            });
+
+            // Brief pause to ensure Realtime DB writes completely
+            await new Promise(res => setTimeout(res, 500));
         }
+        
         loadingText.classList.add('hidden');
         uploadInput.value = '';
     });
@@ -143,14 +178,12 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             const item = document.createElement('div');
-            // Menambahkan class vault-hidden jika di mode hidden agar gambar menjadi blur
             item.className = `grid-item ${isHiddenView ? 'vault-hidden' : ''}`;
             const dateStr = new Date(photo.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
             
             const hideIcon = isHiddenView ? "eye" : "eye-off";
             const hideTitle = isHiddenView ? "Unhide Photo" : "Hide Photo";
 
-            // Struktur HTML Baru (Tombol di luar gambar / Bottom Bar)
             item.innerHTML = `
                 <div class="photo-wrapper">
                     <img src="${photo.src}" alt="Memory">
@@ -166,7 +199,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
             `;
             
-            // Logika Pesan Konfirmasi Bahasa Inggris saat di Hide / Unhide
             item.querySelector('.toggle-visibility-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
                 const confirmMsg = isHiddenView 
@@ -178,7 +210,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Logika Delete
             item.querySelector('.delete-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
                 if(confirm("Are you sure you want to permanently delete this photo?")) {
@@ -186,7 +217,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
 
-            // Logika Zoom hanya berjalan jika area gambar (photo-wrapper) di klik
             item.querySelector('.photo-wrapper').addEventListener('click', () => {
                 modalImg.src = photo.src;
                 modalCaption.innerHTML = `<strong>${dateStr}</strong><br>Location: ${photo.location}`;

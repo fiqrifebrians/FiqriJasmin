@@ -14,10 +14,16 @@
     max-width: 1000px; 
 }
 
-.section-header { margin-bottom: 1.5rem; border-bottom: 1px solid var(--glass-border); padding-bottom: 1rem; }
+.section-header { 
+    margin-bottom: 1.5rem; 
+    border-bottom: 1px solid var(--glass-border); 
+    padding-bottom: 1rem; 
+    flex-shrink: 0; /* Prevents header from shrinking */
+}
+
 .section-header h2 { font-weight: 400; font-size: 2.2rem; }
 
-/* MAP CONTAINER RESPONSIVE SIZING */
+/* MAP CONTAINER RESPONSIVE SIZING WITH FLEX-SHRINK FIX */
 #map-container {
     height: 400px; 
     padding: 0;
@@ -25,6 +31,8 @@
     overflow: hidden;
     transition: height 0.4s ease, margin-bottom 0.4s ease, opacity 0.3s ease;
     opacity: 1;
+    flex-shrink: 0; /* THE FIX: Locks map height to prevent shrinking on mobile */
+    width: 100%;
 }
 
 #map-container.hidden {
@@ -104,7 +112,7 @@
 
 @media (max-width: 768px) { 
     #map-container {
-        height: 450px; /* Lebar dan tinggi ekstra agar nyaman digunakan di HP */
+        height: 450px; 
     }
     .ios-grid { 
         gap: 12px; 
