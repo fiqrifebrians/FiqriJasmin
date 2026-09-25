@@ -1,4 +1,4 @@
-.page-container { 
+/* .page-container { 
     width: 100vw; 
     height: 100dvh; 
     overflow-y: auto; 
@@ -38,7 +38,7 @@
 }
 
 /* PERBAIKAN: Box dibuat fit-content agar fleksibel mengikuti panjang teks */
-.wish-item { 
+/* .wish-item { 
     display: flex; 
     flex-direction: column; 
     justify-content: space-between;
@@ -69,4 +69,4 @@
 
 .wish-item.done { border-left-color: #333; opacity: 0.6; }
 .wish-item.done .wish-title-row h4, .wish-item.done .wish-desc { text-decoration: line-through; color: var(--text-muted); }
-.edit-input { width: 100%; background: var(--bg-solid); border: 1px solid var(--glass-border); color: var(--text-main); padding: 12px; border-radius: 8px; margin-bottom: 10px; outline: none; font-size: 1rem; }
+.edit-input { width: 100%; background: var(--bg-solid); border: 1px solid var(--glass-border); color: var(--text-main); padding: 12px; border-radius: 8px; margin-bottom: 10px; outline: none; font-size: 1rem; } */ */
