@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const grid = document.getElementById('gallery-grid');
     const modal = document.getElementById('image-modal');
     const modalImg = document.getElementById('modal-img');
+    const modalVideo = document.getElementById('modal-video');
     const modalCaption = document.getElementById('modal-caption');
     const loadingText = document.getElementById('upload-loading');
     const mapContainer = document.getElementById('map-container');
@@ -76,7 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch(e) { return "Unknown Location"; }
     }
 
-    // HTML5 Image Compression
     function compressImage(file, maxWidth, quality) {
         return new Promise((resolve) => {
             const reader = new FileReader();
@@ -116,27 +116,45 @@ document.addEventListener('DOMContentLoaded', () => {
             let photoDate = new Date(file.lastModified).toISOString(); 
             let locationName = "Unknown Location";
             let lat = null, lon = null;
+            
+            const isVideo = file.type.startsWith('video/');
+            let finalSrc = "";
 
-            await new Promise((resolve) => {
-                EXIF.getData(file, async function() {
-                    let exifDate = EXIF.getTag(this, "DateTimeOriginal");
-                    if (exifDate) {
-                        let parts = exifDate.split(" ");
-                        let dateParts = parts[0].split(":");
-                        photoDate = new Date(`${dateParts[0]}-${dateParts[1]}-${dateParts[2]}T${parts[1]}`).toISOString();
-                    }
-                    lat = getDecimalGPS(EXIF.getTag(this, "GPSLatitude"), EXIF.getTag(this, "GPSLatitudeRef"));
-                    lon = getDecimalGPS(EXIF.getTag(this, "GPSLongitude"), EXIF.getTag(this, "GPSLongitudeRef"));
-                    if (lat && lon) locationName = await getLocationName(lat, lon);
-                    resolve();
+            if (isVideo) {
+                // PENCEGAHAN CRASH DATABASE: Batas maksimal video 10MB
+                if (file.size > 10 * 1024 * 1024) {
+                    alert(`Video file "${file.name}" is too large. Max 10MB allowed.`);
+                    continue;
+                }
+                
+                finalSrc = await new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.readAsDataURL(file);
                 });
-            });
-
-            const compressedBase64 = await compressImage(file, 1200, 0.7);
+            } else {
+                // Ekstrak GPS Exif hanya untuk Foto
+                await new Promise((resolve) => {
+                    EXIF.getData(file, async function() {
+                        let exifDate = EXIF.getTag(this, "DateTimeOriginal");
+                        if (exifDate) {
+                            let parts = exifDate.split(" ");
+                            let dateParts = parts[0].split(":");
+                            photoDate = new Date(`${dateParts[0]}-${dateParts[1]}-${dateParts[2]}T${parts[1]}`).toISOString();
+                        }
+                        lat = getDecimalGPS(EXIF.getTag(this, "GPSLatitude"), EXIF.getTag(this, "GPSLatitudeRef"));
+                        lon = getDecimalGPS(EXIF.getTag(this, "GPSLongitude"), EXIF.getTag(this, "GPSLongitudeRef"));
+                        if (lat && lon) locationName = await getLocationName(lat, lon);
+                        resolve();
+                    });
+                });
+                
+                finalSrc = await compressImage(file, 1200, 0.7);
+            }
 
             window.store.addPhoto({ 
                 id: Date.now() + i, 
-                src: compressedBase64, 
+                src: finalSrc, 
                 date: photoDate, 
                 location: locationName, 
                 lat: lat, 
@@ -158,12 +176,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         const allPhotos = window.store.state.photos || [];
         let displayPhotos = allPhotos.filter(p => !!p.hidden === isHiddenView);
-        
-        // PENGURUTAN BERDASARKAN TANGGAL FOTO (Paling Baru ke Paling Lama)
         displayPhotos.sort((a, b) => new Date(b.date) - new Date(a.date));
         
         if (displayPhotos.length === 0) {
-            grid.innerHTML = `<p style="color: var(--text-muted); padding: 1rem;">No ${isHiddenView ? 'hidden ' : ''}memories uploaded yet.</p>`;
+            grid.innerHTML = `<p style="color: var(--text-muted); padding: 1rem;">No ${isHiddenView ? 'hidden ' : ''}files uploaded yet.</p>`;
             return;
         }
 
@@ -175,18 +191,23 @@ document.addEventListener('DOMContentLoaded', () => {
                 mapBounds.push([photo.lat, photo.lon]);
             }
             
+            const isVideoFormat = photo.src.startsWith('data:video');
             const item = document.createElement('div');
             item.className = `grid-item ${isHiddenView ? 'vault-hidden' : ''}`;
             const dateStr = new Date(photo.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
             
             const hideIcon = isHiddenView ? "eye" : "eye-off";
-            const hideTitle = isHiddenView ? "Unhide Photo" : "Hide Photo";
+            const hideTitle = isHiddenView ? "Unhide" : "Hide";
+            
+            const mediaTag = isVideoFormat 
+                ? `<video src="${photo.src}" muted autoplay loop playsinline></video>`
+                : `<img src="${photo.src}" alt="Memory">`;
 
-            // MENAMBAHKAN TANGGAL (photo-date-badge) KE DALAM TAMPILAN FOTO
             item.innerHTML = `
                 <div class="photo-wrapper">
                     <div class="photo-date-badge">${dateStr}</div>
-                    <img src="${photo.src}" alt="Memory">
+                    ${isVideoFormat ? `<div style="position:absolute; top:10px; right:10px; color:#fff; z-index:5;"><i data-feather="video" style="width:16px;height:16px;"></i></div>` : ''}
+                    ${mediaTag}
                 </div>
                 <div class="photo-info-bar">
                     <div class="photo-location" title="${photo.location}">
@@ -194,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <div class="photo-actions-bottom">
                         <button class="action-btn toggle-visibility-btn" title="${hideTitle}"><i data-feather="${hideIcon}"></i></button>
-                        <button class="action-btn delete-btn" title="Delete Photo"><i data-feather="trash-2"></i></button>
+                        <button class="action-btn delete-btn" title="Delete"><i data-feather="trash-2"></i></button>
                     </div>
                 </div>
             `;
@@ -202,8 +223,8 @@ document.addEventListener('DOMContentLoaded', () => {
             item.querySelector('.toggle-visibility-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
                 const confirmMsg = isHiddenView 
-                    ? "Are you sure you want to unhide this photo?" 
-                    : "Are you sure you want to hide this photo in the vault?";
+                    ? "Are you sure you want to unhide this file?" 
+                    : "Are you sure you want to hide this file in the vault?";
                 
                 if (confirm(confirmMsg)) {
                     window.store.togglePhotoVisibility(photo.id, !isHiddenView);
@@ -212,13 +233,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
             item.querySelector('.delete-btn').addEventListener('click', (e) => {
                 e.stopPropagation();
-                if(confirm("Are you sure you want to permanently delete this photo?")) {
+                if(confirm("Are you sure you want to permanently delete this file?")) {
                     window.store.deletePhoto(photo.id);
                 }
             });
 
             item.querySelector('.photo-wrapper').addEventListener('click', () => {
-                modalImg.src = photo.src;
+                if (isVideoFormat) {
+                    modalImg.classList.add('hidden');
+                    modalVideo.classList.remove('hidden');
+                    modalVideo.src = photo.src;
+                } else {
+                    modalVideo.classList.add('hidden');
+                    modalVideo.pause();
+                    modalImg.classList.remove('hidden');
+                    modalImg.src = photo.src;
+                }
                 modalCaption.innerHTML = `<strong>${dateStr}</strong><br>Location: ${photo.location}`;
                 modal.classList.add('active');
             });
@@ -231,7 +261,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     document.querySelectorAll('.close-modal').forEach(btn => {
-        btn.addEventListener('click', function() { this.closest('.modal').classList.remove('active'); });
+        btn.addEventListener('click', function() { 
+            this.closest('.modal').classList.remove('active'); 
+            if(modalVideo) modalVideo.pause();
+        });
     });
 
     window.store.subscribe(renderGalleries);

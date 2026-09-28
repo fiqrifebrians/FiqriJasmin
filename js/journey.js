@@ -13,8 +13,6 @@ document.addEventListener('DOMContentLoaded', () => {
         grid.innerHTML = '';
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
-        
-        // Update input picker value (Format: YYYY-MM)
         monthYearPicker.value = `${year}-${String(month + 1).padStart(2, '0')}`;
         
         const firstDay = new Date(year, month, 1).getDay();
@@ -44,7 +42,14 @@ document.addEventListener('DOMContentLoaded', () => {
                         
                         if (e.type === 'Memory') {
                             const photo = window.store.state.photos.find(p => String(p.id) === String(e.id));
-                            if (photo) fullContent = `<img src="${photo.src}" alt="Memory"><p style="font-size:0.85rem; color:var(--text-muted); margin-top:8px;"><i data-feather="map-pin" style="width:12px;height:12px;"></i> ${photo.location}</p>`;
+                            if (photo) {
+                                const isVideoFormat = photo.src.startsWith('data:video');
+                                const mediaTag = isVideoFormat
+                                    ? `<video src="${photo.src}" controls style="width:100%; max-height:300px; border-radius:8px; margin-top:15px; background:#000;"></video>`
+                                    : `<img src="${photo.src}" alt="Memory">`;
+                                    
+                                fullContent = `${mediaTag}<p style="font-size:0.85rem; color:var(--text-muted); margin-top:8px;"><i data-feather="map-pin" style="width:12px;height:12px;"></i> ${photo.location}</p>`;
+                            }
                         } 
                         else if (e.type === 'Love Letter') {
                             const letter = window.store.state.letters.find(l => String(l.id) === String(e.id));
@@ -71,11 +76,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Navigasi Bulan/Tahun via panah
     prevBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() - 1); renderCalendar(); });
     nextBtn.addEventListener('click', () => { currentDate.setMonth(currentDate.getMonth() + 1); renderCalendar(); });
-    
-    // Lompat tanggal langsung dari Picker (Dropdown)
     monthYearPicker.addEventListener('change', (e) => {
         if(e.target.value) {
             const [y, m] = e.target.value.split('-');
@@ -84,6 +86,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    document.querySelector('.close-modal').addEventListener('click', () => modal.classList.remove('active'));
+    document.querySelector('.close-modal').addEventListener('click', () => {
+        modal.classList.remove('active');
+        // Stop Any playing video in Journey Modal
+        const vids = activityList.querySelectorAll('video');
+        vids.forEach(v => v.pause());
+    });
+    
     window.store.subscribe(renderCalendar);
 });

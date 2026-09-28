@@ -1,5 +1,5 @@
 // ==========================================
-// TEMA & DEKORASI GLOBAL (Dijalankan Pertama)
+// TEMA & DEKORASI GLOBAL
 // ==========================================
 (function() {
     const savedTheme = localStorage.getItem('app-theme') || 'twilight';
@@ -17,7 +17,6 @@
         twilight: 'assets/twilight-icon.png'
     };
 
-    // Fungsi untuk memperbarui Favicon Tab Browser
     function updateFavicon(theme) {
         let link = document.querySelector("link[rel~='icon']");
         if (!link) {
@@ -28,7 +27,6 @@
         link.href = themeIcons[theme];
     }
 
-    // Fungsi untuk mengacak urutan elemen di dalam array
     function shuffleArray(array) {
         const arr = [...array];
         for (let i = arr.length - 1; i > 0; i--) {
@@ -39,17 +37,11 @@
     }
 
     function renderDecorations() {
-        // Hapus dekorasi lama jika mengganti tema
         document.querySelectorAll('.theme-decor').forEach(el => el.remove());
         const currentTheme = localStorage.getItem('app-theme') || 'twilight';
         let images = themeImages[currentTheme];
         
-        // Memilih acak hanya 4 gambar jika jumlahnya lebih dari 4 (seperti Cony & Brown)
-        if (images.length > 4) {
-            images = shuffleArray(images).slice(0, 4);
-        }
-        
-        // Perbarui Ikon Tab
+        if (images.length > 4) images = shuffleArray(images).slice(0, 4);
         updateFavicon(currentTheme);
         
         images.forEach((src, idx) => {
@@ -57,13 +49,11 @@
             img.src = src;
             img.className = 'theme-decor';
             
-            // Distribusikan posisi ke 4 sudut agar seimbang
             if(idx === 0) { img.style.top = '10%'; img.style.left = '5%'; }
             else if(idx === 1) { img.style.top = '15%'; img.style.right = '5%'; }
             else if(idx === 2) { img.style.bottom = '10%'; img.style.left = '10%'; }
             else if(idx === 3) { img.style.bottom = '15%'; img.style.right = '10%'; }
             
-            // Randomize sedikit jarak ekstra dan animasi delay
             img.style.marginTop = (Math.random() * 40) + 'px';
             img.style.marginLeft = (Math.random() * 40) + 'px';
             img.style.animationDelay = (idx * 0.7) + 's';
@@ -72,7 +62,6 @@
         });
     }
 
-    // Fungsi global untuk di-trigger dari tombol tema index.html
     window.setTheme = function(themeName) {
         localStorage.setItem('app-theme', themeName);
         document.body.className = `theme-${themeName}`;
@@ -83,7 +72,7 @@
 })();
 
 // ==========================================
-// KONFIGURASI FIREBASE & SINKRONISASI DATA
+// KONFIGURASI FIREBASE & SINKRONISASI
 // ==========================================
 const firebaseConfig = {
   apiKey: "AIzaSyCtaAAhSd605dOM_2gX14WyIz2xC0lo1TQ",
@@ -120,6 +109,43 @@ class AppStore {
         }, (error) => {
             console.error("Firebase Read Error: ", error);
         });
+    }
+
+    // --- FITUR PENGIRIMAN EMAIL OTOMATIS (VIA EMAILJS) ---
+    async sendNotification(author, type, title) {
+        const toEmail = author === 'Fiqri' ? 'jasmina.azzahra.e@gmail.com' : 'febriansfiqri@gmail.com';
+        const toName = author === 'Fiqri' ? 'Jasmin' : 'Fiqri';
+        const fromName = author === 'Fiqri' ? 'Fiqri' : 'Jasmin';
+        
+        const romanticMsg = `My dearest ${toName}, I just added a new ${type.toLowerCase()} titled "${title}" to our sanctuary. Every little thing we share reminds me of how deeply I love you. I can't wait to build our future together. Forever yours, ${fromName} 🤍`;
+        const subject = `${fromName} just added a new ${type.toLowerCase()} 💌`;
+
+        // Anda harus mendaftar di emailjs.com dan mengganti string "YOUR_..." di bawah ini.
+        const data = {
+            service_id: 'YOUR_EMAILJS_SERVICE_ID', 
+            template_id: 'YOUR_EMAILJS_TEMPLATE_ID', 
+            user_id: 'YOUR_EMAILJS_PUBLIC_KEY',
+            template_params: {
+                to_email: toEmail,
+                to_name: toName,
+                from_name: fromName,
+                item_type: type,
+                item_title: title,
+                message: romanticMsg,
+                subject: subject
+            }
+        };
+
+        try {
+            await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            console.log("Email sent successfully!");
+        } catch (err) {
+            console.error('Failed to send notification', err);
+        }
     }
 
     subscribe(listener) { 
@@ -190,7 +216,11 @@ class AppStore {
         }
     }
 
-    addWish(wish) { this.state.wishes.unshift(wish); this.saveToCloud(); }
+    addWish(wish) { 
+        this.state.wishes.unshift(wish); 
+        this.saveToCloud(); 
+        this.sendNotification(wish.author, 'Wishlist', wish.title); // Trigger Email
+    }
     
     toggleWish(id, completionDateStr = null) {
         const w = this.state.wishes.find(x => String(x.id) === String(id));
@@ -225,6 +255,7 @@ class AppStore {
         this.state.letters.unshift(letter);
         this.linkToJourney(letter.date, { id: letter.id, type: 'Love Letter', data: letter.title });
         this.saveToCloud();
+        this.sendNotification(letter.author, 'Love Letter', letter.title); // Trigger Email
     }
     
     updateLetter(id, data) {
@@ -247,7 +278,7 @@ class AppStore {
 }
 window.store = new AppStore();
 
-// Interceptor Global Page Transition Exit (Slight delay for exit animation)
+// Page Transition Interceptor
 document.addEventListener('DOMContentLoaded', () => {
     const links = document.querySelectorAll('a[href]');
     links.forEach(link => {
@@ -256,9 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (target && !target.startsWith('http') && !target.startsWith('#')) {
                 e.preventDefault();
                 document.body.classList.add('page-exit');
-                setTimeout(() => {
-                    window.location.href = target;
-                }, 750); 
+                setTimeout(() => { window.location.href = target; }, 750); 
             }
         });
     });

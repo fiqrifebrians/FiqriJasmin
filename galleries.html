@@ -19,14 +19,14 @@
                 <button id="toggle-map-btn" class="action-btn" title="Toggle Map"><i data-feather="map"></i></button>
                 <button id="toggle-hidden-btn" class="action-btn" title="Hidden Vault"><i data-feather="eye-off"></i></button>
                 
-                <label for="photo-upload" class="glow-btn small solid" style="cursor:pointer;">Upload Photos</label>
-                <input type="file" id="photo-upload" accept="image/*" multiple hidden>
+                <label for="photo-upload" class="glow-btn small solid" style="cursor:pointer;">Upload Files</label>
+                <!-- MEMBUKA OPSI UPLOAD VIDEO -->
+                <input type="file" id="photo-upload" accept="image/*,video/*" multiple hidden>
             </div>
         </div>
         
-        <div id="upload-loading" class="hidden" style="color:var(--theme-accent); margin-bottom:1rem; font-size:0.9rem; text-align:center;">Extracting EXIF data & uploading...</div>
+        <div id="upload-loading" class="hidden" style="color:var(--theme-accent); margin-bottom:1rem; font-size:0.9rem; text-align:center;">Processing and uploading data...</div>
         
-        <!-- Peta dengan Class CSS Murni untuk Responsivitas Optimal -->
         <div id="map-container" class="glass-panel">
             <div id="map" style="width: 100%; height: 100%;"></div>
         </div>
@@ -34,10 +34,11 @@
         <div id="gallery-grid" class="ios-grid"></div>
     </div>
 
-    <!-- Zoom Image Modal -->
+    <!-- Zoom Modal untuk Gambar dan Video -->
     <div id="image-modal" class="modal glass-overlay">
         <span class="close-modal">&times;</span>
         <img class="modal-content" id="modal-img" alt="Zoomed memory">
+        <video class="modal-content hidden" id="modal-video" controls playsinline></video>
         <div id="modal-caption"></div>
     </div>
 
