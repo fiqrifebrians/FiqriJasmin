@@ -122,9 +122,9 @@ class AppStore {
 
         // Anda harus mendaftar di emailjs.com dan mengganti string "YOUR_..." di bawah ini.
         const data = {
-            service_id: 'YOUR_EMAILJS_SERVICE_ID', 
-            template_id: 'YOUR_EMAILJS_TEMPLATE_ID', 
-            user_id: 'YOUR_EMAILJS_PUBLIC_KEY',
+            service_id: 'service_620oyuh', 
+            template_id: 'template_uj31rl8', 
+            user_id: '6sl34tm18kTkVSl6H',
             template_params: {
                 to_email: toEmail,
                 to_name: toName,
