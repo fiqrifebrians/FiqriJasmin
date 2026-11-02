@@ -6,7 +6,6 @@
     <title>One Last Question...</title>
     <link rel="stylesheet" href="css/global.css">
     <style>
-        /* Desain Struktur Buku 3D Interaktif */
         .book-wrapper {
             display: flex;
             align-items: center;
@@ -26,7 +25,6 @@
             transform-style: preserve-3d;
         }
         
-        /* Geser buku ke tengah saat cover dibuka */
         .book.open { transform: translateX(50%); }
         
         .page {
@@ -40,6 +38,7 @@
         
         .page.flipped { transform: rotateY(-180deg); }
         
+        /* Halaman Kertas Solid (Tidak Transparan) */
         .front, .back {
             position: absolute;
             top: 0; left: 0;
@@ -50,56 +49,96 @@
             justify-content: center; align-items: center; text-align: center;
             padding: 2.5rem;
             border-radius: 4px 15px 15px 4px;
-            background: var(--bg-panel);
+            
+            /* Warna solid untuk halaman dalam (menyesuaikan tema gelap/terang) */
+            background: var(--bg-solid);
             border: 1px solid var(--glass-border);
-            box-shadow: inset 4px 0 10px rgba(0,0,0,0.05), 5px 5px 15px rgba(0,0,0,0.1);
+            
+            /* Bayangan untuk kesan tumpukan kertas 3D */
+            box-shadow: inset 4px 0 10px rgba(0,0,0,0.1), 3px 3px 15px rgba(0,0,0,0.4);
+        }
+        
+        body.theme-cony .front, body.theme-cony .back {
+            background: #ffffff; /* Kertas putih solid di tema Cony */
+            box-shadow: inset 4px 0 10px rgba(0,0,0,0.05), 3px 3px 15px rgba(0,0,0,0.1);
         }
         
         .back {
             transform: rotateY(180deg);
             border-radius: 15px 4px 4px 15px;
-            box-shadow: inset -4px 0 10px rgba(0,0,0,0.05), -5px 5px 15px rgba(0,0,0,0.1);
-            background: linear-gradient(to left, var(--bg-panel), rgba(0,0,0,0.05));
+            box-shadow: inset -4px 0 10px rgba(0,0,0,0.1), -3px 3px 15px rgba(0,0,0,0.4);
         }
         
+        body.theme-cony .back {
+            box-shadow: inset -4px 0 10px rgba(0,0,0,0.05), -3px 3px 15px rgba(0,0,0,0.1);
+        }
+        
+        /* Desain Cover Buku */
         .cover .front {
             background: var(--theme-accent);
             color: #fff;
-            box-shadow: inset 10px 0 20px rgba(0,0,0,0.2), 5px 5px 15px rgba(0,0,0,0.2);
+            box-shadow: inset 10px 0 20px rgba(0,0,0,0.3), 5px 5px 20px rgba(0,0,0,0.5);
             border: none;
         }
-        
         .cover .back { background: var(--theme-accent-hover); }
         
-        .front p { font-size: 1.6rem; font-weight: 300; line-height: 1.5; color: var(--text-main); }
+        .front p { font-size: 1.6rem; font-weight: 300; line-height: 1.5; color: var(--text-main); position: relative; z-index: 10; }
         
-        .btn-group { display: flex; flex-direction: column; gap: 15px; width: 100%; margin-top: 2rem; }
+        /* Slot Background Video untuk Halaman Terakhir */
+        .video-bg {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            object-fit: cover;
+            border-radius: 4px 15px 15px 4px;
+            z-index: 1;
+            opacity: 0.7; /* Agak gelap agar tulisan tetap terbaca */
+        }
+        
+        /* Overlay Gelap di Atas Video */
+        .video-overlay {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            border-radius: 4px 15px 15px 4px;
+            z-index: 2;
+        }
+        
+        .btn-group { display: flex; flex-direction: column; gap: 15px; width: 100%; margin-top: 2rem; position: relative; z-index: 10; }
         .ask-btn { padding: 12px; font-size: 1.15rem; width: 100%; }
-        #no-btn { transition: transform 0.2s ease-out; position: relative; }
+        #no-btn { transition: transform 0.2s ease-out; position: relative; border-color:rgba(255,255,255,0.5); color:#fff; }
+        #yes-btn { box-shadow: 0 0 20px var(--theme-accent); }
         
-        /* Tombol Navigasi Bawah */
         .controls { position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%); z-index: 100; transition: opacity 0.5s; }
-        .nav-arrow { background: none; border: none; color: var(--text-muted); font-size: 4rem; cursor: pointer; transition: all 0.4s ease; font-weight: 100; }
+        .nav-arrow { background: none; border: none; color: var(--text-muted); font-size: 4rem; cursor: pointer; transition: all 0.4s ease; font-weight: 100; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
         .nav-arrow:hover { transform: translateX(10px); color: var(--theme-accent); }
         
         #celebration { display: none; flex-direction: column; align-items: center; justify-content: center; height: 100vh; width: 100vw; position: absolute; top: 0; left: 0; z-index: 200; background: var(--bg-solid); }
         #celebration.active { display: flex; animation: cinematicEnter 1s forwards; }
 
         @media (max-width: 768px) {
-            .book { width: 44vw; height: 55vh; }
+            .book { width: 85vw; height: 60vh; }
             .front, .back { padding: 1.2rem; }
-            .front p { font-size: 1.2rem; }
-            .cover .front h1 { font-size: 2.2rem !important; }
+            .front p { font-size: 1.4rem; }
+            .cover .front h1 { font-size: 2.8rem !important; }
         }
     </style>
 </head>
 <body>
     <div class="book-wrapper">
         <div class="book" id="book">
-            <!-- Halaman disuntikkan secara terbalik dari belakang ke depan agar index CSS 3D nya rapi -->
+            <!-- Halaman disuntikkan secara terbalik dari belakang ke depan -->
             <div class="page">
-                <div class="front">
-                    <h1 style="font-weight: 400; font-size: 2.2rem; margin-bottom:10px; color:var(--text-main);">would u be my gf?</h1>
+                <div class="front" style="background:#000;">
+                    <!-- SLOT VIDEO DISINI -->
+                    <video class="video-bg" autoplay loop muted playsinline>
+                        <!-- Ganti jasmin.mp4 dengan nama file video Anda yang ada di folder assets -->
+                        <source src="assets/jasmin.mp4" type="video/mp4">
+                    </video>
+                    <div class="video-overlay"></div>
+                    
+                    <h1 style="font-weight: 400; font-size: 2.2rem; margin-bottom:10px; color:#fff; position:relative; z-index:10;">would u be my gf?</h1>
                     <div class="btn-group">
                         <button class="glow-btn solid ask-btn" id="yes-btn">yes 🤍</button>
                         <button class="glow-btn ask-btn" id="no-btn">no</button>
@@ -115,11 +154,10 @@
             <div class="page"><div class="front"><p>so u found the secret button.</p></div><div class="back"></div></div>
             <div class="page"><div class="front"><p>hi jasmin...</p></div><div class="back"></div></div>
             
-            <!-- Cover Depan (Paling Atas) -->
             <div class="page cover">
                 <div class="front">
-                    <h1 style="font-size: 3rem; font-weight:400;">our<br>secret</h1>
-                    <p style="color:rgba(255,255,255,0.7); margin-top:20px; font-size:1rem;">(click next to open)</p>
+                    <h1 style="font-size: 4rem; font-weight:400; line-height: 1.2;">our<br>secret</h1>
+                    <p style="color:rgba(255,255,255,0.7); margin-top:30px; font-size:1.1rem;">(click next to open)</p>
                 </div>
                 <div class="back"></div>
             </div>
@@ -130,7 +168,6 @@
         <button id="next-btn" class="nav-arrow" title="Next Page">&#10230;</button>
     </div>
 
-    <!-- Layar Penuh Saat Dia Menekan 'Yes' -->
     <div id="celebration">
         <h1 style="font-size: 3.5rem; margin-bottom: 20px; color: var(--theme-accent); font-weight: 400; text-align:center;">i'm the happiest man alive 🤍</h1>
         <p style="font-size: 1.5rem; color: var(--text-main); font-weight: 300; text-align:center;">i promise to make every day special for u.</p>
@@ -143,7 +180,6 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Membalik urutan NodeList halaman karena di HTML Cover ada di posisi paling bawah
             const pagesRaw = document.querySelectorAll('.page');
             const pages = Array.from(pagesRaw).reverse();
             
@@ -153,26 +189,22 @@
             
             let currentSlide = 0;
 
-            // Inisialisasi Z-Index secara dinamis agar tumpukan buku terlihat logis
             pages.forEach((p, i) => { p.style.zIndex = pages.length - i; });
 
-            // Logika Membuka / Membalik Halaman Buku
             nextBtn.addEventListener('click', () => {
                 if (currentSlide === 0) {
-                    book.classList.add('open'); // Geser buku ke tengah layar
+                    book.classList.add('open'); 
                 }
                 
                 if (currentSlide < pages.length - 1) {
                     pages[currentSlide].classList.add('flipped');
                     
-                    // Merubah z-index di pertengahan animasi lipatan agar halaman jatuh dengan benar ke sisi kiri
                     setTimeout((idx) => {
                         pages[idx].style.zIndex = idx + 1;
                     }, 500, currentSlide);
                     
                     currentSlide++;
                     
-                    // Sembunyikan tombol next jika sudah mencapai halaman terakhir (pertanyaan)
                     if (currentSlide >= pages.length - 1) {
                         controlsContainer.style.opacity = '0';
                         setTimeout(() => controlsContainer.style.display = 'none', 500);
@@ -180,7 +212,6 @@
                 }
             });
 
-            // Logika Tombol "No" yang Menghindar
             const noBtn = document.getElementById('no-btn');
             const yesBtn = document.getElementById('yes-btn');
             const celebration = document.getElementById('celebration');
@@ -188,9 +219,9 @@
             const dodgeButton = function(e) {
                 if (e.type === 'touchstart') e.preventDefault(); 
                 
-                // Menentukan batas maksimal gerak lari tombol
-                const maxX = 60; 
-                const maxY = 80;
+                // Menentukan batas maksimal gerak lari tombol di layar HP (dikurangi agar tidak keluar batas buku)
+                const maxX = 50; 
+                const maxY = 70;
                 const x = (Math.random() - 0.5) * maxX * 2;
                 const y = (Math.random() - 0.5) * maxY * 2;
                 
@@ -200,12 +231,9 @@
             noBtn.addEventListener('mouseover', dodgeButton);
             noBtn.addEventListener('touchstart', dodgeButton);
 
-            // Logika Tombol "Yes"
             yesBtn.addEventListener('click', () => {
                 document.querySelector('.book-wrapper').style.display = 'none';
                 celebration.classList.add('active');
-                
-                // Menyembunyikan ornamen karakter/tema saat layar perayaan aktif
                 document.querySelectorAll('.theme-decor').forEach(el => el.style.display = 'none');
             });
         });

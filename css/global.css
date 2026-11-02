@@ -49,7 +49,7 @@ body {
     opacity: 0;
     transition: background-color 0.5s ease;
     
-    /* Dikembalikan ke Cinematic Fade Transition */
+    /* Transisi Normal Global */
     animation: cinematicEnter 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
 
