@@ -38,7 +38,7 @@
         
         .page.flipped { transform: rotateY(-180deg); }
         
-        /* Halaman Kertas Solid Putih & Teks Hitam (Override Tema) */
+        /* Halaman Kertas Solid Putih & Teks Hitam */
         .front, .back {
             position: absolute;
             top: 0; left: 0;
@@ -114,37 +114,18 @@
         .ask-btn { padding: 12px; font-size: 1.15rem; width: 100%; border-color: var(--theme-accent); color: var(--theme-accent); }
         .ask-btn.solid { background: var(--theme-accent); color: #fff; }
         
-        .controls { position: absolute; bottom: 8vh; left: 50%; transform: translateX(-50%); z-index: 100; transition: opacity 0.5s; }
+        /* Memberikan jarak ekstra pada controls (bottom diperkecil) */
+        .controls { position: absolute; bottom: 3vh; left: 50%; transform: translateX(-50%); z-index: 100; transition: opacity 0.5s; }
         .nav-arrow { background: none; border: none; color: var(--text-muted); font-size: 4rem; cursor: pointer; transition: all 0.4s ease; font-weight: 100; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
         .nav-arrow:hover { transform: translateX(10px); color: var(--theme-accent); }
         
-        /* Fatal Error Warning Screen */
-        #error-screen { 
-            display: none; 
-            flex-direction: column; 
-            align-items: center; 
-            justify-content: center; 
-            height: 100vh; 
-            width: 100vw; 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            z-index: 9999; 
-            background: rgba(15, 0, 0, 0.95); 
-        }
-        #error-screen.active { 
-            display: flex; 
-            animation: cinematicEnter 0.5s forwards; 
-        }
-        .error-box {
-            background: #1a0505;
-            border: 1px solid #ff3333;
-            padding: 2.5rem;
-            border-radius: 8px;
-            text-align: center;
-            width: 90%;
-            max-width: 420px;
-            box-shadow: 0 0 30px rgba(255,0,0,0.2);
+        /* Tombol Lanjut Setelah Video 2 Selesai */
+        #final-btn-container {
+            display: none;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+            width: 100%;
+            margin-top: 15px;
         }
 
         @media (max-width: 768px) {
@@ -153,6 +134,7 @@
             .front p { font-size: 1.4rem; }
             .cover .front h1 { font-size: 2.8rem !important; }
             #question-ui h1 { font-size: 1.6rem; }
+            .controls { bottom: 2vh; }
         }
     </style>
 </head>
@@ -164,18 +146,25 @@
                 <div class="front">
                     
                     <div class="landscape-vid">
-                        <!-- Slot Video 1 -->
+                        <!-- Slot Video 1 (Looping) -->
                         <video id="vid1" src="assets/video1.mp4" autoplay loop muted playsinline></video>
-                        <!-- Slot Video 2 -->
-                        <video id="vid2" src="assets/video2.mp4" autoplay loop muted playsinline></video>
+                        <!-- Slot Video 2 (Hanya Play saat 'Yes' ditekan, tanpa loop) -->
+                        <!-- Catatan: Anda bisa menghapus atribut 'muted' jika video 2 memiliki lagu/suara yang ingin diperdengarkan -->
+                        <video id="vid2" src="assets/video2.mp4" muted playsinline></video>
                     </div>
                     
+                    <!-- UI Pertanyaan -->
                     <div id="question-ui">
                         <h1>would u be my gf?</h1>
                         <div class="btn-group">
                             <button class="glow-btn solid ask-btn" id="yes-btn">yes 🤍</button>
                             <button class="glow-btn ask-btn" id="no-btn">no</button>
                         </div>
+                    </div>
+                    
+                    <!-- Tombol Masuk yang akan muncul ketika Video 2 selesai -->
+                    <div id="final-btn-container">
+                        <button class="glow-btn solid ask-btn" onclick="window.location.href='index.html'">enter our sanctuary 🤍</button>
                     </div>
 
                 </div>
@@ -201,24 +190,6 @@
     
     <div class="controls" id="controls-container">
         <button id="next-btn" class="nav-arrow" title="Next Page">&#10230;</button>
-    </div>
-
-    <!-- Error Screen Overlay -->
-    <div id="error-screen" class="modal glass-overlay">
-        <div class="error-box">
-            <div style="color: #ff3333; font-size: 3.5rem; margin-bottom: 10px;">⚠️</div>
-            <h2 style="color: #ff3333; font-family: monospace; margin-bottom: 15px; font-size: 1.5rem; letter-spacing: 1px;">FATAL SYSTEM ERROR</h2>
-            <p style="color: #ff9999; font-family: monospace; font-size: 0.95rem; margin-bottom: 30px; line-height: 1.6; text-align: left;">
-                > Error 404: "Yes" response not found.<br>
-                > Critical failure in romance.exe module.<br>
-                > Unexpected input received.<br>
-                > System shutting down to prevent heartbreak...
-            </p>
-            <div style="display: flex; gap: 15px; justify-content: center;">
-                <button class="glow-btn small" style="border-color: #ff3333; color: #ff3333; flex: 1; font-family: monospace;" onclick="window.location.href='index.html'">Force Close</button>
-                <button class="glow-btn small" style="border-color: #ff3333; color: #ff3333; flex: 1; font-family: monospace;" onclick="window.location.href='index.html'">Exit</button>
-            </div>
-        </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
@@ -270,39 +241,54 @@
                 
                 // Menghilangkan pertanyaan dan tombol
                 questionUI.style.opacity = '0';
-                questionUI.style.pointerEvents = 'none'; // Mencegah klik setelah hilang
+                questionUI.style.pointerEvents = 'none';
+                setTimeout(() => { questionUI.style.display = 'none'; }, 1000);
                 
-                // Transisi Fading Video
+                // Transisi Fading Video & Putar Video 2
                 vid1.style.opacity = '0';
                 vid2.style.opacity = '1';
+                vid1.pause();
+                vid2.play(); // Play Video 2
+                
+                // Menghilangkan ornamen mengambang
+                document.querySelectorAll('.theme-decor').forEach(el => el.style.display = 'none');
+            });
+            
+            // Logika ketika Video 2 selesai diputar
+            const vid2 = document.getElementById('vid2');
+            const finalBtnContainer = document.getElementById('final-btn-container');
+            
+            vid2.addEventListener('ended', () => {
+                finalBtnContainer.style.display = 'block';
+                // Memberikan sedikit waktu sebelum fadenya dimulai
+                setTimeout(() => {
+                    finalBtnContainer.style.opacity = '1';
+                }, 100);
             });
 
-            // Logika Tombol "No" (Force Close Book & Error Screen)
+            // Logika Tombol "No" (Force Close Book & Native Browser Crash)
             noBtn.addEventListener('click', () => {
-                // Mencegah klik berulang
-                noBtn.style.pointerEvents = 'none';
-                
+                noBtn.style.pointerEvents = 'none'; // Cegah klik dobel
                 let current = currentSlide - 1;
                 
-                // Interval untuk menutup halaman satu per satu dengan cepat (150ms)
+                // Animasi buku menutup dengan cepat
                 let closeInterval = setInterval(() => {
                     if (current >= 0) {
                         pages[current].classList.remove('flipped');
-                        
-                        // Kembalikan z-index saat menutup
-                        setTimeout((idx) => {
-                            pages[idx].style.zIndex = pages.length - idx;
-                        }, 200, current);
-                        
+                        setTimeout((idx) => { pages[idx].style.zIndex = pages.length - idx; }, 200, current);
                         current--;
                     } else {
                         clearInterval(closeInterval);
                         book.classList.remove('open');
                         
-                        // Tampilkan layar Error Warning setelah buku tertutup
+                        // Men-trigger Force Close dari sistem browser
                         setTimeout(() => {
-                            document.getElementById('error-screen').classList.add('active');
-                            document.querySelectorAll('.theme-decor').forEach(el => el.style.display = 'none');
+                            // Munculkan Native Warning
+                            alert("FATAL SYSTEM ERROR: 'Yes' response not found.\n\nCritical failure in romance.exe module.\nSystem shutting down to prevent heartbreak...");
+                            
+                            // Eksekusi Force Close Tab / Redirect Blank
+                            window.open('','_self').close();
+                            window.location.href = "about:blank";
                         }, 800);
                     }
                 }, 150);
