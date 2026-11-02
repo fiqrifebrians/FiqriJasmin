@@ -75,14 +75,13 @@
 // KONFIGURASI FIREBASE & SINKRONISASI
 // ==========================================
 const firebaseConfig = {
-  apiKey: "AIzaSyCtaAAhSd605dOM_2gX14WyIz2xC0lo1TQ",
-  authDomain: "fiqrijasmin.firebaseapp.com",
-  databaseURL: "https://fiqrijasmin-default-rtdb.firebaseio.com",
-  projectId: "fiqrijasmin",
-  storageBucket: "fiqrijasmin.firebasestorage.app",
-  messagingSenderId: "596021282856",
-  appId: "1:596021282856:web:2b1a38cb7dadc32d074d1d",
-  measurementId: "G-D5181Q5JFM"
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com", 
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+    appId: "YOUR_APP_ID"
 };
 
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
@@ -111,7 +110,6 @@ class AppStore {
         });
     }
 
-    // --- FITUR PENGIRIMAN EMAIL OTOMATIS (VIA EMAILJS) ---
     async sendNotification(author, type, title) {
         const toEmail = author === 'Fiqri' ? 'jasmina.azzahra.e@gmail.com' : 'febriansfiqri@gmail.com';
         const toName = author === 'Fiqri' ? 'Jasmin' : 'Fiqri';
@@ -120,11 +118,10 @@ class AppStore {
         const romanticMsg = `My dearest ${toName}, I just added a new ${type.toLowerCase()} titled "${title}" to our sanctuary. Every little thing we share reminds me of how deeply I love you. I can't wait to build our future together. Forever yours, ${fromName} 🤍`;
         const subject = `${fromName} just added a new ${type.toLowerCase()} 💌`;
 
-        // Anda harus mendaftar di emailjs.com dan mengganti string "YOUR_..." di bawah ini.
         const data = {
-            service_id: 'service_620oyuh', 
-            template_id: 'template_uj31rl8', 
-            user_id: '6sl34tm18kTkVSl6H',
+            service_id: 'YOUR_EMAILJS_SERVICE_ID', 
+            template_id: 'YOUR_EMAILJS_TEMPLATE_ID', 
+            user_id: 'YOUR_EMAILJS_PUBLIC_KEY',
             template_params: {
                 to_email: toEmail,
                 to_name: toName,
@@ -219,7 +216,7 @@ class AppStore {
     addWish(wish) { 
         this.state.wishes.unshift(wish); 
         this.saveToCloud(); 
-        this.sendNotification(wish.author, 'Wishlist', wish.title); // Trigger Email
+        this.sendNotification(wish.author, 'Wishlist', wish.title);
     }
     
     toggleWish(id, completionDateStr = null) {
@@ -255,7 +252,7 @@ class AppStore {
         this.state.letters.unshift(letter);
         this.linkToJourney(letter.date, { id: letter.id, type: 'Love Letter', data: letter.title });
         this.saveToCloud();
-        this.sendNotification(letter.author, 'Love Letter', letter.title); // Trigger Email
+        this.sendNotification(letter.author, 'Love Letter', letter.title);
     }
     
     updateLetter(id, data) {
@@ -278,7 +275,7 @@ class AppStore {
 }
 window.store = new AppStore();
 
-// Page Transition Interceptor
+// Interceptor Global Page Transition 
 document.addEventListener('DOMContentLoaded', () => {
     const links = document.querySelectorAll('a[href]');
     links.forEach(link => {
@@ -287,7 +284,8 @@ document.addEventListener('DOMContentLoaded', () => {
             if (target && !target.startsWith('http') && !target.startsWith('#')) {
                 e.preventDefault();
                 document.body.classList.add('page-exit');
-                setTimeout(() => { window.location.href = target; }, 750); 
+                // Timer 800ms sinkron dengan durasi animasi 'paperTurn' di global.css
+                setTimeout(() => { window.location.href = target; }, 800); 
             }
         });
     });

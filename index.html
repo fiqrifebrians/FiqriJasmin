@@ -18,12 +18,15 @@
         .theme-icon:hover { transform: scale(1.15); border-color: var(--theme-accent); }
         body.theme-cony .theme-selector { background: rgba(255, 255, 255, 0.5); }
         
-        /* Easter Egg Heart Button Animation */
+        /* Easter Egg Heart Button Animation & Fix Z-Index */
         .secret-heart {
             color: var(--theme-accent);
             text-decoration: none;
             display: inline-block;
             transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            z-index: 50; /* Pastikan tombol bisa diklik dan tidak tertutup layer lain */
+            cursor: pointer;
         }
         .secret-heart:hover {
             transform: scale(1.3) translateY(-2px);
@@ -45,7 +48,6 @@
     </div>
 
     <div id="central-menu">
-        <!-- SECRET BUTTON DISINI: Ikon hati sekarang adalah link 'question.html' -->
         <h1 class="menu-title">Fiqri <a href="question.html" class="secret-heart" title="???">♥︎</a> Jasmin</h1>
         
         <div class="menu-grid">
@@ -59,5 +61,23 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="js/store.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // PERBAIKAN: Memasukkan .secret-heart ke dalam target query selector
+            const links = document.querySelectorAll('.menu-card, .secret-heart');
+            links.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    const target = link.getAttribute('href');
+                    if (target && !target.startsWith('http') && !target.startsWith('#')) {
+                        e.preventDefault();
+                        document.body.classList.add('page-exit');
+                        // Disesuaikan dengan durasi animasi buku/kertas (800ms)
+                        setTimeout(() => { window.location.href = target; }, 800); 
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

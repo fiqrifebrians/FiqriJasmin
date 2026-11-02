@@ -48,21 +48,23 @@ body {
     overflow: hidden; 
     opacity: 0;
     transition: background-color 0.5s ease;
-    animation: cinematicEnter 1s cubic-bezier(0.25, 1, 0.5, 1) forwards;
-}
-
-@keyframes cinematicEnter {
-    0% { opacity: 0; filter: blur(8px); transform: scale(0.97); }
-    100% { opacity: 1; filter: blur(0); transform: scale(1); }
+    
+    /* Animasi Interaktif Kertas/Buku Digeser (Durasi 0.8s) */
+    animation: paperTurnEnter 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
 }
 
 body.page-exit {
-    animation: cinematicLeave 0.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+    animation: paperTurnLeave 0.8s cubic-bezier(0.5, 0, 0.75, 0) forwards;
 }
 
-@keyframes cinematicLeave {
-    0% { opacity: 1; filter: blur(0); transform: scale(1); }
-    100% { opacity: 0; filter: blur(8px); transform: scale(1.03); }
+@keyframes paperTurnEnter {
+    0% { opacity: 0; transform: perspective(2000px) rotateY(-30deg) translateX(100px); transform-origin: left center; }
+    100% { opacity: 1; transform: perspective(2000px) rotateY(0deg) translateX(0); transform-origin: left center; }
+}
+
+@keyframes paperTurnLeave {
+    0% { opacity: 1; transform: perspective(2000px) rotateY(0deg) translateX(0); transform-origin: right center; }
+    100% { opacity: 0; transform: perspective(2000px) rotateY(30deg) translateX(-100px); transform-origin: right center; }
 }
 
 ::-webkit-scrollbar { width: 6px; }
@@ -107,12 +109,10 @@ body.theme-cony .glass-overlay { background-color: rgba(240, 240, 252, 0.9); }
 .modal-content { max-width: 90%; max-height: 80vh; border-radius: 12px; object-fit: contain; }
 .text-modal { background: var(--bg-panel); padding: 2.5rem 2rem; width: 90%; max-width: 450px; text-align: center; border: 1px solid var(--glass-border); max-height: 85vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 
-/* FIX KONTRAS THEME CONY DI JOURNEY CALENDAR */
 body.theme-cony .cal-day { background: #fff; color: #333; border-color: var(--glass-border); }
 body.theme-cony .cal-day.has-event { background: var(--theme-accent); color: #fff; font-weight: 600; box-shadow: 0 0 10px rgba(245, 127, 206, 0.4); border-color: var(--theme-accent-hover); }
 body.theme-cony .cal-day.has-event:hover { background: var(--theme-accent-hover); }
 
-/* Kontras untuk forms di Tema Cony */
 body.theme-cony .edit-input, body.theme-cony input[type="text"], body.theme-cony textarea, body.theme-cony select { background: #fff; color: #333; border-color: var(--glass-border); }
 body.theme-cony .author-selector { background: #fff; color: #333; }
 body.theme-cony .photo-info-bar { background: #fff; color: #333; border-top: 1px solid var(--glass-border); }
