@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>One Last Question...</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/apologies.css">
+    <style>
+        .btn-group { 
+            display: flex; 
+            gap: 20px; 
+            justify-content: center; 
+            margin-top: 3rem; 
+            align-items: center;
+        }
+        .ask-btn { 
+            font-size: 1.5rem; 
+            padding: 15px 40px; 
+            border-radius: 12px;
+            font-weight: 500;
+        }
+        
+        /* The No Button avoids being clicked */
+        #no-btn { 
+            position: relative; 
+            transition: transform 0.2s ease-out; 
+            border-color: var(--text-muted); 
+            color: var(--text-muted); 
+        }
+        
+        #celebration { 
+            display: none; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100vh; 
+            width: 100vw;
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            z-index: 100; 
+        }
+        #celebration.active { 
+            display: flex; 
+            animation: cinematicEnter 1s forwards; 
+        }
+    </style>
+</head>
+<body>
+    <div id="borderless-slider">
+        <div class="slide active">
+            <p>hi jasmin...</p>
+        </div>
+        <div class="slide">
+            <p>so u found the secret button.</p>
+        </div>
+        <div class="slide">
+            <p>u've seen everything in this sanctuary.</p>
+        </div>
+        <div class="slide">
+            <p>the memories, the dreams, the letters, and all my promises.</p>
+        </div>
+        <div class="slide">
+            <p>but honestly, this place still feels empty without u in it.</p>
+        </div>
+        <div class="slide">
+            <p>so there is just one last thing i need to ask...</p>
+        </div>
+        <div class="slide">
+            <h1 style="font-weight: 400; font-size: 4rem;">would u be my gf?</h1>
+            <div class="btn-group">
+                <button class="glow-btn solid ask-btn" id="yes-btn">yes 🤍</button>
+                <button class="glow-btn ask-btn" id="no-btn">no</button>
+            </div>
+        </div>
+        
+        <div class="controls" id="controls-container">
+            <button id="next-btn" class="nav-arrow" style="font-family: sans-serif;">&#10230;</button>
+        </div>
+    </div>
+    
+    <!-- Layar Penuh Saat Dia Menekan 'Yes' -->
+    <div id="celebration">
+        <h1 style="font-size: 3.5rem; margin-bottom: 20px; color: var(--theme-accent); font-weight: 400;">i'm the happiest man alive 🤍</h1>
+        <p style="font-size: 1.5rem; color: var(--text-main); font-weight: 300;">i promise to make every day special for u.</p>
+        <button class="glow-btn solid" style="margin-top: 40px; font-size:1.1rem; padding: 12px 30px;" onclick="window.location.href='index.html'">enter our sanctuary</button>
+    </div>
+
+    <!-- Panggil store.js agar Tema (Cony/Brown/Twilight) & Dekorasi Tetap Aktif -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="js/store.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.slide');
+            const nextBtn = document.getElementById('next-btn');
+            const controlsContainer = document.getElementById('controls-container');
+            
+            const yesBtn = document.getElementById('yes-btn');
+            const noBtn = document.getElementById('no-btn');
+            const celebration = document.getElementById('celebration');
+            const slider = document.getElementById('borderless-slider');
+
+            // Slide Navigation
+            nextBtn.addEventListener('click', () => {
+                slides[currentSlide].style.opacity = '0';
+                setTimeout(() => {
+                    slides[currentSlide].classList.remove('active');
+                    currentSlide++;
+                    
+                    // Hilangkan tombol next di slide terakhir
+                    if (currentSlide >= slides.length - 1) {
+                        controlsContainer.classList.add('hidden');
+                    }
+                    
+                    if (currentSlide < slides.length) {
+                        slides[currentSlide].classList.add('active');
+                    }
+                }, 1000);
+            });
+
+            // Interactive "No" Button (Menghindar saat mau diklik/disentuh)
+            const dodgeButton = function(e) {
+                // Mencegah klik di perangkat mobile
+                if (e.type === 'touchstart') e.preventDefault(); 
+                
+                // Menghitung koordinat acak
+                const maxX = 180;
+                const maxY = 150;
+                const x = (Math.random() - 0.5) * maxX * 2;
+                const y = (Math.random() - 0.5) * maxY * 2;
+                
+                this.style.transform = `translate(${x}px, ${y}px)`;
+            };
+
+            noBtn.addEventListener('mouseover', dodgeButton);
+            noBtn.addEventListener('touchstart', dodgeButton);
+
+            // "Yes" Button Action
+            yesBtn.addEventListener('click', () => {
+                slider.style.display = 'none'; // Sembunyikan slider
+                celebration.classList.add('active'); // Tampilkan pesan terima kasih
+                
+                // Hapus dekorasi tema dari layar celebration agar lebih dramatis dan bersih
+                document.querySelectorAll('.theme-decor').forEach(el => el.style.display = 'none');
+            });
+        });
+    </script>
+</body>
+</html>
