@@ -12,17 +12,20 @@
             justify-content: center;
             height: 100dvh;
             width: 100vw;
-            perspective: 2000px;
+            perspective: 2500px; /* Diperbesar agar tepi buku tidak terlalu distorsi di mobile */
             overflow: hidden;
             position: relative;
         }
         
         .book {
             position: relative;
-            width: 350px;
+            width: 380px;
             height: 520px;
+            max-width: 90vw;
+            max-height: 75vh;
             transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
             transform-style: preserve-3d;
+            -webkit-transform-style: preserve-3d;
         }
         
         .book.open { transform: translateX(50%); }
@@ -34,6 +37,8 @@
             transform-origin: left center;
             transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
             transform-style: preserve-3d;
+            -webkit-transform-style: preserve-3d;
+            will-change: transform; /* Mencegah lag saat animasi */
         }
         
         .page.flipped { transform: rotateY(-180deg); }
@@ -49,15 +54,21 @@
             justify-content: center; align-items: center; text-align: center;
             padding: 2.5rem;
             border-radius: 4px 15px 15px 4px;
+            
             background: #ffffff !important;
-            border: 1px solid #e0e0e0 !important;
+            border: 1px solid #dddddd !important;
             box-shadow: inset 4px 0 10px rgba(0,0,0,0.05), 3px 3px 15px rgba(0,0,0,0.15) !important;
+            
+            /* Trik mencegah glitching/z-fighting di layar Mobile */
+            transform: translateZ(1px);
+            -webkit-transform: translateZ(1px);
         }
         
         .back {
-            transform: rotateY(180deg);
             border-radius: 15px 4px 4px 15px;
             box-shadow: inset -4px 0 10px rgba(0,0,0,0.05), -3px 3px 15px rgba(0,0,0,0.15) !important;
+            transform: rotateY(180deg) translateZ(1px);
+            -webkit-transform: rotateY(180deg) translateZ(1px);
         }
         
         /* Cover Buku Tetap Menggunakan Warna Tema */
@@ -68,7 +79,7 @@
         }
         .cover .back { background: var(--theme-accent-hover) !important; }
         
-        .front p { font-size: 1.6rem; font-weight: 300; line-height: 1.5; color: #1a1a1a !important; }
+        .front p { font-size: 1.5rem; font-weight: 300; line-height: 1.5; color: #1a1a1a !important; }
         
         /* Slot Video Landscape */
         .landscape-vid {
@@ -94,35 +105,27 @@
         /* Video kedua disembunyikan di awal */
         #vid2 { opacity: 0; }
         
-        /* Area Konten Bawah yang Overlap */
-        .ui-container {
-            position: relative;
-            width: 100%;
-            flex: 1; 
-        }
+        /* Area Konten Bawah */
+        .ui-container { position: relative; width: 100%; flex: 1; }
 
-        #question-ui, #celebration-ui {
+        #question-ui {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            transition: opacity 1.5s ease-in-out;
+            display: flex; flex-direction: column; justify-content: center;
+            transition: opacity 1s ease-in-out;
         }
         
-        #celebration-ui { opacity: 0; pointer-events: none; }
-        
-        #question-ui h1 { font-weight: 500; font-size: 2rem; margin-bottom: 15px; color: #1a1a1a; }
-        #celebration-ui h1 { font-weight: 500; font-size: 1.5rem; margin-bottom: 20px; color: #1a1a1a; }
+        #question-ui h1 { font-weight: 500; font-size: 1.8rem; margin-bottom: 15px; color: #1a1a1a; }
 
         .btn-group { display: flex; flex-direction: column; gap: 12px; width: 100%; }
         .ask-btn { padding: 12px; font-size: 1.15rem; width: 100%; border-color: var(--theme-accent); color: var(--theme-accent); }
         .ask-btn.solid { background: var(--theme-accent); color: #fff; }
+        #no-btn { transition: transform 0.2s ease-out; position: relative; }
         
         /* Tombol Navigasi */
         .controls { 
-            position: absolute; bottom: 3vh; left: 50%; transform: translateX(-50%); 
+            position: absolute; bottom: 4vh; left: 50%; transform: translateX(-50%); 
             z-index: 100; transition: opacity 0.5s; 
             display: flex; gap: 40px; 
         }
@@ -132,13 +135,13 @@
         #next-btn:hover { transform: translateX(10px); }
         
         @media (max-width: 768px) {
-            .book { width: 88vw; height: 65vh; }
+            .book { width: 90vw; height: 65vh; }
             .front, .back { padding: 1.2rem; }
-            .front p { font-size: 1.3rem; }
-            #question-ui h1 { font-size: 1.6rem; }
-            #celebration-ui h1 { font-size: 1.3rem; }
+            .front p { font-size: 1.25rem; }
+            #question-ui h1 { font-size: 1.5rem; }
             .controls { bottom: 2vh; gap: 30px; }
             .nav-arrow { font-size: 3rem; }
+            .landscape-vid { margin-bottom: 15px; }
         }
     </style>
 </head>
@@ -150,7 +153,25 @@
     <div class="book-wrapper">
         <div class="book" id="book">
             
-            <!-- Kertas 9: Pertanyaan & Selebrasi (Crossfade UI) -->
+            <!-- Halaman disuntikkan terbalik (Kertas 12 paling atas di susunan HTML) -->
+            
+            <!-- Kertas 12: Hadiah Bouquet & Exit -->
+            <div class="page">
+                <div class="front">
+                    <p style="font-size: 1.2rem; margin-bottom: 15px;">before we go back to our website, i have a little surprise for u...</p>
+                    <p style="font-size: 1.2rem; margin-bottom: 25px;">i noticed that barbie flower bouquet on your wishlist, so i got it just for u. i hope it makes that beautiful smile of yours shine even brighter today 🤍</p>
+                    <button class="glow-btn solid ask-btn" id="go-back-btn">go back to our website</button>
+                </div>
+                <div class="back"></div>
+            </div>
+
+            <!-- Kertas 11: Call u mine -->
+            <div class="page"><div class="front"><p>after all this time... it feels so incredibly surreal that i finally get to call u mine again.<br><br>my girl.<br>my baby princess.<br>my everything.</p></div><div class="back"></div></div>
+            
+            <!-- Kertas 10: Romantis Mampus -->
+            <div class="page"><div class="front"><p>thank u for saying yes.<br><br>u have no idea how happy i'm right now. i promise to always protect, cherish, and love u with all i have.</p></div><div class="back"></div></div>
+
+            <!-- Kertas 9: Pertanyaan & Video -->
             <div class="page" id="page-9">
                 <div class="front">
                     <div class="landscape-vid">
@@ -160,19 +181,13 @@
                     </div>
                     
                     <div class="ui-container">
-                        <!-- UI Pertanyaan (Awalnya Muncul) -->
+                        <!-- UI Pertanyaan -->
                         <div id="question-ui">
                             <h1>would u be my gf?</h1>
                             <div class="btn-group">
                                 <button class="glow-btn solid ask-btn" id="yes-btn">yes 🤍</button>
                                 <button class="glow-btn ask-btn" id="no-btn">no</button>
                             </div>
-                        </div>
-
-                        <!-- UI Celebration (Awalnya Tersembunyi, Fade In saat YES ditekan) -->
-                        <div id="celebration-ui">
-                            <h1>thank u for accepting me back. i promise to make every day special for u 🤍</h1>
-                            <button class="glow-btn solid ask-btn" id="go-back-btn">go back to our website</button>
                         </div>
                     </div>
                 </div>
@@ -217,6 +232,7 @@
     <script>
         let ytPlayer;
         let isBgmPlaying = false;
+        let hasAnsweredYes = false;
 
         function onYouTubeIframeAPIReady() {
             ytPlayer = new YT.Player('yt-player', {
@@ -253,7 +269,7 @@
             }
         }
         
-        // Fade out Audio
+        // Fade out Audio & Pindah Halaman
         function fadeOutAudioAndLeave() {
             if (ytPlayer && isBgmPlaying) {
                 let vol = ytPlayer.getVolume();
@@ -286,18 +302,27 @@
             
             let currentSlide = 0;
 
+            // Inisialisasi Z-Index dengan benar
             pages.forEach((p, i) => { p.style.zIndex = pages.length - i; });
 
             function updateButtons() {
                 prevBtn.style.display = currentSlide > 0 ? 'block' : 'none';
-                nextBtn.style.display = currentSlide >= 9 ? 'none' : 'block';
+                
+                // Kunci tombol next di halaman 9 jika belum jawab Yes. Sembunyikan di halaman terakhir (12).
+                if (currentSlide === 9 && !hasAnsweredYes) {
+                    nextBtn.style.display = 'none';
+                } else if (currentSlide >= pages.length - 1) {
+                    nextBtn.style.display = 'none';
+                } else {
+                    nextBtn.style.display = 'block';
+                }
             }
 
             function triggerVideoPlayback() {
                 vid1.pause();
                 
-                // Mulai mainkan saat tiba di kertas 9
-                if (currentSlide === 9) {
+                // Mulai putar dari detik 0 saat tiba di kertas 9
+                if (currentSlide === 9 && !hasAnsweredYes) {
                     vid1.currentTime = 0;
                     vid1.play();
                     playRomanticBGM();
@@ -309,10 +334,13 @@
                 
                 if (currentSlide < pages.length - 1) {
                     pages[currentSlide].classList.add('flipped');
-                    setTimeout((idx) => { pages[idx].style.zIndex = idx + 1; }, 500, currentSlide);
+                    
+                    // Update z-index di pertengahan animasi (400ms) untuk mencegah glitch di mobile
+                    setTimeout((idx) => { pages[idx].style.zIndex = idx + 1; }, 400, currentSlide);
+                    
                     currentSlide++;
                     updateButtons();
-                    setTimeout(triggerVideoPlayback, 600);
+                    setTimeout(triggerVideoPlayback, 500); // Trigger video setelah halaman mulai terbuka
                 }
             });
 
@@ -320,46 +348,43 @@
                 if (currentSlide > 0) {
                     currentSlide--;
                     pages[currentSlide].classList.remove('flipped');
-                    setTimeout((idx) => { pages[idx].style.zIndex = pages.length - idx; }, 500, currentSlide);
+                    
+                    setTimeout((idx) => { pages[idx].style.zIndex = pages.length - idx; }, 400, currentSlide);
                     
                     if (currentSlide === 0) book.classList.remove('open');
                     
                     updateButtons();
-                    setTimeout(triggerVideoPlayback, 600);
+                    setTimeout(triggerVideoPlayback, 500);
                 }
             });
 
             const yesBtn = document.getElementById('yes-btn');
             const noBtn = document.getElementById('no-btn');
             
-            // Transisi Crossfade "YES"
+            // Transisi "YES"
             yesBtn.addEventListener('click', () => {
+                hasAnsweredYes = true;
                 const questionUI = document.getElementById('question-ui');
-                const celebrationUI = document.getElementById('celebration-ui');
                 
-                // Hilangkan pertanyaan dan tombol
+                // Hilangkan pertanyaan dan tombol (sehingga yang tersisa hanya video 2)
                 questionUI.style.opacity = '0';
                 questionUI.style.pointerEvents = 'none';
                 
-                // Munculkan teks selebrasi
-                celebrationUI.style.opacity = '1';
-                celebrationUI.style.pointerEvents = 'auto';
-                
-                // Crossfade Video
+                // Crossfade Video 1 ke Video 2
                 vid1.style.opacity = '0';
                 vid2.style.opacity = '1';
                 vid1.pause();
                 vid2.currentTime = 0;
                 vid2.play();
                 
-                controlsContainer.style.display = 'none'; // Sembunyikan panah navigasi
-                document.querySelectorAll('.theme-decor').forEach(el => el.style.display = 'none');
+                // Tampilkan kembali tombol Next agar bisa lanjut ke kertas 10
+                updateButtons();
             });
             
-            // Tombol "Go Back To Website" dengan Audio Fade Out
+            // Tombol "Go Back To Website" di kertas terakhir dengan Audio Fade Out
             document.getElementById('go-back-btn').addEventListener('click', fadeOutAudioAndLeave);
 
-            // Logika Klik Paksa "No": Force Close Buku & Web (Statis, tidak kabur)
+            // Logika Klik Paksa "No" (Statis): Force Close Buku & Web
             noBtn.addEventListener('click', () => {
                 noBtn.style.pointerEvents = 'none'; 
                 let current = currentSlide - 1;
