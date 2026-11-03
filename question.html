@@ -91,69 +91,71 @@
             top: 0; left: 0;
             width: 100%; height: 100%;
             object-fit: cover;
-            transition: opacity 1.5s ease-in-out;
         }
-        
-        /* Video kedua disembunyikan di awal */
-        #vid2 { opacity: 0; }
         
         /* Area Pertanyaan Bawah */
-        #question-ui {
-            width: 100%;
-            transition: opacity 1s ease-in-out;
-        }
-        
-        #question-ui h1 {
-            font-weight: 500; 
-            font-size: 2rem; 
-            margin-bottom: 15px; 
-            color: #1a1a1a;
-        }
+        #question-ui { width: 100%; }
+        #question-ui h1 { font-weight: 500; font-size: 2rem; margin-bottom: 15px; color: #1a1a1a; }
 
         .btn-group { display: flex; flex-direction: column; gap: 12px; width: 100%; }
         .ask-btn { padding: 12px; font-size: 1.15rem; width: 100%; border-color: var(--theme-accent); color: var(--theme-accent); }
         .ask-btn.solid { background: var(--theme-accent); color: #fff; }
+        #no-btn { transition: transform 0.2s ease-out; position: relative; }
         
-        /* Memberikan jarak ekstra pada controls (bottom diperkecil) */
-        .controls { position: absolute; bottom: 3vh; left: 50%; transform: translateX(-50%); z-index: 100; transition: opacity 0.5s; }
-        .nav-arrow { background: none; border: none; color: var(--text-muted); font-size: 4rem; cursor: pointer; transition: all 0.4s ease; font-weight: 100; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
-        .nav-arrow:hover { transform: translateX(10px); color: var(--theme-accent); }
-        
-        /* Tombol Lanjut Setelah Video 2 Selesai */
-        #final-btn-container {
-            display: none;
-            opacity: 0;
-            transition: opacity 1.5s ease;
-            width: 100%;
-            margin-top: 15px;
+        /* Area Tombol Navigasi (Back & Next) */
+        .controls { 
+            position: absolute; bottom: 3vh; left: 50%; transform: translateX(-50%); 
+            z-index: 100; transition: opacity 0.5s; 
+            display: flex; gap: 40px; 
         }
-
+        .nav-arrow { background: none; border: none; color: var(--text-muted); font-size: 3.5rem; cursor: pointer; transition: all 0.4s ease; font-weight: 100; text-shadow: 0 0 10px rgba(0,0,0,0.5); }
+        .nav-arrow:hover { color: var(--theme-accent); }
+        #prev-btn:hover { transform: translateX(-10px); }
+        #next-btn:hover { transform: translateX(10px); }
+        
         @media (max-width: 768px) {
             .book { width: 88vw; height: 65vh; }
             .front, .back { padding: 1.2rem; }
-            .front p { font-size: 1.4rem; }
+            .front p { font-size: 1.3rem; }
             .cover .front h1 { font-size: 2.8rem !important; }
             #question-ui h1 { font-size: 1.6rem; }
-            .controls { bottom: 2vh; }
+            .controls { bottom: 2vh; gap: 30px; }
+            .nav-arrow { font-size: 3rem; }
         }
     </style>
 </head>
 <body>
+    
+    <!-- Player YouTube Tersembunyi untuk BGM -->
+    <div id="yt-player" style="display: none; position: absolute; width: 0; height: 0;"></div>
+
     <div class="book-wrapper">
         <div class="book" id="book">
-            <!-- Halaman Terakhir (Pertanyaan & Video) -->
-            <div class="page">
+            
+            <!-- Halaman disuntikkan secara terbalik dari belakang ke depan (Kertas 10 paling atas di struktur HTML ini) -->
+            
+            <!-- Kertas 10: Celebration / Video 2 -->
+            <div class="page" id="page-10">
                 <div class="front">
-                    
                     <div class="landscape-vid">
-                        <!-- Slot Video 1 (Looping) -->
-                        <video id="vid1" src="assets/video1.mp4" autoplay loop muted playsinline></video>
-                        <!-- Slot Video 2 (Hanya Play saat 'Yes' ditekan, tanpa loop) -->
-                        <!-- Catatan: Anda bisa menghapus atribut 'muted' jika video 2 memiliki lagu/suara yang ingin diperdengarkan -->
+                        <!-- Muted, Tidak Loop -->
                         <video id="vid2" src="assets/video2.mp4" muted playsinline></video>
                     </div>
-                    
-                    <!-- UI Pertanyaan -->
+                    <div style="width: 100%;">
+                        <h1 style="font-weight: 500; font-size: 1.5rem; margin-bottom: 20px; color: #1a1a1a;">thank u for accepting me back. i promise to make every day special for u 🤍</h1>
+                        <button class="glow-btn solid ask-btn" onclick="window.location.href='index.html'">go back to our sanctuary</button>
+                    </div>
+                </div>
+                <div class="back"></div>
+            </div>
+
+            <!-- Kertas 9: Pertanyaan / Video 1 -->
+            <div class="page" id="page-9">
+                <div class="front">
+                    <div class="landscape-vid">
+                        <!-- Muted, Tidak Loop -->
+                        <video id="vid1" src="assets/video1.mp4" muted playsinline></video>
+                    </div>
                     <div id="question-ui">
                         <h1>would u be my gf?</h1>
                         <div class="btn-group">
@@ -161,23 +163,28 @@
                             <button class="glow-btn ask-btn" id="no-btn">no</button>
                         </div>
                     </div>
-                    
-                    <!-- Tombol Masuk yang akan muncul ketika Video 2 selesai -->
-                    <div id="final-btn-container">
-                        <button class="glow-btn solid ask-btn" onclick="window.location.href='index.html'">enter our sanctuary 🤍</button>
-                    </div>
-
                 </div>
                 <div class="back"></div>
             </div>
             
-            <div class="page"><div class="front"><p>so there is just one last thing i need to ask...</p></div><div class="back"></div></div>
-            <div class="page"><div class="front"><p>but honestly, this place still feels empty without u in it.</p></div><div class="back"></div></div>
-            <div class="page"><div class="front"><p>the memories, the dreams, the letters, and all my promises.</p></div><div class="back"></div></div>
-            <div class="page"><div class="front"><p>u've seen everything in this sanctuary.</p></div><div class="back"></div></div>
-            <div class="page"><div class="front"><p>so u found the secret button.</p></div><div class="back"></div></div>
+            <!-- Kertas 8 -->
+            <div class="page"><div class="front"><p>to ask u this one very important question.</p></div><div class="back"></div></div>
+            <!-- Kertas 7 -->
+            <div class="page"><div class="front"><p>i feel like... it's finally time.</p></div><div class="back"></div></div>
+            <!-- Kertas 6 -->
+            <div class="page"><div class="front"><p>u make me the happiest man just by being in my life.</p></div><div class="back"></div></div>
+            <!-- Kertas 5 -->
+            <div class="page"><div class="front"><p>and a pure, gentle heart that makes me feel at home.</p></div><div class="back"></div></div>
+            <!-- Kertas 4 -->
+            <div class="page"><div class="front"><p>u have the most beautiful smile that lights up my world.</p></div><div class="back"></div></div>
+            <!-- Kertas 3 -->
+            <div class="page"><div class="front"><p>i just want to take a moment to admire u.</p></div><div class="back"></div></div>
+            <!-- Kertas 2 -->
+            <div class="page"><div class="front"><p>wow, u actually found this secret page. i'm impressed.</p></div><div class="back"></div></div>
+            <!-- Kertas 1 -->
             <div class="page"><div class="front"><p>hi jasmin...</p></div><div class="back"></div></div>
             
+            <!-- Kertas Cover (Paling depan, Index 0 di JS) -->
             <div class="page cover">
                 <div class="front">
                     <h1 style="font-size: 4rem; font-weight:400; line-height: 1.2;">our<br>secret</h1>
@@ -188,90 +195,169 @@
         </div>
     </div>
     
+    <!-- Tombol Navigasi Bawah -->
     <div class="controls" id="controls-container">
+        <button id="prev-btn" class="nav-arrow" title="Previous Page" style="display:none;">&#10229;</button>
         <button id="next-btn" class="nav-arrow" title="Next Page">&#10230;</button>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="js/store.js"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
     
     <script>
+        let ytPlayer;
+        let isBgmPlaying = false;
+
+        // Inisialisasi YouTube API (Hanya dimuat, belum di-play)
+        function onYouTubeIframeAPIReady() {
+            ytPlayer = new YT.Player('yt-player', {
+                height: '0',
+                width: '0',
+                videoId: 'xtsWsebfEtw', // Arctic Monkeys - I Wanna Be Yours
+                playerVars: { 'autoplay': 0, 'controls': 0, 'showinfo': 0, 'rel': 0 },
+                events: {
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        // Fungsi Looping dari detik 0 ketika lagu habis
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.ENDED) {
+                ytPlayer.seekTo(0);
+                ytPlayer.playVideo();
+            }
+        }
+
+        // Fungsi Play & Fade In Musik
+        function playRomanticBGM() {
+            if (ytPlayer && typeof ytPlayer.playVideo === 'function' && !isBgmPlaying) {
+                isBgmPlaying = true;
+                ytPlayer.setVolume(0);
+                ytPlayer.seekTo(115); // Mulai dari 1:55 (115 detik)
+                ytPlayer.playVideo();
+                
+                // Efek Fade In perlahan
+                let vol = 0;
+                let fadeInterval = setInterval(() => {
+                    vol += 5;
+                    ytPlayer.setVolume(vol);
+                    if (vol >= 100) clearInterval(fadeInterval);
+                }, 250);
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const pagesRaw = document.querySelectorAll('.page');
-            const pages = Array.from(pagesRaw).reverse();
+            const pages = Array.from(pagesRaw).reverse(); // Balik array agar Cover = index 0, Page 10 = index 10
             
             const nextBtn = document.getElementById('next-btn');
+            const prevBtn = document.getElementById('prev-btn');
             const controlsContainer = document.getElementById('controls-container');
             const book = document.getElementById('book');
             
+            const vid1 = document.getElementById('vid1');
+            const vid2 = document.getElementById('vid2');
+            
             let currentSlide = 0;
 
+            // Inisialisasi z-index kertas
             pages.forEach((p, i) => { p.style.zIndex = pages.length - i; });
 
-            nextBtn.addEventListener('click', () => {
-                if (currentSlide === 0) {
-                    book.classList.add('open'); 
+            function updateButtons() {
+                prevBtn.style.display = currentSlide > 0 ? 'block' : 'none';
+                
+                // Sembunyikan Next Button saat berada di Kertas 9 (Tembak) atau 10
+                if (currentSlide >= 9) {
+                    nextBtn.style.display = 'none';
+                } else {
+                    nextBtn.style.display = 'block';
                 }
+            }
+
+            // Fungsi untuk memutar video dari awal saat kertas dibuka
+            function triggerVideoPlayback() {
+                // Hentikan semua video terlebih dahulu
+                vid1.pause();
+                vid2.pause();
+                
+                // Jika sedang di Kertas 9 (Tembak)
+                if (currentSlide === 9) {
+                    vid1.currentTime = 0;
+                    vid1.play();
+                    playRomanticBGM(); // Mainkan Lagu YouTube
+                }
+                // Jika sedang di Kertas 10 (Celebration)
+                else if (currentSlide === 10) {
+                    vid2.currentTime = 0;
+                    vid2.play();
+                }
+            }
+
+            // Tombol NEXT (Buka Kertas)
+            nextBtn.addEventListener('click', () => {
+                if (currentSlide === 0) book.classList.add('open'); 
                 
                 if (currentSlide < pages.length - 1) {
                     pages[currentSlide].classList.add('flipped');
                     
-                    setTimeout((idx) => {
-                        pages[idx].style.zIndex = idx + 1;
-                    }, 500, currentSlide);
+                    setTimeout((idx) => { pages[idx].style.zIndex = idx + 1; }, 500, currentSlide);
                     
                     currentSlide++;
-                    
-                    if (currentSlide >= pages.length - 1) {
-                        controlsContainer.style.opacity = '0';
-                        setTimeout(() => controlsContainer.style.display = 'none', 500);
-                    }
+                    updateButtons();
+                    setTimeout(triggerVideoPlayback, 600); // Tunggu kertas terbuka sedikit sebelum nge-play
                 }
             });
 
+            // Tombol BACK (Tutup Kertas)
+            prevBtn.addEventListener('click', () => {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    pages[currentSlide].classList.remove('flipped');
+                    
+                    setTimeout((idx) => { pages[idx].style.zIndex = pages.length - idx; }, 500, currentSlide);
+                    
+                    if (currentSlide === 0) book.classList.remove('open');
+                    
+                    updateButtons();
+                    setTimeout(triggerVideoPlayback, 600);
+                }
+            });
+
+            // Tombol YES & NO pada Kertas 9
             const yesBtn = document.getElementById('yes-btn');
             const noBtn = document.getElementById('no-btn');
             
-            // Logika Tombol "Yes" (Fading UI & Switch Video)
+            // Logika "Yes": Otomatis membalik ke Kertas 10 (Video 2)
             yesBtn.addEventListener('click', () => {
-                const questionUI = document.getElementById('question-ui');
-                const vid1 = document.getElementById('vid1');
-                const vid2 = document.getElementById('vid2');
+                pages[currentSlide].classList.add('flipped');
+                setTimeout((idx) => { pages[idx].style.zIndex = idx + 1; }, 500, currentSlide);
                 
-                // Menghilangkan pertanyaan dan tombol
-                questionUI.style.opacity = '0';
-                questionUI.style.pointerEvents = 'none';
-                setTimeout(() => { questionUI.style.display = 'none'; }, 1000);
+                currentSlide++; // Pindah ke Kertas 10
+                controlsContainer.style.display = 'none'; // Hilangkan seluruh navigasi
                 
-                // Transisi Fading Video & Putar Video 2
-                vid1.style.opacity = '0';
-                vid2.style.opacity = '1';
-                vid1.pause();
-                vid2.play(); // Play Video 2
-                
-                // Menghilangkan ornamen mengambang
+                setTimeout(triggerVideoPlayback, 600);
                 document.querySelectorAll('.theme-decor').forEach(el => el.style.display = 'none');
             });
-            
-            // Logika ketika Video 2 selesai diputar
-            const vid2 = document.getElementById('vid2');
-            const finalBtnContainer = document.getElementById('final-btn-container');
-            
-            vid2.addEventListener('ended', () => {
-                finalBtnContainer.style.display = 'block';
-                // Memberikan sedikit waktu sebelum fadenya dimulai
-                setTimeout(() => {
-                    finalBtnContainer.style.opacity = '1';
-                }, 100);
-            });
 
-            // Logika Tombol "No" (Force Close Book & Native Browser Crash)
+            // Logika "No" Menghindar
+            const dodgeButton = function(e) {
+                if (e.type === 'touchstart') e.preventDefault(); 
+                const maxX = 50; const maxY = 70;
+                const x = (Math.random() - 0.5) * maxX * 2;
+                const y = (Math.random() - 0.5) * maxY * 2;
+                this.style.transform = `translate(${x}px, ${y}px)`;
+            };
+            noBtn.addEventListener('mouseover', dodgeButton);
+            noBtn.addEventListener('touchstart', dodgeButton);
+
+            // Logika Klik Paksa "No": Force Close Buku & Web
             noBtn.addEventListener('click', () => {
-                noBtn.style.pointerEvents = 'none'; // Cegah klik dobel
+                noBtn.style.pointerEvents = 'none'; 
                 let current = currentSlide - 1;
                 
-                // Animasi buku menutup dengan cepat
                 let closeInterval = setInterval(() => {
                     if (current >= 0) {
                         pages[current].classList.remove('flipped');
@@ -281,12 +367,8 @@
                         clearInterval(closeInterval);
                         book.classList.remove('open');
                         
-                        // Men-trigger Force Close dari sistem browser
                         setTimeout(() => {
-                            // Munculkan Native Warning
                             alert("FATAL SYSTEM ERROR: 'Yes' response not found.\n\nCritical failure in romance.exe module.\nSystem shutting down to prevent heartbreak...");
-                            
-                            // Eksekusi Force Close Tab / Redirect Blank
                             window.open('','_self').close();
                             window.location.href = "about:blank";
                         }, 800);
