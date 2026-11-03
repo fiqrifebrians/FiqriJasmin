@@ -12,7 +12,7 @@
             justify-content: center;
             height: 100dvh;
             width: 100vw;
-            perspective: 2500px; /* Diperbesar agar tepi buku tidak terlalu distorsi di mobile */
+            perspective: 2500px; 
             overflow: hidden;
             position: relative;
         }
@@ -21,8 +21,6 @@
             position: relative;
             width: 380px;
             height: 520px;
-            max-width: 90vw;
-            max-height: 75vh;
             transition: transform 1s cubic-bezier(0.25, 1, 0.5, 1);
             transform-style: preserve-3d;
             -webkit-transform-style: preserve-3d;
@@ -38,7 +36,7 @@
             transition: transform 1s cubic-bezier(0.645, 0.045, 0.355, 1);
             transform-style: preserve-3d;
             -webkit-transform-style: preserve-3d;
-            will-change: transform; /* Mencegah lag saat animasi */
+            will-change: transform; 
         }
         
         .page.flipped { transform: rotateY(-180deg); }
@@ -59,7 +57,6 @@
             border: 1px solid #dddddd !important;
             box-shadow: inset 4px 0 10px rgba(0,0,0,0.05), 3px 3px 15px rgba(0,0,0,0.15) !important;
             
-            /* Trik mencegah glitching/z-fighting di layar Mobile */
             transform: translateZ(1px);
             -webkit-transform: translateZ(1px);
         }
@@ -102,13 +99,12 @@
             transition: opacity 1.5s ease-in-out;
         }
         
-        /* Video kedua disembunyikan di awal */
         #vid2 { opacity: 0; }
         
         /* Area Konten Bawah */
         .ui-container { position: relative; width: 100%; flex: 1; }
 
-        #question-ui {
+        #question-ui, #celebration-ui {
             position: absolute;
             top: 0; left: 0;
             width: 100%; height: 100%;
@@ -116,7 +112,10 @@
             transition: opacity 1s ease-in-out;
         }
         
+        #celebration-ui { opacity: 0; pointer-events: none; }
+        
         #question-ui h1 { font-weight: 500; font-size: 1.8rem; margin-bottom: 15px; color: #1a1a1a; }
+        #celebration-ui h1 { font-weight: 500; font-size: 1.3rem; margin-bottom: 15px; color: #1a1a1a; }
 
         .btn-group { display: flex; flex-direction: column; gap: 12px; width: 100%; }
         .ask-btn { padding: 12px; font-size: 1.15rem; width: 100%; border-color: var(--theme-accent); color: var(--theme-accent); }
@@ -134,14 +133,24 @@
         #prev-btn:hover { transform: translateX(-10px); }
         #next-btn:hover { transform: translateX(10px); }
         
+        /* FIX MOBILE LAYOUT */
         @media (max-width: 768px) {
-            .book { width: 90vw; height: 65vh; }
-            .front, .back { padding: 1.2rem; }
-            .front p { font-size: 1.25rem; }
-            #question-ui h1 { font-size: 1.5rem; }
-            .controls { bottom: 2vh; gap: 30px; }
-            .nav-arrow { font-size: 3rem; }
-            .landscape-vid { margin-bottom: 15px; }
+            /* Lebar 48vw. Saat buku membelah 2, total memakan 96vw. Fit sempurna di layar HP 100vw */
+            .book { width: 48vw; height: 55vh; }
+            .front, .back { padding: 1rem 0.8rem; }
+            .front p { font-size: 1.05rem; }
+            
+            .cover .front h1 { font-size: 2rem !important; }
+            
+            #question-ui h1 { font-size: 1.15rem; margin-bottom: 10px; }
+            #celebration-ui h1 { font-size: 1rem; margin-bottom: 10px; line-height: 1.4; }
+            
+            .ask-btn { padding: 8px; font-size: 0.9rem; }
+            .btn-group { gap: 8px; margin-top: 1rem; }
+            
+            .landscape-vid { margin-bottom: 10px; border-radius: 4px; }
+            .controls { bottom: 2vh; gap: 20px; }
+            .nav-arrow { font-size: 2.5rem; }
         }
     </style>
 </head>
@@ -158,18 +167,18 @@
             <!-- Kertas 12: Hadiah Bouquet & Exit -->
             <div class="page">
                 <div class="front">
-                    <p style="font-size: 1.2rem; margin-bottom: 15px;">before we go back to our website, i have a little surprise for u...</p>
-                    <p style="font-size: 1.2rem; margin-bottom: 25px;">i noticed that barbie flower bouquet on your wishlist, so i got it just for u. i hope it makes that beautiful smile of yours shine even brighter today 🤍</p>
+                    <p style="margin-bottom: 15px;">before we go back to our website, i have a little surprise for u...</p>
+                    <p style="margin-bottom: 25px;">i noticed that barbie flower bouquet on your wishlist, so i got it just for u. i hope it makes that beautiful smile of yours shine even brighter today 🤍</p>
                     <button class="glow-btn solid ask-btn" id="go-back-btn">go back to our website</button>
                 </div>
                 <div class="back"></div>
             </div>
 
             <!-- Kertas 11: Call u mine -->
-            <div class="page"><div class="front"><p>after all this time... it feels so incredibly surreal that i finally get to call u mine again.<br><br>my girl.<br>my baby princess.<br>my everything.</p></div><div class="back"></div></div>
+            <div class="page"><div class="front"><p>after all this time... it feels so incredibly surreal that i finally get to call u mine again.<br><br>my girl.<br>my home.<br>my everything.</p></div><div class="back"></div></div>
             
             <!-- Kertas 10: Romantis Mampus -->
-            <div class="page"><div class="front"><p>thank u for saying yes.<br><br>u have no idea how happy i'm right now. i promise to always protect, cherish, and love u with all i have.</p></div><div class="back"></div></div>
+            <div class="page"><div class="front"><p>thank u for saying yes.<br><br>u have no idea how fast my heart is beating right now. i promise to always protect, cherish, and love u with all i have.</p></div><div class="back"></div></div>
 
             <!-- Kertas 9: Pertanyaan & Video -->
             <div class="page" id="page-9">
@@ -335,7 +344,7 @@
                 if (currentSlide < pages.length - 1) {
                     pages[currentSlide].classList.add('flipped');
                     
-                    // Update z-index di pertengahan animasi (400ms) untuk mencegah glitch di mobile
+                    // Update z-index di pertengahan animasi (400ms) untuk mencegah glitch
                     setTimeout((idx) => { pages[idx].style.zIndex = idx + 1; }, 400, currentSlide);
                     
                     currentSlide++;
