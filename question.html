@@ -133,14 +133,12 @@
         #prev-btn:hover { transform: translateX(-10px); }
         #next-btn:hover { transform: translateX(10px); }
         
-        /* FIX MOBILE LAYOUT */
+        /* FIX MOBILE LAYOUT & ASPECT RATIO */
         @media (max-width: 768px) {
-            /* Lebar 48vw. Saat buku membelah 2, total memakan 96vw. Fit sempurna di layar HP 100vw */
-            .book { width: 48vw; height: 55vh; }
+            /* Memaksa rasio 1 : 1.56 layaknya buku asli. Tidak akan pernah lonjong. */
+            .book { width: 48vw; height: 75vw; max-height: none; }
             .front, .back { padding: 1rem 0.8rem; }
-            .front p { font-size: 1.05rem; }
-            
-            .cover .front h1 { font-size: 2rem !important; }
+            .front p { font-size: 1.25rem; }
             
             #question-ui h1 { font-size: 1.15rem; margin-bottom: 10px; }
             #celebration-ui h1 { font-size: 1rem; margin-bottom: 10px; line-height: 1.4; }
@@ -174,8 +172,13 @@
                 <div class="back"></div>
             </div>
 
-            <!-- Kertas 11: Call u mine -->
-            <div class="page"><div class="front"><p>after all this time... it feels so incredibly surreal that i finally get to call u mine again.<br><br>my girl.<br>my home.<br>my everything.</p></div><div class="back"></div></div>
+            <!-- Kertas 11: Call u mine & Promise Ring -->
+            <div class="page">
+                <div class="front">
+                    <p style="font-size: 1.3rem;">after all this time... it feels so incredibly surreal that i finally get to call u mine again.<br><br>now u can finally wear my promise ring again.<br><br>my girl.<br>my princess.<br>my home.<br>my everything.</p>
+                </div>
+                <div class="back"></div>
+            </div>
             
             <!-- Kertas 10: Romantis Mampus -->
             <div class="page"><div class="front"><p>thank u for saying yes.<br><br>u have no idea how fast my heart is beating right now. i promise to always protect, cherish, and love u with all i have.</p></div><div class="back"></div></div>
@@ -261,7 +264,7 @@
             }
         }
 
-        // Fade in Audio
+        // Fade in Audio (Akan dipanggil murni dari dalam event listener click)
         function playRomanticBGM() {
             if (ytPlayer && typeof ytPlayer.playVideo === 'function' && !isBgmPlaying) {
                 isBgmPlaying = true;
@@ -327,14 +330,18 @@
                 }
             }
 
-            function triggerVideoPlayback() {
-                vid1.pause();
-                
-                // Mulai putar dari detik 0 saat tiba di kertas 9
-                if (currentSlide === 9 && !hasAnsweredYes) {
+            // Fungsi trigger media ini dipanggil SINKRON (tanpa timeout) agar mobile browser mengizinkan autoplay
+            function triggerVideoPlayback(slideIndex) {
+                if (slideIndex === 9 && !hasAnsweredYes) {
                     vid1.currentTime = 0;
-                    vid1.play();
+                    vid1.play().catch(e => console.log('Video autoplay handled:', e));
                     playRomanticBGM();
+                } else {
+                    vid1.pause();
+                    if (isBgmPlaying && slideIndex < 9) {
+                        ytPlayer.pauseVideo();
+                        isBgmPlaying = false;
+                    }
                 }
             }
 
@@ -344,12 +351,14 @@
                 if (currentSlide < pages.length - 1) {
                     pages[currentSlide].classList.add('flipped');
                     
-                    // Update z-index di pertengahan animasi (400ms) untuk mencegah glitch
+                    // Update z-index di pertengahan animasi untuk mencegah glitch di mobile
                     setTimeout((idx) => { pages[idx].style.zIndex = idx + 1; }, 400, currentSlide);
                     
                     currentSlide++;
                     updateButtons();
-                    setTimeout(triggerVideoPlayback, 500); // Trigger video setelah halaman mulai terbuka
+                    
+                    // Trigger media tepat di momen klik ini
+                    triggerVideoPlayback(currentSlide);
                 }
             });
 
@@ -363,7 +372,7 @@
                     if (currentSlide === 0) book.classList.remove('open');
                     
                     updateButtons();
-                    setTimeout(triggerVideoPlayback, 500);
+                    triggerVideoPlayback(currentSlide);
                 }
             });
 
@@ -384,7 +393,7 @@
                 vid2.style.opacity = '1';
                 vid1.pause();
                 vid2.currentTime = 0;
-                vid2.play();
+                vid2.play().catch(e => console.log('Video 2 handled:', e));
                 
                 // Tampilkan kembali tombol Next agar bisa lanjut ke kertas 10
                 updateButtons();
