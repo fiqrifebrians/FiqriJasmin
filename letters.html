@@ -3,41 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Love Letters - Fiqri ♥︎ Jasmin</title>
+    <title>Love Letters - Fiqri & Jasmin</title>
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/letters.css">
-    <script src="https://unpkg.com/feather-icons"></script>
 </head>
 <body>
-    <a href="index.html" class="glow-btn small" style="position:fixed; top:20px; left:20px; text-decoration:none; display:flex; align-items:center; gap:5px; z-index:100;"><i data-feather="arrow-left"></i> Menu</a>
-    
-    <div class="page-container">
-        <div class="section-header"><h2>Digital Mailbox</h2></div>
-        
-        <div class="letter-form glass-panel">
-            <input type="text" id="letter-title" placeholder="Subject...">
-            <textarea id="letter-body" rows="5" placeholder="Write something from the heart..."></textarea>
-            <div class="author-selector">
-                <label>Written by:</label>
-                <input type="radio" name="letter-author" value="Fiqri" id="letter-fiqri" checked> <label for="letter-fiqri">Fiqri</label>
-                <input type="radio" name="letter-author" value="Jasmin" id="letter-jasmin"> <label for="letter-jasmin">Jasmin</label>
-            </div>
-            <button id="send-letter-btn" class="glow-btn small solid">Drop Letter</button>
-        </div>
-        
-        <div id="letters-feed" class="letters-feed"></div>
+    <div class="theme-selector">
+        <img src="assets/cony-icon.png" class="theme-icon" onclick="setTheme('cony')" title="Cony Theme">
+        <img src="assets/brown-icon.png" class="theme-icon" onclick="setTheme('brown')" title="Brown Theme">
+        <img src="assets/twilight-icon.png" class="theme-icon" onclick="setTheme('twilight')" title="Twilight Sparkle Theme">
     </div>
 
-    <!-- Edit Modal -->
-    <div id="edit-modal" class="modal glass-overlay">
-        <div class="modal-content text-modal glass-panel">
-            <h3 id="edit-modal-title" style="margin-bottom:1.5rem; font-weight:400; font-size:1.6rem; color:var(--text-main);">Edit Letter</h3>
-            <input type="text" id="edit-input-1" class="edit-input" placeholder="Subject">
-            <textarea id="edit-input-2" class="edit-input" rows="5" placeholder="Body"></textarea>
-            <div style="display:flex; gap:10px; margin-top:1.5rem; justify-content:center;">
-                <button id="save-edit-btn" class="glow-btn small solid">Save</button>
-                <button id="cancel-edit-btn" class="glow-btn small close-modal-btn" style="border-color:var(--glass-border); color:var(--text-muted);">Cancel</button>
+    <div class="container">
+        <header class="letters-header">
+            <a href="index.html" class="back-btn">&#10229; Home</a>
+            <h1>Love Letters</h1>
+            <p>Words from the heart, kept safe forever.</p>
+        </header>
+
+        <div class="controls-bar glass-panel" style="display: flex; justify-content: flex-end; align-items: center; gap: 15px; margin-bottom: 25px; padding: 12px 20px; border-radius: 12px;">
+            <div class="filter-group">
+                <label for="sort-letters">Sort by:</label>
+                <select id="sort-letters" class="filter-select">
+                    <option value="latest">Latest Added</option>
+                    <option value="oldest">Oldest Added</option>
+                </select>
             </div>
+            <button class="glow-btn small" id="open-letter-modal">+ Write Letter</button>
+        </div>
+
+        <div class="letters-grid" id="letters-grid">
+            <!-- Render via JS -->
+        </div>
+    </div>
+
+    <!-- Modal Baca Surat -->
+    <div class="modal glass-overlay" id="read-modal">
+        <div class="text-modal glass-panel" style="max-width: 600px; text-align: left;">
+            <span class="close-modal" id="close-read">&times;</span>
+            <div id="read-author" style="font-size: 0.85rem; text-transform: uppercase; color: var(--theme-accent); letter-spacing: 1px; margin-bottom: 5px;"></div>
+            <h2 id="read-title" style="font-size: 1.8rem; font-weight: 400; margin-bottom: 5px;"></h2>
+            <div id="read-date" style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 20px;"></div>
+            <div id="read-body" style="font-size: 1.05rem; line-height: 1.6; color: var(--text-main); white-space: pre-wrap; max-height: 50vh; overflow-y: auto; padding-right: 10px;"></div>
+        </div>
+    </div>
+
+    <!-- Modal Tulis Surat -->
+    <div class="modal glass-overlay" id="write-modal">
+        <div class="text-modal glass-panel" style="max-width: 550px;">
+            <span class="close-modal" id="close-write">&times;</span>
+            <h2 id="write-modal-title" style="margin-bottom: 20px; font-weight: 400;">Write a Love Letter</h2>
+            <form id="letter-form">
+                <input type="hidden" id="edit-letter-id">
+                <div style="margin-bottom: 15px; text-align: left;">
+                    <label style="font-size: 0.9rem; color: var(--text-muted);">Title:</label>
+                    <input type="text" id="letter-title" required class="edit-input" style="width:100%; padding: 10px; margin-top:5px; border-radius:6px; border:1px solid var(--glass-border); background:var(--bg-panel); color:var(--text-main);">
+                </div>
+                <div style="margin-bottom: 15px; text-align: left;">
+                    <label style="font-size: 0.9rem; color: var(--text-muted);">Date:</label>
+                    <input type="date" id="letter-date" required class="edit-input" style="width:100%; padding: 10px; margin-top:5px; border-radius:6px; border:1px solid var(--glass-border); background:var(--bg-panel); color:var(--text-main);">
+                </div>
+                <div style="margin-bottom: 15px; text-align: left;" id="letter-author-group">
+                    <label style="font-size: 0.9rem; color: var(--text-muted);">From:</label>
+                    <select id="letter-author" class="edit-input" style="width:100%; padding: 10px; margin-top:5px; border-radius:6px; border:1px solid var(--glass-border); background:var(--bg-panel); color:var(--text-main);">
+                        <option value="Fiqri">Fiqri</option>
+                        <option value="Jasmin">Jasmin</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 20px; text-align: left;">
+                    <label style="font-size: 0.9rem; color: var(--text-muted);">Your Message:</label>
+                    <textarea id="letter-body" rows="6" required class="edit-input" style="width:100%; padding: 10px; margin-top:5px; border-radius:6px; border:1px solid var(--glass-border); background:var(--bg-panel); color:var(--text-main); resize:vertical;"></textarea>
+                </div>
+                <button type="submit" class="glow-btn solid" style="width: 100%;">Seal & Send Letter</button>
+            </form>
         </div>
     </div>
 
@@ -45,6 +83,5 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="js/store.js"></script>
     <script src="js/letters.js"></script>
-    <script>feather.replace();</script>
 </body>
 </html>

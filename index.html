@@ -18,7 +18,6 @@
         .theme-icon:hover { transform: scale(1.15); border-color: var(--theme-accent); }
         body.theme-cony .theme-selector { background: rgba(255, 255, 255, 0.5); }
         
-        /* Animasi Hati Rahasia Diperbarui */
         .secret-heart {
             color: var(--theme-accent);
             text-decoration: none;
@@ -50,11 +49,10 @@
     <div id="central-menu">
         <h1 class="menu-title">Fiqri <a href="#" id="secret-btn" class="secret-heart" title="???">♥︎</a> Jasmin</h1>
         
-        
         <div class="menu-grid">
             <a href="journey.html" class="menu-card"><h3>Our Journey</h3></a>
             <a href="galleries.html" class="menu-card"><h3>Gallery</h3></a>
-            <a href="wishlist.html" class="menu-card"><h3>Our Wishlist</h3></a>
+            <a href="wishlist.html" class="menu-card"><h3>Wishlist</h3></a>
             <a href="letters.html" class="menu-card"><h3>Love Letters</h3></a>
         </div>
     </div>
@@ -65,7 +63,6 @@
     
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Logika Menu Card Normal
             const links = document.querySelectorAll('.menu-card');
             links.forEach(link => {
                 link.addEventListener('click', (e) => {
@@ -78,7 +75,6 @@
                 });
             });
             
-            // LOGIKA KHUSUS TOMBOL HATI RAHASIA (Dijamin Berfungsi)
             document.getElementById('secret-btn').addEventListener('click', (e) => {
                 e.preventDefault();
                 document.body.classList.add('page-exit');

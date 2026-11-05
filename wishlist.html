@@ -3,61 +3,102 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wishlist - Fiqri ♥︎ Jasmin</title>
+    <title>Our Wishlist - Fiqri & Jasmin</title>
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/wishlist.css">
-    <script src="https://unpkg.com/feather-icons"></script>
 </head>
 <body>
-    <a href="index.html" class="glow-btn small" style="position:fixed; top:20px; left:20px; text-decoration:none; display:flex; align-items:center; gap:5px; z-index:100;"><i data-feather="arrow-left"></i> Menu</a>
-    
-    <div class="page-container">
-        <div class="section-header"><h2>Our Dreams</h2></div>
-        
-        <div class="wisher-form glass-panel">
-            <input type="text" id="wish-title" placeholder="What's our next dream?">
-            <input type="text" id="wish-desc" placeholder="A short description...">
-            <select id="wish-category">
-                <option value="Item">Item</option>
-                <option value="Travel">Travel</option>
-                <option value="Milestone">Milestone</option>
-                <option value="Date Night">Date</option>
-            </select>
-            <div class="author-selector">
-                <label>Added by:</label>
-                <input type="radio" name="wish-author" value="Fiqri" id="wish-fiqri" checked> <label for="wish-fiqri">Fiqri</label>
-                <input type="radio" name="wish-author" value="Jasmin" id="wish-jasmin"> <label for="wish-jasmin">Jasmin</label>
-            </div>
-            <button id="add-wish-btn" class="glow-btn small solid">Add Wish</button>
-        </div>
-        
-        <div id="wishlist-container" class="wish-list"></div>
+    <div class="theme-selector">
+        <img src="assets/cony-icon.png" class="theme-icon" onclick="setTheme('cony')" title="Cony Theme">
+        <img src="assets/brown-icon.png" class="theme-icon" onclick="setTheme('brown')" title="Brown Theme">
+        <img src="assets/twilight-icon.png" class="theme-icon" onclick="setTheme('twilight')" title="Twilight Sparkle Theme">
     </div>
 
-    <!-- Edit Modal -->
-    <div id="edit-modal" class="modal glass-overlay">
-        <div class="modal-content text-modal glass-panel">
-            <h3 id="edit-modal-title" style="margin-bottom:1.5rem; font-weight:400; font-size:1.6rem; color:var(--text-main);">Edit</h3>
-            <input type="text" id="edit-input-1" class="edit-input" placeholder="Title">
-            <textarea id="edit-input-2" class="edit-input" rows="5" placeholder="Description"></textarea>
-            <div style="display:flex; gap:10px; margin-top:1.5rem; justify-content:center;">
-                <button id="save-edit-btn" class="glow-btn small solid">Save</button>
-                <button id="cancel-edit-btn" class="glow-btn small close-modal-btn" style="border-color:var(--glass-border); color:var(--text-muted);">Cancel</button>
+    <div class="container">
+        <header class="wishlist-header">
+            <a href="index.html" class="back-btn">&#10229; Home</a>
+            <h1>Wishlist</h1>
+            <p>Our dreams, goals, and little things we want to do together.</p>
+        </header>
+
+        <!-- Bar Kontrol Filter dan Sort yang Estetik -->
+        <div class="controls-bar glass-panel">
+            <div class="filter-group">
+                <label for="category-filter">Category:</label>
+                <select id="category-filter" class="filter-select">
+                    <option value="all">All Items</option>
+                    <option value="date">Date Idea</option>
+                    <option value="gift">Gift / Item</option>
+                    <option value="travel">Travel</option>
+                    <option value="other">Other</option>
+                </select>
             </div>
+            
+            <div class="filter-group">
+                <label for="sort-select">Sort by:</label>
+                <select id="sort-select" class="filter-select">
+                    <option value="latest">Latest Added</option>
+                    <option value="oldest">Oldest Added</option>
+                </select>
+            </div>
+
+            <button class="glow-btn small" id="open-add-modal">+ Add Wish</button>
+        </div>
+
+        <div class="wishlist-grid" id="wishlist-grid">
+            <!-- Render via JS -->
         </div>
     </div>
 
-    <!-- Date Modal -->
-    <div id="wish-date-modal" class="modal glass-overlay">
-        <div class="modal-content text-modal glass-panel">
-            <h3 style="margin-bottom:1rem; font-weight:400; font-size:1.4rem;">When was this achieved?</h3>
-            <p style="font-size:0.9rem; color:var(--text-muted); margin-bottom:1.5rem;">Record this beautiful moment in our Journey.</p>
-            <input type="date" id="wish-date-input" class="edit-input" style="text-align:center; margin-bottom:1.5rem;">
-            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-                <button id="wish-today-btn" class="glow-btn small solid">Today</button>
-                <button id="wish-save-date-btn" class="glow-btn small">Choose Date</button>
-                <button id="wish-cancel-btn" class="glow-btn small close-modal-btn" style="border-color:var(--glass-border); color:var(--text-muted);">Cancel</button>
-            </div>
+    <!-- Modal Add / Edit -->
+    <div class="modal glass-overlay" id="wishlist-modal">
+        <div class="text-modal glass-panel">
+            <span class="close-modal" id="close-modal">&times;</span>
+            <h2 id="modal-title" style="margin-bottom: 20px; font-weight: 400;">Add New Wish</h2>
+            <form id="wish-form">
+                <input type="hidden" id="edit-wish-id">
+                <div style="margin-bottom: 15px; text-align: left;">
+                    <label style="font-size: 0.9rem; color: var(--text-muted);">Title:</label>
+                    <input type="text" id="wish-title" required class="edit-input" style="width:100%; padding: 10px; margin-top:5px; border-radius:6px; border:1px solid var(--glass-border); background:var(--bg-panel); color:var(--text-main);">
+                </div>
+                <div style="margin-bottom: 15px; text-align: left;">
+                    <label style="font-size: 0.9rem; color: var(--text-muted);">Category:</label>
+                    <select id="wish-category" class="edit-input" style="width:100%; padding: 10px; margin-top:5px; border-radius:6px; border:1px solid var(--glass-border); background:var(--bg-panel); color:var(--text-main);">
+                        <option value="date">Date Idea</option>
+                        <option value="gift">Gift / Item</option>
+                        <option value="travel">Travel</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 20px; text-align: left;">
+                    <label style="font-size: 0.9rem; color: var(--text-muted);">Description / Notes:</label>
+                    <textarea id="wish-desc" rows="3" class="edit-input" style="width:100%; padding: 10px; margin-top:5px; border-radius:6px; border:1px solid var(--glass-border); background:var(--bg-panel); color:var(--text-main); resize:none;"></textarea>
+                </div>
+                <div style="margin-bottom: 20px; text-align: left;" id="author-container">
+                    <label style="font-size: 0.9rem; color: var(--text-muted);">Added by:</label>
+                    <select id="wish-author" class="edit-input" style="width:100%; padding: 10px; margin-top:5px; border-radius:6px; border:1px solid var(--glass-border); background:var(--bg-panel); color:var(--text-main);">
+                        <option value="Fiqri">Fiqri</option>
+                        <option value="Jasmin">Jasmin</option>
+                    </select>
+                </div>
+                <button type="submit" class="glow-btn solid" style="width: 100%;">Save Wish</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Complete Wish -->
+    <div class="modal glass-overlay" id="complete-modal">
+        <div class="text-modal glass-panel">
+            <span class="close-modal" id="close-complete-modal">&times;</span>
+            <h2 style="margin-bottom: 15px; font-weight: 400;">Mark as Completed ✨</h2>
+            <p style="margin-bottom: 20px; color: var(--text-muted); font-size: 0.95rem;">When did you make this dream come true?</p>
+            <form id="complete-form">
+                <input type="hidden" id="complete-wish-id">
+                <div style="margin-bottom: 20px;">
+                    <input type="date" id="completion-date" required class="edit-input" style="width:100%; padding: 10px; border-radius:6px; border:1px solid var(--glass-border); background:var(--bg-panel); color:var(--text-main);">
+                </div>
+                <button type="submit" class="glow-btn solid" style="width: 100%;">Confirm & Add to Journey</button>
+            </form>
         </div>
     </div>
 
@@ -65,6 +106,5 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="js/store.js"></script>
     <script src="js/wishlist.js"></script>
-    <script>feather.replace();</script>
 </body>
 </html>

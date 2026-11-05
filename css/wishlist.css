@@ -1,72 +1,78 @@
-.page-container { 
-    width: 100vw; 
-    height: 100dvh; 
-    overflow-y: auto; 
-    overflow-x: hidden; 
-    display: flex; 
-    flex-direction: column; 
-    align-items: center; 
-    padding: 5rem 5% 2rem; 
-}
+.container { max-width: 900px; margin: 0 auto; padding: 30px 20px 80px; height: 100vh; overflow-y: auto; }
+.wishlist-header { text-align: center; margin-bottom: 25px; }
+.wishlist-header h1 { font-size: 2.8rem; font-weight: 400; color: var(--text-main); margin-bottom: 8px; }
+.wishlist-header p { color: var(--text-muted); font-size: 1.1rem; }
+.back-btn { display: inline-block; color: var(--text-muted); text-decoration: none; margin-bottom: 15px; transition: color 0.3s; }
+.back-btn:hover { color: var(--theme-accent); }
 
-.page-container > * { 
-    width: 100%; 
-    max-width: 1000px; 
-}
-
-.section-header { 
-    margin-bottom: 1.5rem; 
-    border-bottom: 1px solid var(--glass-border); 
-    padding-bottom: 1rem; 
-}
-
-.section-header h2 { font-weight: 400; font-size: 2.2rem; }
-
-.wisher-form { display: flex; gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; align-items: center; }
-.wisher-form input[type="text"], .wisher-form select { background: rgba(0,0,0,0.5); border: 1px solid var(--glass-border); color: var(--text-main); padding: 12px 15px; border-radius: 8px; flex: 1; min-width: 200px; outline: none; }
-.wisher-form input[type="text"]:focus, .wisher-form select:focus { border-color: var(--theme-accent); }
-
-.author-selector { display: flex; align-items: center; gap: 1rem; color: var(--text-main); font-size: 0.9rem; background: var(--bg-panel); padding: 10px 15px; border-radius: 8px; border: 1px solid var(--glass-border); }
-.author-selector input[type="radio"] { accent-color: var(--theme-accent); cursor: pointer; }
-
-/* PERBAIKAN: Menggunakan flex-wrap agar elemen berjajar rapi dan tidak merentang paksa */
-.wish-list { 
-    display: flex; 
-    flex-wrap: wrap; 
-    gap: 1.5rem; 
-    align-items: flex-start; 
-}
-
-/* PERBAIKAN: Box dibuat fit-content agar fleksibel mengikuti panjang teks */
-.wish-item { 
-    display: flex; 
-    flex-direction: column; 
+/* Kontrol Bar Filter & Sort */
+.controls-bar {
+    display: flex;
     justify-content: space-between;
-    gap: 15px; 
-    padding: 1.5rem; 
-    background: var(--bg-panel); 
-    border: 1px solid var(--glass-border); 
-    border-radius: 12px; 
-    border-left: 4px solid var(--theme-accent); 
-    transition: all 0.3s ease; 
-    
-    width: fit-content; 
-    min-width: 320px;
-    max-width: 100%;
-    flex: 0 1 auto;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 25px;
+    padding: 15px 20px;
+    border-radius: 12px;
+    flex-wrap: wrap;
+}
+.filter-group { display: flex; align-items: center; gap: 10px; font-size: 0.95rem; color: var(--text-muted); }
+.filter-select {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid var(--glass-border);
+    background: var(--bg-panel);
+    color: var(--text-main);
+    outline: none;
+    cursor: pointer;
 }
 
-.wish-header-wrap { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; flex-wrap: wrap; }
-.wish-info { display: flex; flex-direction: column; gap: 8px; flex: 1; }
-.wish-title-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.wish-title-row h4 { font-size: 1.25rem; font-weight: 500; color: var(--text-main); }
-.wish-cat { font-size: 0.75rem; color: #fff; background: var(--theme-accent-trans); padding: 3px 8px; border-radius: 12px; text-transform: uppercase; }
-.wish-author-badge { font-size: 0.75rem; color: var(--theme-accent); border: 1px solid var(--theme-accent); padding: 2px 8px; border-radius: 12px; }
-.wish-desc { font-size: 0.95rem; color: var(--text-muted); font-weight: 300; line-height: 1.5;}
+/* Grid Wishlist yang Simetris & Seragam */
+.wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    align-items: stretch;
+}
 
-.wish-tools { display: flex; align-items: center; gap: 8px; align-self: flex-end; margin-top: 5px; }
-.wish-checkbox { width: 24px; height: 24px; cursor: pointer; accent-color: var(--theme-accent); margin-left: 10px;}
+.wishlist-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+    position: relative;
+    backdrop-filter: blur(5px);
+    height: 100%; /* Memastikan tinggi kartu sama rata */
+}
+.wishlist-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--theme-accent);
+    background: var(--bg-panel-hover);
+    box-shadow: 0 5px 15px var(--theme-accent-trans);
+}
 
-.wish-item.done { border-left-color: #333; opacity: 0.6; }
-.wish-item.done .wish-title-row h4, .wish-item.done .wish-desc { text-decoration: line-through; color: var(--text-muted); }
-.edit-input { width: 100%; background: var(--bg-solid); border: 1px solid var(--glass-border); color: var(--text-main); padding: 12px; border-radius: 8px; margin-bottom: 10px; outline: none; font-size: 1rem; }
+.wishlist-card.completed {
+    opacity: 0.75;
+    border-color: rgba(76, 175, 80, 0.4);
+    background: rgba(76, 175, 80, 0.05);
+}
+
+.card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; gap: 10px; }
+.card-category { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; padding: 3px 8px; border-radius: 4px; background: var(--theme-accent-trans); color: var(--theme-accent); font-weight: 500; }
+.card-title { font-size: 1.25rem; font-weight: 500; color: var(--text-main); margin-bottom: 8px; word-break: break-word; }
+.card-desc { font-size: 0.95rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 15px; flex-grow: 1; word-break: break-word; }
+.card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--glass-border); padding-top: 12px; margin-top: auto; font-size: 0.85rem; color: var(--text-muted); }
+
+.card-actions { display: flex; gap: 8px; }
+
+@media (max-width: 768px) {
+    .container { padding: 20px 15px 60px; }
+    .wishlist-header h1 { font-size: 2.2rem; }
+    .controls-bar { flex-direction: column; align-items: stretch; gap: 12px; }
+    .filter-group { justify-content: space-between; }
+    .wishlist-grid { grid-template-columns: 1fr; }
+}
