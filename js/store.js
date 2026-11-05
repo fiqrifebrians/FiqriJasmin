@@ -88,12 +88,52 @@ const firebaseConfig = {
 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
+// INDEXED-DB CACHE SYSTEM (MENGHILANGKAN DELAY LOADING)
+const dbName = "SanctuaryDB";
+const storeName = "stateStore";
+
+function initDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open(dbName, 1);
+        request.onupgradeneeded = (e) => { e.target.result.createObjectStore(storeName); };
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+    });
+}
+
+async function saveLocalCache(data) {
+    const database = await initDB();
+    const tx = database.transaction(storeName, 'readwrite');
+    tx.objectStore(storeName).put(data, 'sanctuary_state');
+}
+
+async function getLocalCache() {
+    const database = await initDB();
+    return new Promise((resolve) => {
+        const tx = database.transaction(storeName, 'readonly');
+        const req = tx.objectStore(storeName).get('sanctuary_state');
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => resolve(null);
+    });
+}
+
 class AppStore {
     constructor() {
         this.state = { photos: [], wishes: [], letters: [], journey: {} };
         this.listeners = [];
         this.isLoaded = false;
+        this.isLoadedFromCloud = false;
         
+        // 1. Muat dari Cache Lokal Terlebih Dahulu (Render Instan)
+        getLocalCache().then(cachedData => {
+            if (cachedData && !this.isLoadedFromCloud) {
+                this.state = cachedData;
+                this.isLoaded = true;
+                this.notify();
+            }
+        });
+        
+        // 2. Sinkronisasi dengan Firebase di Background
         db.ref('sanctuary_data').on('value', (snapshot) => {
             const cloudData = snapshot.val();
             if (cloudData) {
@@ -103,8 +143,10 @@ class AppStore {
                     letters: cloudData.letters || [],
                     journey: cloudData.journey || {}
                 };
+                this.isLoadedFromCloud = true;
+                this.isLoaded = true;
+                saveLocalCache(this.state); // Update Cache
             }
-            this.isLoaded = true;
             this.notify();
         }, (error) => {
             console.error("Firebase Read Error: ", error);
@@ -123,27 +165,14 @@ class AppStore {
             service_id: 'YOUR_EMAILJS_SERVICE_ID', 
             template_id: 'YOUR_EMAILJS_TEMPLATE_ID', 
             user_id: 'YOUR_EMAILJS_PUBLIC_KEY',
-            template_params: {
-                to_email: toEmail,
-                to_name: toName,
-                from_name: fromName,
-                item_type: type,
-                item_title: title,
-                message: romanticMsg,
-                subject: subject
-            }
+            template_params: { to_email: toEmail, to_name: toName, from_name: fromName, item_type: type, item_title: title, message: romanticMsg, subject: subject }
         };
 
         try {
             await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
             });
-            console.log("Email sent successfully!");
-        } catch (err) {
-            console.error('Failed to send notification', err);
-        }
+        } catch (err) {}
     }
 
     subscribe(listener) { 
@@ -152,7 +181,7 @@ class AppStore {
     }
     
     notify() { this.listeners.forEach(listener => listener(this.state)); }
-    saveToCloud() { db.ref('sanctuary_data').set(this.state); }
+    saveToCloud() { db.ref('sanctuary_data').set(this.state); saveLocalCache(this.state); }
 
     _getDateKey(dateString) {
         if (!dateString) return null;
@@ -276,7 +305,6 @@ class AppStore {
 }
 window.store = new AppStore();
 
-// Interceptor Global Page Transition 
 document.addEventListener('DOMContentLoaded', () => {
     const links = document.querySelectorAll('a[href]');
     links.forEach(link => {
@@ -285,7 +313,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (target && !target.startsWith('http') && !target.startsWith('#')) {
                 e.preventDefault();
                 document.body.classList.add('page-exit');
-                // Timer 800ms sinkron dengan durasi animasi 'paperTurn' di global.css
                 setTimeout(() => { window.location.href = target; }, 800); 
             }
         });

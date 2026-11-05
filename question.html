@@ -41,7 +41,6 @@
         
         .page.flipped { transform: rotateY(-180deg); }
         
-        /* Halaman Kertas Solid Putih & Teks Hitam */
         .front, .back {
             position: absolute;
             top: 0; left: 0;
@@ -68,7 +67,6 @@
             -webkit-transform: rotateY(180deg) translateZ(1px);
         }
         
-        /* Cover Buku Tetap Menggunakan Warna Tema */
         .cover .front {
             background: var(--theme-accent) !important;
             box-shadow: inset 10px 0 20px rgba(0,0,0,0.2), 5px 5px 20px rgba(0,0,0,0.4) !important;
@@ -78,7 +76,6 @@
         
         .front p { font-size: 1.5rem; font-weight: 300; line-height: 1.5; color: #1a1a1a !important; }
         
-        /* Slot Video Landscape */
         .landscape-vid {
             width: 100%;
             aspect-ratio: 16/9;
@@ -101,13 +98,11 @@
         
         #vid2 { opacity: 0; }
         
-        /* Area Konten Bawah */
-        .ui-container { position: relative; width: 100%; flex: 1; }
+        .ui-container { position: relative; width: 100%; flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; }
 
         #question-ui, #celebration-ui {
             position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
+            width: 100%;
             display: flex; flex-direction: column; justify-content: center;
             transition: opacity 1s ease-in-out;
         }
@@ -115,14 +110,12 @@
         #celebration-ui { opacity: 0; pointer-events: none; }
         
         #question-ui h1 { font-weight: 500; font-size: 1.8rem; margin-bottom: 15px; color: #1a1a1a; }
-        #celebration-ui h1 { font-weight: 500; font-size: 1.3rem; margin-bottom: 15px; color: #1a1a1a; }
 
         .btn-group { display: flex; flex-direction: column; gap: 12px; width: 100%; }
         .ask-btn { padding: 12px; font-size: 1.15rem; width: 100%; border-color: var(--theme-accent); color: var(--theme-accent); }
         .ask-btn.solid { background: var(--theme-accent); color: #fff; }
         #no-btn { transition: transform 0.2s ease-out; position: relative; }
         
-        /* Tombol Navigasi */
         .controls { 
             position: absolute; bottom: 4vh; left: 50%; transform: translateX(-50%); 
             z-index: 100; transition: opacity 0.5s; 
@@ -139,7 +132,6 @@
             .front p { font-size: 0.95rem; line-height: 1.4; margin-bottom: 10px; }
             
             #question-ui h1 { font-size: 1.15rem; margin-bottom: 10px; }
-            #celebration-ui h1 { font-size: 1rem; margin-bottom: 10px; line-height: 1.4; }
             
             .ask-btn { padding: 8px; font-size: 0.9rem; }
             .btn-group { gap: 8px; margin-top: 0.5rem; }
@@ -183,7 +175,7 @@
             <div class="page" id="page-9">
                 <div class="front">
                     <div class="landscape-vid">
-                        <!-- Muted, Tidak Loop, Akan di-play dengan delay -->
+                        <!-- Muted, Tidak Loop -->
                         <video id="vid1" src="assets/video1.mp4" muted playsinline></video>
                         <video id="vid2" src="assets/video2.mp4" muted playsinline></video>
                     </div>
@@ -191,16 +183,16 @@
                     <div class="ui-container">
                         <!-- UI Pertanyaan -->
                         <div id="question-ui">
-                            <h1>would u be my gf?</h1>
+                            <h1>would you be my girlfriend?</h1>
                             <div class="btn-group">
                                 <button class="glow-btn solid ask-btn" id="yes-btn">yes 🤍</button>
                                 <button class="glow-btn ask-btn" id="no-btn">no</button>
                             </div>
                         </div>
 
-                        <!-- UI Celebration -->
+                        <!-- UI Celebration (Hanya ada tombol yang tersembunyi di awal, TANPA teks) -->
                         <div id="celebration-ui">
-                            <h1>thank u for accepting me back. i promise to make every day special for u 🤍</h1>
+                            <button class="glow-btn solid ask-btn" id="next-celebration-btn">continue 🤍</button>
                         </div>
                     </div>
                 </div>
@@ -224,7 +216,7 @@
             <!-- Kertas 1 -->
             <div class="page"><div class="front"><p>hi jasmin...</p></div><div class="back"></div></div>
             
-            <!-- Kertas Cover Depan -->
+            <!-- Kertas Cover Depan (Tanpa Teks) -->
             <div class="page cover">
                 <div class="front"></div>
                 <div class="back"></div>
@@ -247,13 +239,12 @@
         let isBgmPlaying = false;
         let hasAnsweredYes = false;
         let audioUnlocked = false;
-        let videoTimeout = null;
 
         function onYouTubeIframeAPIReady() {
             ytPlayer = new YT.Player('yt-player', {
                 height: '0',
                 width: '0',
-                videoId: 'xtsWsebfEtw', // Arctic Monkeys - I Wanna Be Yours
+                videoId: 'xtsWsebfEtw', 
                 playerVars: { 'autoplay': 0, 'controls': 0, 'showinfo': 0, 'rel': 0 },
                 events: { 'onStateChange': onPlayerStateChange }
             });
@@ -345,25 +336,14 @@
                 
                 if (currentSlide < pages.length - 1) {
                     
-                    // Jika saat ini di kertas 8 dan akan membuka kertas 9 (Video 1)
                     if (currentSlide === 8 && !hasAnsweredYes) {
                         vid1.currentTime = 0;
-                        playRomanticBGM(); // Musik jalan secara instan
-                        
-                        // Video ditahan 0.8 detik (800ms) menyesuaikan animasi kertas dibuka
-                        clearTimeout(videoTimeout);
-                        videoTimeout = setTimeout(() => {
-                            if (!hasAnsweredYes) {
-                                let playPromise = vid1.play();
-                                if (playPromise !== undefined) {
-                                    playPromise.catch(e => console.log('Mobile video autoplay handling:', e));
-                                }
-                            }
-                        }, 800);
+                        let playPromise = vid1.play();
+                        if (playPromise !== undefined) playPromise.catch(e => console.log('Mobile video autoplay handling:', e));
+                        playRomanticBGM();
                     }
 
                     pages[currentSlide].classList.add('flipped');
-                    
                     setTimeout((idx) => { pages[idx].style.zIndex = idx + 1; }, 400, currentSlide);
                     
                     currentSlide++;
@@ -376,7 +356,6 @@
                     currentSlide--;
                     
                     if (currentSlide === 8) {
-                        clearTimeout(videoTimeout);
                         vid1.pause();
                         if (isBgmPlaying) {
                             ytPlayer.pauseVideo();
@@ -395,34 +374,41 @@
 
             const yesBtn = document.getElementById('yes-btn');
             const noBtn = document.getElementById('no-btn');
+            const nextCelebrationBtn = document.getElementById('next-celebration-btn');
             
             yesBtn.addEventListener('click', () => {
                 hasAnsweredYes = true;
                 const questionUI = document.getElementById('question-ui');
                 const celebrationUI = document.getElementById('celebration-ui');
                 
+                // Menghilangkan UI pertanyaan
                 questionUI.style.opacity = '0';
                 questionUI.style.pointerEvents = 'none';
                 
-                celebrationUI.style.opacity = '1';
-                celebrationUI.style.pointerEvents = 'auto';
-                
+                // Crossfade Video 1 ke Video 2
                 vid1.style.opacity = '0';
                 vid2.style.opacity = '1';
                 vid1.pause();
                 vid2.currentTime = 0;
                 
                 let playPromise = vid2.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(e => console.log('Video 2 handled:', e));
-                }
+                if (playPromise !== undefined) playPromise.catch(e => console.log('Video 2 handled:', e));
                 
+                // Memunculkan tombol Continue di kertas yang sama (teks dihapus sesuai instruksi)
+                celebrationUI.style.opacity = '1';
+                celebrationUI.style.pointerEvents = 'auto';
+            });
+            
+            // Tombol "Continue" setelah Yes ditekan
+            nextCelebrationBtn.addEventListener('click', () => {
+                pages[currentSlide].classList.add('flipped');
+                setTimeout((idx) => { pages[idx].style.zIndex = idx + 1; }, 400, currentSlide);
+                currentSlide++;
                 updateButtons();
             });
             
             document.getElementById('go-back-btn').addEventListener('click', fadeOutAudioAndLeave);
 
-            // Logika Klik Paksa "No" (Statis, tanpa efek menghindar)
             noBtn.addEventListener('click', () => {
                 noBtn.style.pointerEvents = 'none'; 
                 let current = currentSlide - 1;
