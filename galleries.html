@@ -3,93 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gallery - Fiqri & Jasmin</title>
+    <title>Gallery - Fiqri ♥︎ Jasmin</title>
     <link rel="stylesheet" href="css/global.css">
     <link rel="stylesheet" href="css/galleries.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/feather-icons"></script>
 </head>
 <body>
-    <div class="theme-selector">
-        <img src="assets/cony-icon.png" class="theme-icon" onclick="setTheme('cony')" title="Cony Theme">
-        <img src="assets/brown-icon.png" class="theme-icon" onclick="setTheme('brown')" title="Brown Theme">
-        <img src="assets/twilight-icon.png" class="theme-icon" onclick="setTheme('twilight')" title="Twilight Sparkle Theme">
-    </div>
-
-    <div class="container">
-        <header class="gallery-header">
-            <a href="index.html" class="back-btn">&#10229; Home</a>
-            <h1>Our Gallery</h1>
-            <p>Memories captured in time.</p>
-        </header>
-
-        <!-- Bar Kontrol Filter Tanggal & Sort -->
-        <div class="controls-bar glass-panel" style="display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 25px; padding: 12px 20px; border-radius: 12px; flex-wrap: wrap;">
-            <div class="filter-group" style="gap: 12px; flex-wrap: wrap;">
-                <span>Date Range:</span>
-                <input type="date" id="filter-start" class="filter-select" style="padding: 6px 10px;">
-                <span>to</span>
-                <input type="date" id="filter-end" class="filter-select" style="padding: 6px 10px;">
-                <button class="action-btn" id="clear-date-filter" title="Clear Date Filter" style="width: auto; padding: 0 10px; font-size: 0.85rem;">Clear</button>
-            </div>
-            
-            <div class="filter-group" style="gap: 15px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <label for="sort-gallery">Sort:</label>
-                    <select id="sort-gallery" class="filter-select">
-                        <option value="latest">Latest Added</option>
-                        <option value="oldest">Oldest Added</option>
-                    </select>
-                </div>
-                <button class="glow-btn small" id="open-photo-modal">+ Add Photo</button>
+    <a href="index.html" class="glow-btn small" style="position:fixed; top:20px; left:20px; text-decoration:none; display:flex; align-items:center; gap:5px; z-index:100;"><i data-feather="arrow-left"></i> Menu</a>
+    
+    <div class="page-container">
+        <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <h2 id="gallery-page-title">Gallery</h2>
+            <div class="upload-wrapper" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                <button id="toggle-map-btn" class="action-btn" title="Toggle Map"><i data-feather="map"></i></button>
+                <button id="toggle-hidden-btn" class="action-btn" title="Hidden Vault"><i data-feather="eye-off"></i></button>
+                
+                <label for="photo-upload" class="glow-btn small solid" style="cursor:pointer;">Upload Files</label>
+                <!-- MEMBUKA OPSI UPLOAD VIDEO -->
+                <input type="file" id="photo-upload" accept="image/*,video/*" multiple hidden>
             </div>
         </div>
-
-        <div class="gallery-grid" id="gallery-grid">
-            <!-- Render via JS -->
+        
+        <div id="upload-loading" class="hidden" style="color:var(--theme-accent); margin-bottom:1rem; font-size:0.9rem; text-align:center;">Processing and uploading data...</div>
+        
+        <div id="map-container" class="glass-panel">
+            <div id="map" style="width: 100%; height: 100%;"></div>
         </div>
+
+        <div id="gallery-grid" class="ios-grid"></div>
     </div>
 
-    <!-- Modal Lightbox -->
-    <div class="modal glass-overlay" id="lightbox-modal">
-        <span class="close-modal" id="close-lightbox">&times;</span>
-        <img class="modal-content" id="lightbox-img">
-        <div class="photo-info-bar glass-panel" style="margin-top: 15px; text-align: center; max-width: 600px; padding: 10px 20px;">
-            <h3 id="lightbox-location" style="font-weight: 500; margin-bottom: 3px;"></h3>
-            <p id="lightbox-date" style="font-size: 0.85rem; color: var(--text-muted);"></p>
-        </div>
+    <!-- Zoom Modal untuk Gambar dan Video -->
+    <div id="image-modal" class="modal glass-overlay">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modal-img" alt="Zoomed memory">
+        <video class="modal-content hidden" id="modal-video" controls playsinline></video>
+        <div id="modal-caption"></div>
     </div>
 
-    <!-- Modal Add Photo -->
-    <div class="modal glass-overlay" id="photo-modal">
-        <div class="text-modal glass-panel" style="max-width: 480px;">
-            <span class="close-modal" id="close-photo-modal">&times;</span>
-            <h2 style="margin-bottom: 20px; font-weight: 400;">Add New Memory</h2>
-            <form id="photo-form">
-                <div style="margin-bottom: 15px; text-align: left;">
-                    <label style="font-size: 0.9rem; color: var(--text-muted);">Select Image:</label>
-                    <input type="file" id="photo-file" accept="image/*" required class="edit-input" style="width:100%; padding: 8px; margin-top:5px; border-radius:6px; border:1px solid var(--glass-border); background:var(--bg-panel); color:var(--text-main);">
-                </div>
-                <div style="margin-bottom: 15px; text-align: left;">
-                    <label style="font-size: 0.9rem; color: var(--text-muted);">Location / Title:</label>
-                    <input type="text" id="photo-location" required placeholder="e.g., Leeds City Centre" class="edit-input" style="width:100%; padding: 10px; margin-top:5px; border-radius:6px; border:1px solid var(--glass-border); background:var(--bg-panel); color:var(--text-main);">
-                </div>
-                <div style="margin-bottom: 15px; text-align: left;">
-                    <label style="font-size: 0.9rem; color: var(--text-muted);">Date:</label>
-                    <input type="date" id="photo-date" required class="edit-input" style="width:100%; padding: 10px; margin-top:5px; border-radius:6px; border:1px solid var(--glass-border); background:var(--bg-panel); color:var(--text-main);">
-                </div>
-                <div style="margin-bottom: 20px; text-align: left;">
-                    <label style="font-size: 0.9rem; color: var(--text-muted);">Added by:</label>
-                    <select id="photo-author" class="edit-input" style="width:100%; padding: 10px; margin-top:5px; border-radius:6px; border:1px solid var(--glass-border); background:var(--bg-panel); color:var(--text-main);">
-                        <option value="Fiqri">Fiqri</option>
-                        <option value="Jasmin">Jasmin</option>
-                    </select>
-                </div>
-                <button type="submit" class="glow-btn solid" style="width: 100%;" id="upload-btn">Upload Photo</button>
-            </form>
+    <!-- Password Modal -->
+    <div id="password-modal" class="modal glass-overlay">
+        <div class="modal-content text-modal glass-panel">
+            <h3 style="margin-bottom:1rem; font-weight:400; font-size:1.6rem; color:var(--text-main);">Restricted Area</h3>
+            <p style="font-size:0.95rem; color:var(--text-muted); margin-bottom:1.5rem;">Please enter the password to view hidden memories.</p>
+            <input type="password" id="vault-password" class="edit-input" style="text-align:center; margin-bottom:1.5rem;" placeholder="Enter password">
+            <div style="display:flex; gap:10px; justify-content:center;">
+                <button id="submit-password-btn" class="glow-btn small solid">Unlock</button>
+                <button id="cancel-password-btn" class="glow-btn small close-modal-btn" style="border-color:var(--glass-border); color:var(--text-muted);">Cancel</button>
+            </div>
         </div>
     </div>
 
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exif-js"></script>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    
     <script src="js/store.js"></script>
     <script src="js/galleries.js"></script>
 </body>
